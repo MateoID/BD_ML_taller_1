@@ -13,3 +13,8 @@ for (i in 1:10){
   
   tabla_geih <- rbind(tabla_geih, my_table)
 }
+
+clean_geih <- tabla_geih %>% 
+  select('directorio', 'ingtot', 'age', 'sex', 'clase', 'college', 'maxEducLevel', 'depto', 'formal', 
+         'ocu', 'oficio', 'totalHoursWorked') %>% 
+  filter(age >= 18, ocu == 1)
