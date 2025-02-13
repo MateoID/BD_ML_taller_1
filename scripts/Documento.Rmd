@@ -1,0 +1,67 @@
+---
+title: "Proble Set 1: Prediciendo el ingreso"
+author: "Maria Camila Caraballo, Javier Amaya, Nicolas Moreno, Mateo Isaza"
+date: "2025-02-01"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Motivación del problema
+
+En el sector público, la declaración precisa de los ingresos individuales es fundamental para el cálculo de impuestos.
+
+Sin embargo, el fraude fiscal en todas sus formas ha sido siempre un problema significativo. Según el Servicio de Impuestos Internos (IRS), aproximadamente el 83.6% de los impuestos en EE. UU. se pagan de manera voluntaria y a tiempo.
+
+Una de las causas de esta brecha es la subdeclaración de ingresos por parte de los individuos. Un modelo de predicción de ingresos podría ayudar a identificar posibles casos de fraude, lo que contribuiría a reducir esta brecha. Además, un modelo de predicción de ingresos puede ayudar a identificar a personas y familias vulnerables que podrían necesitar asistencia adicional.
+
+For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+### 1.1 Introducción
+
+El principal obejtivo es construir un modelo de salario por horas individual:
+
+$$
+w = f(X) + u
+$$
+
+en el que $w$ es el salario por horas, y $X$ es la matriz que incluye las variables/predictores potenciales explicativos. En este problem set nos vamos a enfocar en $$f(X) = X\beta$$.
+
+*The introduction briefly states the problem and if there are any antecedents. It briefly describes the data and its suitability to address the problem set question. It contains a preview of the results and main takeaways.*
+
+(a) Describe los datos brevemente, incluyendo su propósito y cualquier otra información relevante.
+
+\
+(b) Describe el proceso de adquisición de los datos y si existen restricciones para acceder a ellos o para realizar scraping.
+
+\
+(c) Describe el proceso de limpieza de los datos.
+
+\
+(d) Describa las variables incluidas en tu análisis. Como mínimo, debes incluir una tabla de estadísticas descriptivas con su interpretación. Sin embargo, espero un análisis profundo que ayude al lector a comprender los datos, su variación y la justificación de tus elecciones de datos. Utiliza tu conocimiento profesional para agregar valor a esta sección. No lo presentes como una lista "seca" de ingredientes.
+
+### 1.2 Datos
+
+### 1.3 Perfil ingreso - edad
+
+### 1.4 Brecha salarial por género
+
+### 1.5 Predicción del salario
+
+### 
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
