@@ -17,13 +17,9 @@ Sin embargo, el fraude fiscal en todas sus formas ha sido siempre un problema si
 
 Una de las causas de esta brecha es la subdeclaración de ingresos por parte de los individuos. Un modelo de predicción de ingresos podría ayudar a identificar posibles casos de fraude, lo que contribuiría a reducir esta brecha. Además, un modelo de predicción de ingresos puede ayudar a identificar a personas y familias vulnerables que podrían necesitar asistencia adicional.
 
-For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+La predicción precisa de los salarios es fundamental para una correcta declaración de impuestos, ya que los ingresos laborales constituyen una parte significativa del ingreso total de los hogares y, por ende, de la base imponible tributaria (CEPAL). Una estimación adecuada de los salarios permite a las autoridades fiscales proyectar con precisión la recaudación tributaria, facilitando la planificación fiscal y la asignación eficiente de recursos públicos (CIAT). Además, comprender las tendencias salariales es esencial para diseñar políticas fiscales equitativas y efectivas, asegurando que las cargas impositivas se distribuyan de manera justa entre los contribuyentes.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
+Utilizando datos de [fuente], este estudio emplea modelos econométricos y de aprendizaje automático para predecir ingresos salariales. Los resultados muestran que variables como educación y sector laboral mejoran la precisión de las estimaciones, proporcionando información valiosa para el diseño de políticas fiscales más eficientes y equitativas.
 
 ### 1.1 Introducción
 
@@ -33,17 +29,17 @@ $$
 w = f(X) + u
 $$
 
-en el que $w$ es el salario por horas, y $X$ es la matriz que incluye las variables/predictores potenciales explicativos. En este problem set nos vamos a enfocar en $$f(X) = X\beta$$.
+en el que $w$ es el salario por horas, y $X$ es la matriz que incluye las variables/predictores potenciales explicativos. En este problem set nos vamos a enfocar en $$f(X) = X\beta$$
 
 *The introduction briefly states the problem and if there are any antecedents. It briefly describes the data and its suitability to address the problem set question. It contains a preview of the results and main takeaways.*
 
-(a) Describe los datos brevemente, incluyendo su propósito y cualquier otra información relevante.
+(a) Describa los datos brevemente, incluyendo su propósito y cualquier otra información relevante.
 
 \
-(b) Describe el proceso de adquisición de los datos y si existen restricciones para acceder a ellos o para realizar scraping.
+(b) Describa el proceso de adquisición de los datos y si existen restricciones para acceder a ellos o para realizar scraping.
 
 \
-(c) Describe el proceso de limpieza de los datos.
+(c) Describa el proceso de limpieza de los datos.
 
 \
 (d) Describa las variables incluidas en tu análisis. Como mínimo, debes incluir una tabla de estadísticas descriptivas con su interpretación. Sin embargo, espero un análisis profundo que ayude al lector a comprender los datos, su variación y la justificación de tus elecciones de datos. Utiliza tu conocimiento profesional para agregar valor a esta sección. No lo presentes como una lista "seca" de ingredientes.
@@ -52,16 +48,69 @@ en el que $w$ es el salario por horas, y $X$ es la matriz que incluye las variab
 
 ### 1.3 Perfil ingreso - edad
 
+Una gran cantidad de evidencia en economía laboral sugiere que el perfil típico de edad-salario de los trabajadores sigue un patrón predecible: los salarios tienden a ser bajos cuando el trabajador es joven, aumentan a medida que envejece, alcanzando su punto máximo alrededor de los 50 años, y luego tienden a mantenerse estables o disminuir ligeramente después de esa edad. En esta subsección, estimaremos el perfil de edad-salario para los individuos de esta muestra.
+
+$$
+log(w) = \beta_1 + \beta_2Edad + \beta_3 Edad^2 + u
+$$
+Al presentar y discutir tus resultados, incluye:
+
+-   Una tabla de regresión.
+
+-   Una interpretación de los coeficientes y su significancia.
+
+-   Una discusión sobre el ajuste del modelo dentro de la muestra.
+
+-   Un gráfico del perfil estimado de edad-ingresos implícito en la ecuación anterior, incluyendo un análisis de la edad en la que se alcanza el pico con sus respectivos intervalos de confianza. *(Nota: Usa bootstrap para construir los intervalos de confianza.)*
+
 ### 1.4 Brecha salarial por género
+
+La brecha salarial de género. Los formuladores de políticas han estado preocupados durante mucho tiempo por la brecha salarial de género, y este será nuestro enfoque en esta subsección.
+
+a\. Comience estimando y discutiendo la brecha salarial incondicional:
+
+$$
+log(w) = \beta_1 + \beta_2Female + u
+$$
+
+donde *Female* es un indicador que toma el valor de uno si el individuo en la muestra se identifica como mujer.
+
+b\. Un eslogan común es "igual salario por igual trabajo". Una forma de interpretar esto es que, para empleados con características laborales y personales similares, no debería existir una brecha salarial de género. Para analizar esto, estima la brecha salarial condicional incorporando variables de control como características del trabajador y del puesto de trabajo.
+
+En esta sección, estima la brecha salarial condicional:\
+i. Primero, utilizando FWL.\
+ii. Segundo, utilizando FWL con bootstrap.
+
+Compare las estimaciones y los errores estándar.
+
+c\. Luego, grafique el perfil de edad-salario predicho y estima las edades en las que se alcanza el pico salarial, junto con los respectivos intervalos de confianza por género.
+
+Al presentar y discutir tus resultados, incluya:
+
+-   Una ecuación de estimación, explicando las variables de control incluidas (ten cuidado con los *bad controls*).
+
+-   Una tabla de regresión con las estimaciones de las brechas salariales condicional e incondicional, presentadas lado a lado y resaltando el coeficiente de interés. Las variables de control no deben incluirse en la tabla, pero sí mencionarse adecuadamente.
+
+-   Una interpretación de los coeficientes de *Female*, una comparación entre los modelos y el ajuste dentro de la muestra.
+
+-   Un análisis de las edades en las que se alcanza el pico salarial y su similitud/diferencia estadística.
+
+-   Una discusión reflexiva sobre la brecha salarial condicional e incondicional, evaluando si los cambios en el coeficiente son evidencia de un problema de selección, discriminación, una combinación de ambos o si no están relacionados con estos factores.
 
 ### 1.5 Predicción del salario
 
+En las secciones anteriores, estimaste algunas especificaciones con un enfoque en la inferencia. En esta subsección, evaluaremos el poder predictivo de estas especificaciones.
+
+(a) Divida la muestra en dos grupos: una muestra de entrenamiento (70%) y una de prueba (30%). (No olvide fijar una semilla para garantizar la reproducibilidad. En R, por ejemplo, puede usar `set.seed(10101)`, donde 10101 es la semilla).
+
+(b) Reporte y compare el desempeño predictivo en términos del RMSE de todas las especificaciones anteriores junto con al menos cinco (5) especificaciones adicionales que exploren no linealidades y mayor complejidad.
+
+(c) En la discusión de los resultados, comente:
+
+    i\. El desempeño general de los modelos.\
+    ii. La especificación con el menor error de predicción.\
+    iii. Para la especificación con el menor error de predicción, analice aquellas observaciones que parecen desviarse significativamente. Para ello, calcule los errores de predicción en la muestra de prueba y examine su distribución. ¿Hay observaciones en los extremos de la distribución del error de predicción? ¿Estos valores atípicos podrían representar personas que la DIAN debería investigar, o son simplemente el resultado de un modelo defectuoso?
+
+(d) **LOOCV.** Para los dos modelos con el menor error de predicción en la sección anterior, calcule el error de predicción utilizando *Leave-One-Out Cross-Validation* (LOOCV). Compare los resultados del error de prueba con aquellos obtenidos mediante el enfoque de conjunto de validación y explore los posibles vínculos con la estadística de influencia. *(Nota: al realizar esta subsección, los cálculos pueden tomar mucho tiempo dependiendo de sus habilidades de programación, planifique en consecuencia).*
+
 ### 
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
