@@ -38,6 +38,12 @@ en el que $w$ es el salario por horas, y $X$ es la matriz que incluye las variab
 \
 (b) Describa el proceso de adquisición de los datos y si existen restricciones para acceder a ellos o para realizar scraping.
 
+Primero accedimos al enlace "https://ignaciomsarmiento.github.io/GEIH2018_sample/page1.html" e inspeccionamos el código HTML subyacente. En dicho código pudimos ubicar el elemento "table" correspondiente a los datos que necesitamos extraer. No obstante, al usar el paquete "rvest" para extraerlo, el resultado era un objeto vacío. Revisando con más detenimiento, evidenciamos que en la secuencia de carga de la página, la tabla que nos interesaba era uno de los últimos elementos en cargarse. Esto nos llevó a suponer que al ejecutar el código de extracción en R, si bien lográbamos extraer parte del códogo HTML de la página, el elemento "table" no alcanzaba a cargarse para el momento en que la secuencia de extracción de R ya había terminado.  
+
+En vista de lo anterior, optamos por revisar la pestaña "Network" en el inspector web y recargamos la página para examinar la secuencia de aparición de los elementos en ella y en particular la tabla con datos de la GEIH. Uno de los elementos es "geih_page_1.html" que contiene como Request URL: "https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_1.html". Al acceder a dicho enlace evidenciamos que contenía como único elemento HTML la tabla con los datos que buscábamos. 
+
+Usando el paquete "rvest", extrajimos la tabla y la transformamos en un data.frame. Creamos un bucle que iterara sobre el enlace "https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_%d.html" 10 veces, ya que este es el número de tablas que debíamos extraer y reemplazara el componente %d por el número de la iteración, de modo que cada vez se concatenara la tabla extraída a las de las iteraciones anteriores. Luego de completar las 10 iteraciones terminamos obteniendo una tabla de dimensiones 32177 x 177.
+
 \
 (c) Describa el proceso de limpieza de los datos.
 
