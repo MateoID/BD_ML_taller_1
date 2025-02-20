@@ -19,7 +19,8 @@ p_load(rio,
        caret, 
        gridExtra, 
        skimr,  
-       stargazer 
+       stargazer,
+       boot
 )   
 
 library(rvest)
@@ -83,8 +84,7 @@ for (i in 1:10){
 }
 
 clean_geih <- tabla_geih %>% 
-  select('directorio', 'ingtot', 'age', 'sex', 'clase', 'college', 'maxEducLevel', 'depto', 'formal', 
-         'ocu', 'oficio', 'totalHoursWorked') %>% 
+  select('directorio', 'ingtot', 'age', 'sex', 'clase', 'college', 'maxEducLevel', 'depto', 'formal','ocu', 'oficio', 'totalHoursWorked') %>% 
   filter(age >= 18, ocu == 1)
 
 ```
@@ -104,6 +104,65 @@ $$ Al presentar y discutir tus resultados, incluye:
 -   Una discusión sobre el ajuste del modelo dentro de la muestra.
 
 -   Un gráfico del perfil estimado de edad-ingresos implícito en la ecuación anterior, incluyendo un análisis de la edad en la que se alcanza el pico con sus respectivos intervalos de confianza. *(Nota: Usa bootstrap para construir los intervalos de confianza.)*
+
+```{r}
+#No tener variable dependiente con na, nan, infinito o menores a 0
+clean_geih <- clean_geih[!is.na(clean_geih$ingtot) & 
+                       !is.nan(clean_geih$ingtot) & 
+                       !is.infinite(clean_geih$ingtot) & 
+                       clean_geih$ingtot > 0, ]
+
+clean_geih <- clean_geih[!is.na(clean_geih$age) & 
+                       !is.nan(clean_geih$age) & 
+                       !is.infinite(clean_geih$age) & 
+                       clean_geih$age > 0, ]
+
+modelo <- lm(log(ingtot) ~ age + I(age^2), data = clean_geih)
+
+stargazer(modelo, type = "text",
+          add.lines = list(c("R² ajustado", round(summary(modelo)$adj.r.squared, 3)),
+                           c("Estadístico F", round(summary(modelo)$fstatistic[1], 3))))
+
+#Normalidad en los residuos
+ks.test(residuals(modelo), "pnorm", mean = mean(residuals(modelo)), sd = sd(residuals(modelo)))
+
+#Curva de modelo ajustado
+ggplot(clean_geih, aes(x = age, y = log(ingtot))) + geom_point(alpha = 0.5) + 
+geom_smooth(method = "lm", formula = y ~ x + I(x^2), color = "blue") + 
+labs(title = "Ajuste del Modelo", x = "Edad", y = "log(w)") + theme_minimal()
+
+par(mfrow = c(2, 2)) 
+# Dividir la ventana gráfica en 4 
+plot(modelo) # Diagnóstico del modelo
+
+#gráfico del perfil estimado de edad-ingresos (Bootstrap)
+coefs<-modelo$coef
+coefs
+
+b0<-coefs[1] 
+b1<-coefs[2]
+b2<-coefs[3] 
+
+boot_func <- function(data,index, age_bar)
+{
+    age_bar <- mean(clean_geih$age)
+      f<-lm(log(ingtot) ~ age + I(age^2),data, subset = index)
+      
+        
+        b1<-f$coefficients[2]
+        b2<-f$coefficients[3] 
+         
+      elastpt<-b1+2*b2*age_bar    
+    
+      return(elastpt)
+}
+
+boot_func(clean_geih,1:nrow(clean_geih))
+
+results <- boot(data=clean_geih, boot_func ,R=1000)
+results
+
+```
 
 ### 1.4 Brecha salarial por género
 
