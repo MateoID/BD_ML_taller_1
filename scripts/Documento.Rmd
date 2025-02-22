@@ -83,10 +83,150 @@ for (i in 1:10){
   tabla_geih <- rbind(tabla_geih, my_table)
 }
 
+# Limpieza de los datos
 clean_geih <- tabla_geih %>% 
-  select('directorio', 'ingtot', 'age', 'sex', 'clase', 'college', 'maxEducLevel', 'depto', 'formal','ocu', 'oficio', 'totalHoursWorked') %>% 
-  filter(age >= 18, ocu == 1)
+  filter(age >= 18, ocu == 1) %>% 
+  mutate(
+    directorio = as.factor(directorio),
+    secuencia_p = as.factor(secuencia_p),
+    orden = as.factor(orden),
+    id = paste(directorio, secuencia_p, orden, sep = "")) %>% 
+  select(
+    'id', # Identificador único por individuo
+    'hoursWorkUsual', # Horas trabajadas en la última semana
+    'p6870', # Horas trabajadas en la última semana por la segunda actividad
+    'age', # Edad
+    'sex', # Sexo
+    'p6210', # Nivel educativo alcanzado
+    'cuentaPropia', # Independiente
+    'estrato1', # Estrato
+    
+    'impa', # Ingreso mensual por la primera actividad antes de imputación
+    'impaes', # Ingreso mensual imputado por la primera actividad
+    'isa', # Ingreso mensual por la segunda actividad antes de imputación
+    'isaes', # Ingreso mensual imputado por la segunda actividad
+    'ie', # Ingreso mensual en especie antes de imputación
+    'iees', # Ingreso mensual en especia imputado
+    'p6590s1', # Valor de alimentos como parte de pago
+    'p6600s1', # Valor de vivienda como parte de pago
+    'p6620s1', # Valor de otros ingresos en especie
+    
+    'p6545s1', # Valor de las primas recibidas el mes anterior
+    'p6545s2', # Si el valor ya fue incluido en los ingresos reportados
+    
+    'p6580s1', # Valor de las bonificaciones recibidas el mes anterior
+    'p6580s2', # Si el valor ya fue incluido en los ingresos reportados
+    
+    'p6585s1a1', # Valor recibido por subsidio de alimentación
+    'p6585s1a2', # Si el valor ya fue incluido en los ingresos reportados
+    
+    'p6585s2a1', # Valor recibido por subsidio de transporte
+    'p6585s2a2', # Si el valor ya fue incluido en los ingresos reportados
+    
+    'p6585s3a1', # Valor recibido por subsidio familiar
+    'p6585s3a2', # Si el valor ya fue incluido en los ingresos reportados
+    
+    'p6585s4a1', # Valor recibido por subsidio educativo
+    'p6585s4a2', # Si el valor ya fue incluido en los ingresos reportados
+    
+    'p6630s1a1', # Valor anual prima de servicios
+    'p6630s2a1', # Valor anual prima de navidad
+    'p6630s3a1', # Valor anual prima de vacaciones
+    'p6630s4a1', # Valor anual viáticos
+    'p6630s6a1', # Valor bonificaciones anuales
+    'p7510s6a1', # Valor anual de cesantías e intereses a la cesantías
+    
+    'p6750', # Valor drecibido por: honorarios, actividad, negocio, profesión, finca
+    'p6760', # Meses comprendidos por el concepto anterior
+    
+    'formal', 
+    'sizeFirm', 
+    'oficio', 
+    'relab')
 
+clean_geih <-  clean_geih %>% 
+  # Si estos conceptos ya fueron reportados, se sustituye su valor por 0
+  mutate(p6545s1 = ifelse(p6545s2 == 1, 0, p6545s1)) %>% 
+  mutate(p6580s1 = ifelse(p6580s2 == 1, 0, p6580s1)) %>% 
+  mutate(p6585s1a1 = ifelse(p6585s1a2 == 1, 0, p6585s1a1)) %>% 
+  mutate(p6585s2a1 = ifelse(p6585s2a2 == 1, 0, p6585s2a1)) %>% 
+  mutate(p6585s3a1 = ifelse(p6585s3a2 == 1, 0, p6585s3a1)) %>% 
+  mutate(p6585s4a1 = ifelse(p6585s4a2 == 1, 0, p6585s4a1)) %>% 
+  # Se divide el valor de estos conceptos entre 12 por ser anuales
+  mutate(p6630s1a1 = p6630s1a1 / 12) %>% 
+  mutate(p6630s2a1 = p6630s2a1 / 12) %>% 
+  mutate(p6630s3a1 = p6630s3a1 / 12) %>% 
+  mutate(p6630s4a1 = p6630s4a1 / 12) %>% 
+  mutate(p6630s6a1 = p6630s6a1 / 12) %>% 
+  mutate(p7510s6a1 = p7510s6a1 / 12) %>% 
+  # Se ajusta el valor de los meses y se divide el concepto entre la cantidad
+  # de meses que comprende
+  mutate(p6750 = ifelse(is.na(p6760) == TRUE, 1, p6760)) %>%
+  mutate(p6750 = ifelse(p6760 == 0, p6750, (p6750/p6760)))
+
+# Valor de ingresos mensuales por persona
+clean_geih$inglab <- rowSums(clean_geih[, c(
+  'impa', 
+  'impaes', 
+  'isa', 
+  'isaes', 
+  'ie', 
+  'iees',
+  'p6590s1',
+  'p6600s1',
+  'p6620s1',
+  'p6545s1',
+  'p6580s1',
+  'p6585s1a1',
+  'p6585s2a1',
+  'p6585s3a1',
+  'p6585s4a1',
+  'p6630s1a1',
+  'p6630s2a1',
+  'p6630s3a1',
+  'p6630s4a1',
+  'p6630s6a1',
+  'p7510s6a1',
+  'p6750'
+  )], na.rm=TRUE)
+
+# Imputaciôn de promedio de ingresos por estrato para valores faltantes
+clean_geih <- clean_geih %>% 
+     group_by(estrato1) %>% 
+     mutate(mean_inglab = mean(inglab, na.rm=TRUE)) %>% 
+     ungroup() %>% 
+     mutate(mean_inglab = ifelse(is.na(mean_inglab) == TRUE, 0, mean_inglab)) %>% 
+     mutate(inglab = ifelse(is.na(inglab) == TRUE, mean_inglab, inglab))
+
+# Cálculo e imputación de horas trabajadas por mes
+clean_geih$total_hours <- rowSums(clean_geih[, c('hoursWorkUsual', 'p6870')], na.rm=TRUE) 
+
+clean_geih <- clean_geih %>% 
+     group_by(estrato1) %>% 
+     mutate(mean_hours = mean(total_hours, na.rm=TRUE)) %>% 
+     ungroup() %>% 
+     mutate(total_hours = ifelse(is.na(total_hours) == TRUE, mean_hours, total_hours))
+
+# Cálculo de ingresos laborales por hora
+clean_geih <- clean_geih %>% 
+  mutate(hourly_inglab = inglab / total_hours)
+     
+clean_geih <- clean_geih %>% 
+     mutate(female = ifelse(sex == 1, 0, 1)) %>% 
+     select(
+       'id', 
+       'hourly_inglab', 
+       'age', 
+       'female', 
+       'p6210', 
+       'cuentaPropia', 
+       'estrato1', 
+       'formal', 
+       'sizeFirm', 
+       'oficio', 
+       'relab')
+
+skim(clean_geih)
 ```
 
 ### 1.3 Perfil ingreso - edad
