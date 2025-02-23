@@ -155,7 +155,7 @@ clean_geih <- tabla_geih %>%
   select(
     'id', # Identificador único por individuo
     'hoursWorkUsual', # Horas trabajadas en la última semana
-    'p6870', # Horas trabajadas en la última semana por la segunda actividad
+    'hoursWorkActualSecondJob', # Horas trabajadas en la última semana por la segunda actividad
     'age', # Edad
     'sex', # Sexo
     'p6210', # Nivel educativo alcanzado
@@ -201,7 +201,11 @@ clean_geih <- clean_geih %>%
      mutate(inglab = ifelse(is.na(inglab) == TRUE, mean_inglab, inglab))
 
 # Cálculo e imputación de horas trabajadas por mes
-clean_geih$total_hours <- rowSums(clean_geih[, c('hoursWorkUsual', 'p6870')], na.rm=TRUE) 
+clean_geih <- clean_geih %>% 
+  mutate(hour_month1 = (hoursWorkUsual * 49) / 12) %>% 
+  mutate(hour_month2 = (hoursWorkActualSecondJob * 49) / 12)
+
+clean_geih$total_hours <- rowSums(clean_geih[, c('hour_month1', 'hour_month2')], na.rm=TRUE) 
 
 clean_geih <- clean_geih %>% 
      group_by(estrato1) %>% 
