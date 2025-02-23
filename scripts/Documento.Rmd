@@ -168,37 +168,7 @@ clean_geih <- tabla_geih %>%
     'isaes', # Ingreso mensual imputado por la segunda actividad
     'ie', # Ingreso mensual en especie antes de imputación
     'iees', # Ingreso mensual en especia imputado
-    'p6590s1', # Valor de alimentos como parte de pago
-    'p6600s1', # Valor de vivienda como parte de pago
-    'p6620s1', # Valor de otros ingresos en especie
-    
-    'p6545s1', # Valor de las primas recibidas el mes anterior
-    'p6545s2', # Si el valor ya fue incluido en los ingresos reportados
-    
-    'p6580s1', # Valor de las bonificaciones recibidas el mes anterior
-    'p6580s2', # Si el valor ya fue incluido en los ingresos reportados
-    
-    'p6585s1a1', # Valor recibido por subsidio de alimentación
-    'p6585s1a2', # Si el valor ya fue incluido en los ingresos reportados
-    
-    'p6585s2a1', # Valor recibido por subsidio de transporte
-    'p6585s2a2', # Si el valor ya fue incluido en los ingresos reportados
-    
-    'p6585s3a1', # Valor recibido por subsidio familiar
-    'p6585s3a2', # Si el valor ya fue incluido en los ingresos reportados
-    
-    'p6585s4a1', # Valor recibido por subsidio educativo
-    'p6585s4a2', # Si el valor ya fue incluido en los ingresos reportados
-    
-    'p6630s1a1', # Valor anual prima de servicios
-    'p6630s2a1', # Valor anual prima de navidad
-    'p6630s3a1', # Valor anual prima de vacaciones
     'p6630s4a1', # Valor anual viáticos
-    'p6630s6a1', # Valor bonificaciones anuales
-    'p7510s6a1', # Valor anual de cesantías e intereses a la cesantías
-    
-    'p6750', # Valor drecibido por: honorarios, actividad, negocio, profesión, finca
-    'p6760', # Meses comprendidos por el concepto anterior
     
     'formal', 
     'sizeFirm', 
@@ -206,24 +176,7 @@ clean_geih <- tabla_geih %>%
     'relab')
 
 clean_geih <-  clean_geih %>% 
-  # Si estos conceptos ya fueron reportados, se sustituye su valor por 0
-  mutate(p6545s1 = ifelse(p6545s2 == 1, 0, p6545s1)) %>% 
-  mutate(p6580s1 = ifelse(p6580s2 == 1, 0, p6580s1)) %>% 
-  mutate(p6585s1a1 = ifelse(p6585s1a2 == 1, 0, p6585s1a1)) %>% 
-  mutate(p6585s2a1 = ifelse(p6585s2a2 == 1, 0, p6585s2a1)) %>% 
-  mutate(p6585s3a1 = ifelse(p6585s3a2 == 1, 0, p6585s3a1)) %>% 
-  mutate(p6585s4a1 = ifelse(p6585s4a2 == 1, 0, p6585s4a1)) %>% 
-  # Se divide el valor de estos conceptos entre 12 por ser anuales
-  mutate(p6630s1a1 = p6630s1a1 / 12) %>% 
-  mutate(p6630s2a1 = p6630s2a1 / 12) %>% 
-  mutate(p6630s3a1 = p6630s3a1 / 12) %>% 
-  mutate(p6630s4a1 = p6630s4a1 / 12) %>% 
-  mutate(p6630s6a1 = p6630s6a1 / 12) %>% 
-  mutate(p7510s6a1 = p7510s6a1 / 12) %>% 
-  # Se ajusta el valor de los meses y se divide el concepto entre la cantidad
-  # de meses que comprende
-  mutate(p6750 = ifelse(is.na(p6760) == TRUE, 1, p6760)) %>%
-  mutate(p6750 = ifelse(p6760 == 0, p6750, (p6750/p6760)))
+  mutate(p6630s4a1 = p6630s4a1 / 12)
 
 # Exportando la tabla con las variables seleccionadas
 save(clean_geih, file = file.path(data_processed_path,"data_GEIH_seleccionada.RData"))
@@ -236,22 +189,7 @@ clean_geih$inglab <- rowSums(clean_geih[, c(
   'isaes', 
   'ie', 
   'iees',
-  'p6590s1',
-  'p6600s1',
-  'p6620s1',
-  'p6545s1',
-  'p6580s1',
-  'p6585s1a1',
-  'p6585s2a1',
-  'p6585s3a1',
-  'p6585s4a1',
-  'p6630s1a1',
-  'p6630s2a1',
-  'p6630s3a1',
-  'p6630s4a1',
-  'p6630s6a1',
-  'p7510s6a1',
-  'p6750'
+  'p6630s4a1'
   )], na.rm=TRUE)
 
 # Imputaciôn de promedio de ingresos por estrato para valores faltantes
