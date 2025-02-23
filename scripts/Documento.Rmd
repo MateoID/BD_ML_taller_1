@@ -11,7 +11,8 @@ knitr::opts_chunk$set(echo = TRUE)
 # Limpieza del ambiente
   rm(list = ls())
   cat("\f")
-  
+
+# Cargando los paquetes requeriods para el analisis
 library(pacman)
 
 p_load(rio, 
@@ -20,25 +21,27 @@ p_load(rio,
        gridExtra, 
        skimr,  
        stargazer,
-       boot
+       boot,
+       rvest
 )   
 
-library(rvest)
+# Declarando las rutas
+data_raw_path <- "../data/raw"
+data_processed_path <- "../data/processed"
+table_results_path <- "../results/tables"
+figure_results_path <- "../results/figures"
+
 ```
 
-## Motivación del problema
+# Introducción
 
-En el sector público, la declaración precisa de los ingresos individuales es fundamental para el cálculo de impuestos.
+## Problema
 
-Sin embargo, el fraude fiscal en todas sus formas ha sido siempre un problema significativo. Según el Servicio de Impuestos Internos (IRS), aproximadamente el 83.6% de los impuestos en EE. UU. se pagan de manera voluntaria y a tiempo.
+Rúbrica: se enuncia con claridad y precisión el problema,
 
-Una de las causas de esta brecha es la subdeclaración de ingresos por parte de los individuos. Un modelo de predicción de ingresos podría ayudar a identificar posibles casos de fraude, lo que contribuiría a reducir esta brecha. Además, un modelo de predicción de ingresos puede ayudar a identificar a personas y familias vulnerables que podrían necesitar asistencia adicional.
+PENDIENTE: CREO QUE EN ESTA PARTE DEBEMOS HACER UNA PRESENTACIÓN MÁS TEÓRICA DEL TEMA DE NUESTRA AUTORIA Y QUE TENGA UNAS 3 O 4 REFERENCIAS QUE SUSTENTEN DESDE EL PUNTO DE VISTA ECONÓMICO. 2 párrafos
 
-La predicción precisa de los salarios es fundamental para una correcta declaración de impuestos, ya que los ingresos laborales constituyen una parte significativa del ingreso total de los hogares y, por ende, de la base imponible tributaria (CEPAL). Una estimación adecuada de los salarios permite a las autoridades fiscales proyectar con precisión la recaudación tributaria, facilitando la planificación fiscal y la asignación eficiente de recursos públicos (CIAT). Además, comprender las tendencias salariales es esencial para diseñar políticas fiscales equitativas y efectivas, asegurando que las cargas impositivas se distribuyan de manera justa entre los contribuyentes.
-
-Utilizando datos de [fuente], este estudio emplea modelos econométricos y de aprendizaje automático para predecir ingresos salariales. Los resultados muestran que variables como educación y sector laboral mejoran la precisión de las estimaciones, proporcionando información valiosa para el diseño de políticas fiscales más eficientes y equitativas.
-
-### 1.1 Introducción
+De esta manera,
 
 El principal obejtivo es construir un modelo de salario por horas individual:
 
@@ -46,11 +49,53 @@ $$
 w = f(X) + u
 $$
 
-en el que $w$ es el salario por horas, y $X$ es la matriz que incluye las variables/predictores potenciales explicativos. En este problem set nos vamos a enfocar en $$f(X) = X\beta$$
+oras, y $X$ es la matriz que incluye las variables/predictores potenciales explicativos. En este problem set nos vamos a enfocar en $$f(X) = X\beta$$
 
-*The introduction briefly states the problem and if there are any antecedents. It briefly describes the data and its suitability to address the problem set question. It contains a preview of the results and main takeaways.*
+en el que $w$ es el salario por h*The introduction briefly states the problem and if there are any antecedents. It briefly describes the data and its suitability to address the problem set question. It contains a preview of the results and main takeaways.*
 
-(a) Describa los datos brevemente, incluyendo su propósito y cualquier otra información relevante.
+## Antecedentes
+
+Se mencionan antecedentes relevantes y debidamente documentados,
+
+## Presentación breve de los datos
+
+Se presentan brevemente los datos y la pertinencia para responder el problema planteado en el taller,
+
+## Resultados
+
+Contiene un resumen de los resultados,
+
+## Conclusiones 
+
+Se presentan breves conclusiones del análisis.
+
+# Datos
+
+## Rubrica
+
+Esto debe ser transversal a todas las secciones: se utiliza el conocimiento profesional y los antecedentes para agregar valor a la sección.
+
+### Fuente original y webscraping
+
+Se realiza una descripción completa de la fuente de datos original, así como de la técnica de webscraping para su recolección, resaltando las restricciones para el acceso a los datos en caso de haberlas,
+
+### Utilidad de la base para la solución del problema
+
+Se discute la utilidad de la base para la solución del problema planteado en el taller,
+
+### Limpieza de datos
+
+Se describe cómo se obtiene la muestra final incluyendo la unión entre las bases de datos, la transformación de variables, las variables incluidas en el análisis, y el tratamiento a observaciones faltantes y datos atípicos
+
+### Análisis descriptivo
+
+Se realiza un análisis descriptivo de las variables utilizadas en el análisis mediante tablas y/o gráficos que son autocontenidos y debidamente formateadas, con el formato sugerido. Las tablas no son pantallazos de R/Python (o el software utilizado), y tienen título y notas que permitan entenderlas sin recurrir al documento. Las gráficas tienen título, ejes, leyenda y notas que permiten entenderlas sin recurrir al documento.
+
+El análisis descriptivo permite al lector entender la variación de los datos y la elección de las variables,
+
+## Redacción previa - Mateo
+
+-   Describa los datos brevemente, incluyendo su propósito y cualquier otra información relevante.
 
 \
 (b) Describa el proceso de adquisición de los datos y si existen restricciones para acceder a ellos o para realizar scraping.
@@ -64,32 +109,76 @@ Con esta información, utilizamos `rvest` para extraer la tabla y convertirla en
 \
 (c) Describa el proceso de limpieza de los datos.
 
+```{r}
+#PENDIENTE
+```
+
 \
 (d) Describa las variables incluidas en tu análisis. Como mínimo, debes incluir una tabla de estadísticas descriptivas con su interpretación. Sin embargo, espero un análisis profundo que ayude al lector a comprender los datos, su variación y la justificación de tus elecciones de datos. Utiliza tu conocimiento profesional para agregar valor a esta sección. No lo presentes como una lista "seca" de ingredientes.
 
-### 1.2 Datos
+```{r}
+#PENDIENTE
+```
+
+### 
 
 ```{r}
-tabla_geih <- data.frame()
+# Haciendo el webscraping - 
+# Funciona pero lo desactivo mientras trabajamos. Hay que activarlo al final
+  # tabla_geih <- data.frame()
+  # 
+  # for (i in 1:10){
+  #   my_url <- sprintf("https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_%d.html", i)
+  #   my_table <- read_html(my_url) %>% 
+  #     html_elements(xpath='/html/body/table') %>% 
+  #     html_table()
+  #   
+  #   my_table <- as.data.frame(my_table)
+  #   
+  #   tabla_geih <- rbind(tabla_geih, my_table)
+  # }
 
-for (i in 1:10){
-  my_url <- sprintf("https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_%d.html", i)
-  my_table <- read_html(my_url) %>% 
-    html_elements(xpath='/html/body/table') %>% 
-    html_table()
-  
-  my_table <- as.data.frame(my_table)
-  
-  tabla_geih <- rbind(tabla_geih, my_table)
-}
+# exportando la data cruda
+#saveRDS(tabla_geih, file = "../data/raw/data_GEIH_raw.rds")
+tabla_geih <- readRDS(file.path(data_raw_path,"Data_GEIH_raw.rds"))
 
+# Seleccionando las variables a ser incluidas en el análisis
 clean_geih <- tabla_geih %>% 
   select('directorio', 'ingtot', 'age', 'sex', 'clase', 'college', 'maxEducLevel', 'depto', 'formal','ocu', 'oficio', 'totalHoursWorked') %>% 
   filter(age >= 18, ocu == 1)
+# Exportando la tabla con las variables seleccionadas
+save(clean_geih, file = file.path(data_processed_path,"data_GEIH_seleccionada.RData"))
+
+# Limpiando el ambiente y guardando la data cruda y limía
+# rm(my_table) activar cuando se active el webscraping
 
 ```
 
-### 1.3 Perfil ingreso - edad
+# Perfil ingreso - edad
+
+## Rubrica
+
+Formato de tablas y gráficas
+
+Se presenta los resultados de la estimación en una tabla que no es un pantallazo sino que está debidamente formateada, con el formato indicado, y contiene título y notas que permiten entenderla sin recurrir al documento,
+
+Interpretación de coeficientes
+
+Se interpreta los coeficientes y se discute su significancia tanto económica como estadística,
+
+Discusión del ajuste del modelo
+
+Se discute el ajuste del modelo sobre la muestra
+
+Predicción de la edad-salario
+
+Se presenta el perfil edad-salario predicho y sus intervalos de confianza en una gráfica autocontenida y debidamente formateada, con el formato indicado. Contiene título, ejes, leyenda, y notas que permiten entender sin recurrir al documento,
+
+Edad pico
+
+Se estima la 'edad pico' con sus correspondientes errores estándar, interpretando los resultados y su significancia tanto económica como estadística.
+
+## Contenido redactado previamente Cami-Nico
 
 Una gran cantidad de evidencia en economía laboral sugiere que el perfil típico de edad-salario de los trabajadores sigue un patrón predecible: los salarios tienden a ser bajos cuando el trabajador es joven, aumentan a medida que envejece, alcanzando su punto máximo alrededor de los 50 años, y luego tienden a mantenerse estables o disminuir ligeramente después de esa edad. En esta subsección, estimaremos el perfil de edad-salario para los individuos de esta muestra.
 
@@ -164,7 +253,13 @@ results
 
 ```
 
-### 1.4 Brecha salarial por género
+# Brecha salarial por género
+
+## Rubrica
+
+Se presenta la estimación de la brecha salarial de género incondicional y condicional en una misma tabla, con las estimaciones lado a lado. La tabla no es un pantallazo, sino que está debidamente formateada, con título y notas que permitan entenderla sin recurrir al documento. Por ejemplo, listando las variables control utilizadas. Se justifica la inclusión de los diferentes controles.
+
+## Descripción taller
 
 La brecha salarial de género. Los formuladores de políticas han estado preocupados durante mucho tiempo por la brecha salarial de género, y este será nuestro enfoque en esta subsección.
 
@@ -198,7 +293,49 @@ Al presentar y discutir tus resultados, incluya:
 
 -   Una discusión reflexiva sobre la brecha salarial condicional e incondicional, evaluando si los cambios en el coeficiente son evidencia de un problema de selección, discriminación, una combinación de ambos o si no están relacionados con estos factores.
 
-### 1.5 Predicción del salario
+## Rubrica
+
+Brecha condicional e incondicional
+
+Se presenta la estimación de la brecha salarial de género incondicional y condicional en una misma tabla, con las estimaciones lado a lado. La tabla no es un pantallazo, sino que está debidamente formateada, con título y notas que permitan entenderla sin recurrir al documento. Por ejemplo, listando las variables control utilizadas. Se justifica la inclusión de los diferentes controles.
+
+Interpretación de coeficientes
+
+Se interpreta los coeficientes asociados al género y se discute su significancia, tanto económica como estadística, haciendo énfasis en si los resultados son consecuencia de un problema de selección, de discriminación, una mezcla entre los dos, o ninguno de ellos.
+
+FWL vs FWL bootstrap
+
+Se discute la diferencia entre los coeficientes de los diferentes modelos, y entre los errores estándar de FWL y FWL con bootstrap,
+
+Ajuste del modelo
+
+Se discute el ajuste del modelo sobre la muestra,
+
+Predicción edad-salario
+
+Se presenta el perfil edad-salario predicho y sus intervalos de confianza desagregando por género en una gráfica autocontenida con título, ejes, leyenda, y notas que permiten entender sin recurrir al documento.
+
+Edad pico
+
+Se estima la 'edad pico' por género con sus correspondientes errores estándar, y se argumenta su similitud o disimilitud estadística.
+
+# Predicción del salario
+
+## Rubrica
+
+-   Se divide la muestra en una proporción 70-30, y se incluye una semilla que permita la reproducibilidad.
+
+-   Se presenta una tabla que resume el desempeño predictivo de las tres especificaciones anteriores en términos del RMSE.
+
+-   Se calcula el desempeño predictivo para, al menos, cinco especificaciones adicionales que exploran no-linealidades y mayor complejidad.
+
+-   Se interpreta el desempeño de los diferentes modelos y se describe, detalladamente, la especificación con mejor desempeño.
+
+-   Se presenta una gráfica con la distribución de los errores en el modelo con mejor desempeño predictivo y diagnostica los outilers de la muestra, argumentando si se deben a la naturaleza de los datos o al modelo.
+
+-   Se presenta una tabla con el LOOCV para los dos modelos con el menor error predictivo y compara los resultados con los obtenidos mediante el enfoque de validación.
+
+## Contenido redactado previamente
 
 En las secciones anteriores, estimaste algunas especificaciones con un enfoque en la inferencia. En esta subsección, evaluaremos el poder predictivo de estas especificaciones.
 
@@ -230,4 +367,18 @@ entreno <- createDataPartition(
 
 (c) **LOOCV.** Para los dos modelos con el menor error de predicción en la sección anterior, calcule el error de predicción utilizando *Leave-One-Out Cross-Validation* (LOOCV). Compare los resultados del error de prueba con aquellos obtenidos mediante el enfoque de conjunto de validación y explore los posibles vínculos con la estadística de influencia. *(Nota: al realizar esta subsección, los cálculos pueden tomar mucho tiempo dependiendo de sus habilidades de programación, planifique en consecuencia).*
 
-### 
+# Repositorio y código
+
+### Rubrica
+
+-   El documento es autocontenido, no excede las 10 páginas y las 8 tablas o figuras,
+
+-   Existe el repositorio siguiendo el template provisto,
+
+-   Contiene un README que ayuda al lector a navegar el repositorio e incluye instrucciones breves para replicar completamente el trabajo,
+
+-   La rama del repositorio principal muestra al menos cinco (5) contribuciones que aportan significativamente al taller, por parte de cada miembro del equipo,
+
+-   El código en el repositorio es legible.
+
+-   El código es reproducible descargandose directamente del repositorio.
