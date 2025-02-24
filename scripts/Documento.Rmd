@@ -111,17 +111,47 @@ Con esta información, utilizamos `rvest` para extraer la tabla y convertirla en
 \
 (c) Describa el proceso de limpieza de los datos.
 
-```{r}
-#PENDIENTE
-```
+Para empezar, filtramos la tabla para quedar únicamente con las observaciones correspondientes a ocupados (ocu==1) mayores de edad (age>=18). Para garantizar la consistencia de los datos, tuvimos la precausión de verificar que quienes pertenecieran a la población en edad de trabajar (wap==1) contuviera a la población económicamente activa (pea==1) y a los inactivos (inac==1). Porteriormente, revisamos que la población económicamente activa contuviera a los ocupados y a los desocupados (dsi==1). Habiendo visto que las cifras coincidían para cada categoría continuamos con el filtrado.
+
+Posteriormente, asignamos un identificador único a cada observación concatenando los valores de las columnas "directorio", "secuencia_p" y "oeden", correspondientes al identificador de vivienda, hogar y persona, respectivamente. Previamente nos habíamos cerciorado de que la combinación de los códigos de estas columnas eran únicos para cada fila.
+
+Luego de lo mencionado, seleccionamos el listado de columnas que identificamos como variables relevantes para efectos del presente taller. En el punto siguiente explicaremos los criterios para esta selección. Por lo pronto, cabe anotar que nuestra variable explicada fue el resultado de sumar para cada observacion un conjunto de columnas correspondientes a diferentes conceptos posibles de ingresos ("impa", "impaes", "isa", "isaes", "ie", "iees", "p6630s4a1"). En particular para el caso de "p6630s4a1" que corresponde al valor de los viáticos recibidos para el año anterior, dividimos su valor entre 12 antes de sumarlo a los demás conceptos para conservar la unidad de tiempo mensual común a los demás.
+
+Aparte de la construcción de los ingresos mensuales, también construimos una columna con la cantidad de horas trabajadas por cada individuo durante un mes. Para esto, partimos de las columnas "hoursWorkUsual" y "hoursWorkActualSecondJob" que corresponden a la cantidad de horas trabajadas por la persona durante la semana anterior. Para obtener la cantidad de horas trabajadas por año, multiplicamos ambas columnas por 49, valor correspondiente a la cantidad de semanas laborables por año en Colombia, es decir 52 semanas que tiene el año menos tres semana correspondientes a los 15 días hábiles de vacaciones que usalmente un colombiano recibe anualmente. Por último, dividimos el valor de horas anuales entre 12 para obtener el valor mensual de horas trabajadas. Finalmente, sumamos los valores de ambas columnas para consolidar en una sola la cantidad de horas que cada individuo tabaja en un mes.
+
+Teniendo ya una columna con el valor de los ingresos mensuales y otra con la cantidad de horas trabajadas, procedimos a imputar tanto los ingresos como las horas trabajadas a aquellas observaciones para las cuales faltaran estos valores. Para ese propósito, agrupamos las observaciones por estratos y calculamos el promedio de ingresos y de horas para cada estrato para usarlos como valores imputables. Por último, creamos una nueva columna denominada "hourly_inglab" que sería nuestra variable dependiente y que contiene los ingresos laborales recibidos por una hora de trabajo para cada una de las observaciones. 
+
+Para efectos de facilidad de comprensión, también decidimos inverir la variable "sex" y llamarla "female", quedando 0 para hombres y 1 para mujeres, tal como se pide en el taller para una de las variables de interés.
 
 \
-(d) Describa las variables incluidas en tu análisis. Como mínimo, debes incluir una tabla de estadísticas descriptivas con su interpretación. Sin embargo, espero un análisis profundo que ayude al lector a comprender los datos, su variación y la justificación de tus elecciones de datos. Utiliza tu conocimiento profesional para agregar valor a esta sección. No lo presentes como una lista "seca" de ingredientes.
+(d) Describa las variables incluidas en su análisis. Como mínimo, se debe incluir una tabla de estadísticas descriptivas con su interpretación. Sin embargo, espero un análisis profundo que ayude al lector a comprender los datos, su variación y la justificación de la elección de los datos. Utilice su conocimiento profesional para agregar valor a esta sección. No lo presente como una lista "seca" de ingredientes.
+
+Nuestra variable explicada "hourly_inglab" fue la que más trabajo necesitó, ya que sus valores no venían originalmente con la GEIH. Esta variable se compone de: 
+- "impa" (ingreso mensual por la primera actividad antes de imputación)
+- "impaes" (ingreso mensual imputado por la primera actividad)
+- "isa" (ingreso mensual por la segunda actividad antes de imputación)
+- "isaes" (ingreso mensual imputado por la segunda actividad)
+- "ie" (ingreso mensual en especie antes de imputación)
+- "iees" (ingreso mensual en especia imputado)
+- "p6630s4a1" (valor anual viáticos)
+
+Estas columnas fueron seleccionadas tomando en consideración el concepto de "rentas laborales" que la DIAN usa para efectos tributarios y que comprende específicamente aquellos ingresos que se originan en la actividad laboral de una persona. Si bien, en la base de datos general se encontraba la variable "ingtot" que agrupa la totalidad de ingresos reportados por cada persona, esta variable no resultada idónea, pues incluye ingresos provenientes de fuentes no laborales como arriendos, dividendos, pensiones, etc.
+
+Como lo mencionamos en el punto anterior, al valor de los ingresos mensuales lo dividimos entre la cantidad de horas de trabajo mensual reportadas por los individuos para obtener sus ingresos por hora. La media de esta variable corresponde a \$9.323 pesos, un rango que va desde \$0 hasta \$888.775 pesos, lo cual muestra un sesgo muy marcado hacia la derecha dado que al ser la mediana de \$5.204, su magnitud es considerablemente menor que la media
+
+Dentro de nuestras variables independientes se encuentran la edad, cuya media es de 39 años, su rango va de 18 a 94 años y tiene una distribución aproximadamente normal. Del mismo modo, incluímos la variable female con 47% de mujeres y el resto hombres. 
+
+Otras variables de control que consideramos relevantes fueron "p6210", "cuentaPropia", "estrato1", "formal", "sizeFirm", "oficio", "relab". "p6210" es una variable categórica que toma valores de 1 a 6, donde 1 corresponde a una persona sin educación formal, 6 a una con educación universitaria y los valores intermedios son etapas intermedias de educación. Para nuestra muestra, la media se encuentra en 5 correspondiente a educación secundaria. Consideramos muy relevante esta variable, ya que es de conocimiento general que el acceso a la educación tiene un marcado impacto en el nivel de ingresos que alcanza una persona. 
+
+Por otro lado, nuestra variable "oficio" es categórica y comprende 80 tipos de actividades distintas. Para el caso de la muestra, la más frecuente fue la que agrupa a "vendedores ambulantes, a domicilio, de loterías y periódicos, y mercaderistas". Similar a la anterior, elejimos "relab" que contiene 9 categorías diferentes de actividades económicas. En este caso, la más frecuente fue la que agrupa a "obrero o empleado de empresa particular". Estas variables nos parecieron relevantes, dado que el tipo de actividad que desempeña una persona determina su nivel de ingresos, más allá de la cantidad de tiempo que dedique a su trabajo y a menudo, sin considerasión de sus credenciales académicas. 
+
+Nos interesamos también por "formal" que corresponde a una variable dicótoma que indica si un trabajador se encuentra afiliado al sistema de seguridad social o no. Para nuestra muestra, aproximadamente el 58.6% de los individuos es formal. Estos datos concuerdan con el Boletín técnico GEIH emitido por el DANE para diciembre 2018 - febrero 2019, donde registró 60.7% de trabajadores formales en Bogotá. 
+
+Por último, decidimos incluir el estrato de las personas como indicador adicional de sus condiciones de vida. Esta variable tiene un rango de 1 a 6, una media de 2.6 y una mediana de 2. De manera similar a los ingresos, esta variable tiene un sesgo marcado a la derecha en la medida en que hasta el percentil 75 los individuos viven en estrato 3, por lo que solamente el 25% de la muestra vive en estratos superiores de servicios públicos domiciliarios. 
 
 ```{r}
-#PENDIENTE
+skim(clean_geih) # Estadísticas descriptivas
 ```
-
 ### 
 
 ```{r}
@@ -157,7 +187,7 @@ clean_geih <- tabla_geih %>%
   select(
     'id', # Identificador único por individuo
     'hoursWorkUsual', # Horas trabajadas en la última semana
-    'p6870', # Horas trabajadas en la última semana por la segunda actividad
+    'hoursWorkActualSecondJob', # Horas trabajadas en la última semana por la segunda actividad
     'age', # Edad
     'sex', # Sexo
     'p6210', # Nivel educativo alcanzado
@@ -170,37 +200,13 @@ clean_geih <- tabla_geih %>%
     'isaes', # Ingreso mensual imputado por la segunda actividad
     'ie', # Ingreso mensual en especie antes de imputación
     'iees', # Ingreso mensual en especia imputado
-    'p6590s1', # Valor de alimentos como parte de pago
-    'p6600s1', # Valor de vivienda como parte de pago
-    'p6620s1', # Valor de otros ingresos en especie
-    
-    'p6545s1', # Valor de las primas recibidas el mes anterior
-    'p6545s2', # Si el valor ya fue incluido en los ingresos reportados
-    
-    'p6580s1', # Valor de las bonificaciones recibidas el mes anterior
-    'p6580s2', # Si el valor ya fue incluido en los ingresos reportados
-    
-    'p6585s1a1', # Valor recibido por subsidio de alimentación
-    'p6585s1a2', # Si el valor ya fue incluido en los ingresos reportados
-    
-    'p6585s2a1', # Valor recibido por subsidio de transporte
-    'p6585s2a2', # Si el valor ya fue incluido en los ingresos reportados
-    
-    'p6585s3a1', # Valor recibido por subsidio familiar
-    'p6585s3a2', # Si el valor ya fue incluido en los ingresos reportados
-    
-    'p6585s4a1', # Valor recibido por subsidio educativo
-    'p6585s4a2', # Si el valor ya fue incluido en los ingresos reportados
-    
-    'p6630s1a1', # Valor anual prima de servicios
-    'p6630s2a1', # Valor anual prima de navidad
-    'p6630s3a1', # Valor anual prima de vacaciones
     'p6630s4a1', # Valor anual viáticos
     'p6630s6a1', # Valor bonificaciones anuales
     'p7510s6a1', # Valor anual de cesantías e intereses a la cesantías
     
     'p6750', # Valor recibido por: honorarios, actividad, negocio, profesión, finca
     'p6760', # Meses comprendidos por el concepto anterior
+
     
     'formal', 
     'sizeFirm', 
@@ -208,6 +214,7 @@ clean_geih <- tabla_geih %>%
     'relab')
 
 clean_geih <-  clean_geih %>% 
+
   # Si estos conceptos ya fueron reportados, se sustituye su valor por 0
   mutate(p6545s1 = ifelse(p6545s2 == 1, 0, p6545s1)) %>% 
   mutate(p6580s1 = ifelse(p6580s2 == 1, 0, p6580s1)) %>% 
@@ -229,6 +236,9 @@ clean_geih <-  clean_geih %>%
   mutate(p6750 = ifelse(is.na(p6760) == TRUE, 1, p6760)) %>%
   mutate(p6750 = ifelse(p6760 == 0, p6750, (p6750/p6760)))
 
+  #mutate(p6630s4a1 = p6630s4a1 / 12)
+#>>>>>>> 4dfdc4befad264599e1be9f3deb8b6e7149dcf5e
+
 # Exportando la tabla con las variables seleccionadas
 save(clean_geih, file = file.path(data_processed_path,"data_GEIH_seleccionada.RData"))
 
@@ -240,22 +250,7 @@ clean_geih$inglab <- rowSums(clean_geih[, c(
   'isaes', 
   'ie', 
   'iees',
-  'p6590s1',
-  'p6600s1',
-  'p6620s1',
-  'p6545s1',
-  'p6580s1',
-  'p6585s1a1',
-  'p6585s2a1',
-  'p6585s3a1',
-  'p6585s4a1',
-  'p6630s1a1',
-  'p6630s2a1',
-  'p6630s3a1',
-  'p6630s4a1',
-  'p6630s6a1',
-  'p7510s6a1',
-  'p6750'
+  'p6630s4a1'
   )], na.rm=TRUE)
 
 # Imputaciôn de promedio de ingresos por estrato para valores faltantes
@@ -267,7 +262,11 @@ clean_geih <- clean_geih %>%
      mutate(inglab = ifelse(is.na(inglab) == TRUE, mean_inglab, inglab))
 
 # Cálculo e imputación de horas trabajadas por mes
-clean_geih$total_hours <- rowSums(clean_geih[, c('hoursWorkUsual', 'p6870')], na.rm=TRUE) 
+clean_geih <- clean_geih %>% 
+  mutate(hour_month1 = (hoursWorkUsual * 49) / 12) %>% 
+  mutate(hour_month2 = (hoursWorkActualSecondJob * 49) / 12)
+
+clean_geih$total_hours <- rowSums(clean_geih[, c('hour_month1', 'hour_month2')], na.rm=TRUE) 
 
 clean_geih <- clean_geih %>% 
      group_by(estrato1) %>% 
@@ -281,7 +280,8 @@ clean_geih <- clean_geih %>%
 
 #Selección de las variables definitivas 
 clean_geih <- clean_geih %>% 
-     mutate(female = ifelse(sex == 1, 0, 1)) %>% 
+  mutate(female = ifelse(sex == 1, 0, 1)) %>%
+  mutate(p6210 = ifelse(p6210 == 9, 1, p6210)) %>%
      select(
        'id', 
        'hourly_inglab', 
@@ -455,10 +455,49 @@ $$
 donde *Female* es un indicador que toma el valor de uno si el individuo en la muestra se identifica como mujer.
 
 b\. Un eslogan común es "igual salario por igual trabajo". Una forma de interpretar esto es que, para empleados con características laborales y personales similares, no debería existir una brecha salarial de género. Para analizar esto, estima la brecha salarial condicional incorporando variables de control como características del trabajador y del puesto de trabajo.
+```{r}
+modelo_simple <- lm(log(hourly_inglab + 1) ~ female, data=clean_geih)
+
+stargazer(modelo_simple, type = "text")
+```
 
 En esta sección, estima la brecha salarial condicional:\
 i. Primero, utilizando FWL.\
+```{r}
+modelo_lm <- lm(log(hourly_inglab + 1) ~ female + factor(oficio) + factor(relab) + age + factor(p6210) + factor(formal), data=clean_geih)
+
+# Teorema Frisch-Waugh-Lovell
+res_inglab <- residuals(lm(log(hourly_inglab + 1) ~ factor(oficio) + factor(relab) + age + factor(p6210) + factor(formal), data=clean_geih))
+
+res_female <- residuals(lm(female ~ factor(oficio) + factor(relab) + age + factor(p6210) + factor(formal), data=clean_geih))
+
+modelo_fwl <- lm(res_inglab ~ res_female)
+
+stargazer(modelo_simple, modelo_lm, modelo_fwl, type = "text",
+          keep = c("female", "res_female", "age"),
+          column.labels = c("Simple", "Múltiple", "FWL"))
+```
+
+
 ii. Segundo, utilizando FWL con bootstrap.
+```{r}
+set.seed(10101)
+
+mod_boot_fn<-function(data, index){
+  
+  sample_data <- data[index, ]
+  
+  r_inglab_boot <- residuals(lm(log(hourly_inglab + 1) ~ factor(oficio) + factor(relab) + age + factor(p6210) + factor(formal), data = data, subset = index))
+  
+  r_female_boot <- residuals(lm(female ~ factor(oficio) + factor(relab) + age + factor(p6210) + factor(formal), data = data, subset = index))
+  
+  return (coef(lm(r_inglab_boot ~ r_female_boot))[2])
+}
+
+modelo2_boot <- boot(clean_geih, mod_boot_fn, R = 10)
+
+print(modelo2_boot)
+```
 
 Compare las estimaciones y los errores estándar.
 
