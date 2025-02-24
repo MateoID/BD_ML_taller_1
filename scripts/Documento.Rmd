@@ -15,6 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Cargando los paquetes requeriods para el analisis
 library(pacman)
 
+
 p_load(rio, 
        tidyverse, 
        caret, 
@@ -22,7 +23,8 @@ p_load(rio,
        skimr,  
        stargazer,
        boot,
-       rvest
+       rvest, 
+       ggplot
 )   
 
 # Declarando las rutas
@@ -43,7 +45,7 @@ PENDIENTE: CREO QUE EN ESTA PARTE DEBEMOS HACER UNA PRESENTACIÓN MÁS TEÓRICA 
 
 De esta manera,
 
-El principal obejtivo es construir un modelo de salario por horas individual:
+El principal objetivo es construir un modelo de salario por horas individual:
 
 $$
 w = f(X) + u
@@ -65,7 +67,7 @@ Se presentan brevemente los datos y la pertinencia para responder el problema pl
 
 Contiene un resumen de los resultados,
 
-## Conclusiones 
+## Conclusiones
 
 Se presentan breves conclusiones del análisis.
 
@@ -197,7 +199,7 @@ clean_geih <- tabla_geih %>%
     'p6630s6a1', # Valor bonificaciones anuales
     'p7510s6a1', # Valor anual de cesantías e intereses a la cesantías
     
-    'p6750', # Valor drecibido por: honorarios, actividad, negocio, profesión, finca
+    'p6750', # Valor recibido por: honorarios, actividad, negocio, profesión, finca
     'p6760', # Meses comprendidos por el concepto anterior
     
     'formal', 
@@ -213,6 +215,7 @@ clean_geih <-  clean_geih %>%
   mutate(p6585s2a1 = ifelse(p6585s2a2 == 1, 0, p6585s2a1)) %>% 
   mutate(p6585s3a1 = ifelse(p6585s3a2 == 1, 0, p6585s3a1)) %>% 
   mutate(p6585s4a1 = ifelse(p6585s4a2 == 1, 0, p6585s4a1)) %>% 
+  
   # Se divide el valor de estos conceptos entre 12 por ser anuales
   mutate(p6630s1a1 = p6630s1a1 / 12) %>% 
   mutate(p6630s2a1 = p6630s2a1 / 12) %>% 
@@ -220,6 +223,7 @@ clean_geih <-  clean_geih %>%
   mutate(p6630s4a1 = p6630s4a1 / 12) %>% 
   mutate(p6630s6a1 = p6630s6a1 / 12) %>% 
   mutate(p7510s6a1 = p7510s6a1 / 12) %>% 
+  
   # Se ajusta el valor de los meses y se divide el concepto entre la cantidad
   # de meses que comprende
   mutate(p6750 = ifelse(is.na(p6760) == TRUE, 1, p6760)) %>%
@@ -274,7 +278,8 @@ clean_geih <- clean_geih %>%
 # Cálculo de ingresos laborales por hora
 clean_geih <- clean_geih %>% 
   mutate(hourly_inglab = inglab / total_hours)
-     
+
+#Selección de las variables definitivas 
 clean_geih <- clean_geih %>% 
      mutate(female = ifelse(sex == 1, 0, 1)) %>% 
      select(
@@ -297,25 +302,16 @@ skim(clean_geih)
 
 ## Rubrica
 
-Formato de tablas y gráficas
-
-Se presenta los resultados de la estimación en una tabla que no es un pantallazo sino que está debidamente formateada, con el formato indicado, y contiene título y notas que permiten entenderla sin recurrir al documento,
-
-Interpretación de coeficientes
-
-Se interpreta los coeficientes y se discute su significancia tanto económica como estadística,
-
-Discusión del ajuste del modelo
-
-Se discute el ajuste del modelo sobre la muestra
-
-Predicción de la edad-salario
-
-Se presenta el perfil edad-salario predicho y sus intervalos de confianza en una gráfica autocontenida y debidamente formateada, con el formato indicado. Contiene título, ejes, leyenda, y notas que permiten entender sin recurrir al documento,
-
-Edad pico
-
-Se estima la 'edad pico' con sus correspondientes errores estándar, interpretando los resultados y su significancia tanto económica como estadística.
+1.  Formato de tablas y gráficas
+2.  Se presenta los resultados de la estimación en una tabla que no es un pantallazo sino que está debidamente formateada, con el formato indicado, y contiene título y notas que permiten entenderla sin recurrir al documento,
+3.  Interpretación de coeficientes
+4.  Se interpreta los coeficientes y se discute su significancia tanto económica como estadística,
+5.  Discusión del ajuste del modelo
+6.  Se discute el ajuste del modelo sobre la muestra
+7.  Predicción de la edad-salario
+8.  Se presenta el perfil edad-salario predicho y sus intervalos de confianza en una gráfica autocontenida y debidamente formateada, con el formato indicado. Contiene título, ejes, leyenda, y notas que permiten entender sin recurrir al documento,
+9.  Edad pico
+10. Se estima la 'edad pico' con sus correspondientes errores estándar, interpretando los resultados y su significancia tanto económica como estadística.
 
 ## Contenido redactado previamente Cami-Nico
 
@@ -327,68 +323,116 @@ $$ Al presentar y discutir tus resultados, incluye:
 
 -   Una tabla de regresión.
 
+    ```{r}
+    #No tener variable dependiente con na, nan, infinito o menores a 0
+    clean_geih <- clean_geih[!is.na(clean_geih$hourly_inglab) & 
+                           !is.nan(clean_geih$hourly_inglab) & 
+                           !is.infinite(clean_geih$hourly_inglab) & 
+                           clean_geih$hourly_inglab > 0, ]
+
+    clean_geih <- clean_geih[!is.na(clean_geih$age) & 
+                           !is.nan(clean_geih$age) & 
+                           !is.infinite(clean_geih$age) & 
+                           clean_geih$age > 0, ]
+
+    #Transformación directa de variables de interés para el modelo
+    clean_geih <- clean_geih %>% mutate(age_sq = age^2) 
+    clean_geih <- clean_geih %>% mutate(log_inglab = log(hourly_inglab)) 
+
+    #Calculamos el modelo 
+    modelo <- lm(log_inglab ~ age + age_sq, data = clean_geih)
+
+    #Tabla de resultados
+    stargazer(modelo, type = "text")
+    ```
+
 -   Una interpretación de los coeficientes y su significancia.
+
+Dado que en el modelo se encuentra una transformación de la misma variable esto implica que el efecto no es constante a lo largo de la vida laboral y por ende no es posible darse una interpretacion marginal pues el proposito es capturar las relaciones crecientes o decrecientes de la variable con respecto a la variable dependiente.
+
+Ambas son significativas para que se puedan interpretar y dado que son significativas y el termino representa la pendiente o la tasa de cambio del ingreso laboral por hora respecto a la edad.
+
+Por su parte el coeficiente negativo de edad al cuadrado indica que entre la edad y el salario no es lineal por lo que la tasa de crecimiento del salario disminuye a medida que la edad incrementa. Para este caso la tasa de crecimiento del salario disminuye a medida que la edad aumenta, por lo que a medida de que una persona incrementa su edad la relación positiva de la edad en el salario se reduce debido a la relación negativa del término cuadrático.
+
+Falta poner la significancia económica de esto, se puede entender como si es significativa la variable, que en general si lo es
 
 -   Una discusión sobre el ajuste del modelo dentro de la muestra.
 
--   Un gráfico del perfil estimado de edad-ingresos implícito en la ecuación anterior, incluyendo un análisis de la edad en la que se alcanza el pico con sus respectivos intervalos de confianza. *(Nota: Usa bootstrap para construir los intervalos de confianza.)*
+Con base en las métricas aprendidas, el R2 ajustado que penaliza la inclusión de variables irrelevantes pues logra capturar la varianza de la variable de ingresos laborales por hora en relación con la edad. Para este ejemplo, el valor del r2 ajustado sugiere que el modelo solo explica el 1.6% de la variabilidad en la variabilidad del ingreso por hora. En este sentido, esto indica que el poder explicativo del modelo es bajo y la mayoría de la variabilidad en log(w) no está siendo capturada por las variables de la edad y su transformación al cuadrado. Proporción de la variabilidad total de la variable dependiente que es explicada por el modelo de regresión.
 
 ```{r}
-#No tener variable dependiente con na, nan, infinito o menores a 0
-clean_geih <- clean_geih[!is.na(clean_geih$ingtot) & 
-                       !is.nan(clean_geih$ingtot) & 
-                       !is.infinite(clean_geih$ingtot) & 
-                       clean_geih$ingtot > 0, ]
 
-clean_geih <- clean_geih[!is.na(clean_geih$age) & 
-                       !is.nan(clean_geih$age) & 
-                       !is.infinite(clean_geih$age) & 
-                       clean_geih$age > 0, ]
+#MSE dentro de la muestra 
+pred <- predict(modelo, clean_geih)
+pred_orig <- exp(pred)  # Llevar predicciones a la escala original
+rmse_original <- RMSE(pred_orig, exp(clean_geih$log_inglab))  
+print(rmse_original)
 
-modelo <- lm(log(ingtot) ~ age + I(age^2), data = clean_geih)
+```
 
-stargazer(modelo, type = "text",
-          add.lines = list(c("R² ajustado", round(summary(modelo)$adj.r.squared, 3)),
-                           c("Estadístico F", round(summary(modelo)$fstatistic[1], 3))))
+-   Un gráfico del perfil estimado de edad-ingresos implícito en la ecuación anterior, incluyendo un análisis de la edad en la que se alcanza el pico con sus respectivos intervalos de confianza. *(Nota: Usa bootstrap para construir los intervalos de confianza.)*
 
-#Normalidad en los residuos
-ks.test(residuals(modelo), "pnorm", mean = mean(residuals(modelo)), sd = sd(residuals(modelo)))
+Derivando la ecuación con respecto a la edad e igualando a cero
 
-#Curva de modelo ajustado
-ggplot(clean_geih, aes(x = age, y = log(ingtot))) + geom_point(alpha = 0.5) + 
-geom_smooth(method = "lm", formula = y ~ x + I(x^2), color = "blue") + 
-labs(title = "Ajuste del Modelo", x = "Edad", y = "log(w)") + theme_minimal()
+$$ \frac{\delta log(w)}{\delta Edad} = 0,0065 -2(000,1)Edad  =0 $$
 
-par(mfrow = c(2, 2)) 
-# Dividir la ventana gráfica en 4 
-plot(modelo) # Diagnóstico del modelo
+$$ Edad = 32,5 $$
 
-#gráfico del perfil estimado de edad-ingresos (Bootstrap)
-coefs<-modelo$coef
-coefs
+Esto significa que el salario crece con la edad hasta aproximadamente los 32 años de edad, a partir de este punto el salario empieza a disminuir.
 
+```{r}
+
+#Modelo para el bootstrap 
+boot_model<- lm(log_inglab ~ age + age_sq, data = clean_geih)
+coefs<-boot_model$coef
+
+#Obtener los coeficientes de la regresión en escalares
 b0<-coefs[1] 
 b1<-coefs[2]
 b2<-coefs[3] 
 
-boot_func <- function(data,index, age_bar)
+
+#Se calcula la edad promedio 
+age_bar <- mean(clean_geih$age)
+elast <- b1+2*b2*age_bar
+
+#Desarrollamos la función para el bootstrap
+boot_func <- function(data,index)
 {
-    age_bar <- mean(clean_geih$age)
-      f<-lm(log(ingtot) ~ age + I(age^2),data, subset = index)
-      
-        
-        b1<-f$coefficients[2]
-        b2<-f$coefficients[3] 
-         
-      elastpt<-b1+2*b2*age_bar    
-    
-      return(elastpt)
+    sample <- data[index, ]
+    boot_model <-lm(log_inglab ~ age + age_sq,data, subset = index)
+    beta2_boot <- coef(boot_model)["age"]
+    beta3_boot <-  coef(boot_model)["age_sq"]
+    return(- beta2_boot / (2 * beta3_boot))
 }
 
-boot_func(clean_geih,1:nrow(clean_geih))
+#Se aplica el bootstrap 
+boot_result <- boot(clean_geih, boot_func,1000)
+boot_result
 
-results <- boot(data=clean_geih, boot_func ,R=1000)
-results
+#Para obtener los intervalos de confianza
+conf_int <- boot.ci(boot_result, type = "perc")
+conf_int
+
+
+#Para graficar el perfil estimado de edad e ingresos 
+top_age <- -b2 / (2*b2)
+pred_log_w <- predict(boot_model, clean_geih, interval = "confidence")
+
+#En la escala 
+clean_geih$predicted_wage <- exp(pred_log_w[,1])  
+
+#Graficamos
+ggplot(clean_geih, aes(x = clean_geih$age, y = pred_log_w)) +
+  geom_point(aes(y = exp(log_inglab)), alpha = 0.3) +  # Puntos reales
+  geom_line(color = "blue", size = 1) +  # Línea de predicción
+  geom_ribbon(aes(ymin = exp(pred_log_w[,2]), ymax = exp(pred_log_w[,3])), 
+              fill = "lightblue", alpha = 0.4) +  # Intervalo de confianza
+  theme_minimal() +
+  labs(title = "Perfil Edad-Ingresos en la Muestra",
+       x = "Edad",
+       y = "Salario Estimado")
+
 
 ```
 
@@ -487,8 +531,8 @@ set.seed(10101)
 #Dividimos la muestra para el entrenamiento 
 
 entreno <- createDataPartition(
-  y = clean_geih$totalHoursWorked,  ## the outcome data are needed
-  p = .80, ## The percentage of training data
+  y = clean_geih$totalHoursWorked,  ## La variable de interes
+  p = .70, ## Porcentaje del set de entrenamiento
   list = FALSE
 )
 
@@ -496,6 +540,10 @@ entreno <- createDataPartition(
 ```
 
 (a) Reporte y compare el desempeño predictivo en términos del RMSE de todas las especificaciones anteriores junto con al menos cinco (5) especificaciones adicionales que exploren no linealidades y mayor complejidad.
+
+    ```{r}
+
+    ```
 
 (b) En la discusión de los resultados, comente:
 
