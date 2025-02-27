@@ -3,6 +3,9 @@ title: "Proble Set 1: Prediciendo el ingreso"
 author: "Maria Camila Caraballo, Javier Amaya, Nicolas Moreno, Mateo Isaza"
 date: "2025-02-01"
 output: pdf_document
+editor_options: 
+  markdown: 
+    wrap: 65
 ---
 
 ```{r, message=FALSE, warning=FALSE}
@@ -35,7 +38,7 @@ figure_results_path <- "../results/figures"
 
 ```
 
-# Introducción
+# 1. Introducción
 
 ## Problema
 
@@ -75,7 +78,7 @@ Contiene un resumen de los resultados,
 
 Se presentan breves conclusiones del análisis.
 
-# Datos
+# 2. Datos
 
 ## Rubrica
 
@@ -150,11 +153,6 @@ Otra variable que consideramos fundamental en nuestro análisis es `formal`, que
 
 Por último, decidimos incluir el estrato socioeconómico de los individuos como un indicador adicional de sus condiciones de vida. Esta variable tiene un rango de 1 a 6, con una media de 2.6 y una mediana de 2. Al igual que la variable de ingresos, el estrato presenta un sesgo hacia la derecha, dado que hasta el percentil 75 los individuos de la muestra pertenecen al estrato 3, lo que indica que solo el 25% de los encuestados reside en estratos superiores de servicios públicos domiciliarios.
 
-```{r}
-skim(clean_geih) # Estadísticas descriptivas
-```
-
-### 
 
 ```{r}
 # Haciendo el webscraping - 
@@ -175,6 +173,7 @@ skim(clean_geih) # Estadísticas descriptivas
 # rm(my_table) activar cuando se active el webscraping
 
 # exportando la data cruda
+# exportando la data cruda
 #saveRDS(tabla_geih, file = "../data/raw/data_GEIH_raw.rds")
 tabla_geih <- readRDS(file.path(data_raw_path,"Data_GEIH_raw.rds"))
 
@@ -187,15 +186,13 @@ clean_geih <- tabla_geih %>%
     orden = as.factor(orden),
     id = paste(directorio, secuencia_p, orden, sep = "")) %>% 
   select(
+    # Variables demográficas
     'id', # Identificador único por individuo
-    'hoursWorkUsual', # Horas trabajadas en la última semana
-    'hoursWorkActualSecondJob', # Horas trabajadas en la última semana por la segunda actividad
     'age', # Edad
     'sex', # Sexo
-    'p6210', # Nivel educativo alcanzado
-    'cuentaPropia', # Independiente
-    'estrato1', # Estrato
+    'p6210', # Nivel educativo alcanzado 
     
+    # Variables para utilizar en el cálculo de los ingresos por hora
     'impa', # Ingreso mensual por la primera actividad antes de imputación
     'impaes', # Ingreso mensual imputado por la primera actividad
     'isa', # Ingreso mensual por la segunda actividad antes de imputación
@@ -203,48 +200,26 @@ clean_geih <- tabla_geih %>%
     'ie', # Ingreso mensual en especie antes de imputación
     'iees', # Ingreso mensual en especia imputado
     'p6630s4a1', # Valor anual viáticos
-    'p6630s6a1', # Valor bonificaciones anuales
-    'p7510s6a1', # Valor anual de cesantías e intereses a la cesantías
+    'hoursWorkUsual', # Horas trabajadas en la última semana
+    'hoursWorkActualSecondJob', # Horas trabajadas en la última semana por la segunda actividad
     
-    'p6750', # Valor recibido por: honorarios, actividad, negocio, profesión, finca
-    'p6760', # Meses comprendidos por el concepto anterior
+    # Otras variables de interes
+    'formal', # empleo formal
+    'sizeFirm', # tamaño de la firma
+    'oficio', # Oficio de la persona
+    'relab', # tipo de ocupación
+    'cuentaPropia', # Independiente
+    'estrato1', # Estrato
+    )
 
-    
-    'formal', 
-    'sizeFirm', 
-    'oficio', 
-    'relab')
-
+# Calculando la variable viáticos anuales a viáticos mensuales
 clean_geih <-  clean_geih %>% 
-
-  # Si estos conceptos ya fueron reportados, se sustituye su valor por 0
-  mutate(p6545s1 = ifelse(p6545s2 == 1, 0, p6545s1)) %>% 
-  mutate(p6580s1 = ifelse(p6580s2 == 1, 0, p6580s1)) %>% 
-  mutate(p6585s1a1 = ifelse(p6585s1a2 == 1, 0, p6585s1a1)) %>% 
-  mutate(p6585s2a1 = ifelse(p6585s2a2 == 1, 0, p6585s2a1)) %>% 
-  mutate(p6585s3a1 = ifelse(p6585s3a2 == 1, 0, p6585s3a1)) %>% 
-  mutate(p6585s4a1 = ifelse(p6585s4a2 == 1, 0, p6585s4a1)) %>% 
-  
-  # Se divide el valor de estos conceptos entre 12 por ser anuales
-  mutate(p6630s1a1 = p6630s1a1 / 12) %>% 
-  mutate(p6630s2a1 = p6630s2a1 / 12) %>% 
-  mutate(p6630s3a1 = p6630s3a1 / 12) %>% 
-  mutate(p6630s4a1 = p6630s4a1 / 12) %>% 
-  mutate(p6630s6a1 = p6630s6a1 / 12) %>% 
-  mutate(p7510s6a1 = p7510s6a1 / 12) %>% 
-  
-  # Se ajusta el valor de los meses y se divide el concepto entre la cantidad
-  # de meses que comprende
-  mutate(p6750 = ifelse(is.na(p6760) == TRUE, 1, p6760)) %>%
-  mutate(p6750 = ifelse(p6760 == 0, p6750, (p6750/p6760)))
-
-  #mutate(p6630s4a1 = p6630s4a1 / 12)
-#>>>>>>> 4dfdc4befad264599e1be9f3deb8b6e7149dcf5e
+  mutate(p6630s4a1 = p6630s4a1 / 12)
 
 # Exportando la tabla con las variables seleccionadas
 save(clean_geih, file = file.path(data_processed_path,"data_GEIH_seleccionada.RData"))
 
-# Valor de ingresos mensuales por persona
+# Sumando los ingresos por diferentes conceptos para cada persona
 clean_geih$inglab <- rowSums(clean_geih[, c(
   'impa', 
   'impaes', 
@@ -253,15 +228,19 @@ clean_geih$inglab <- rowSums(clean_geih[, c(
   'ie', 
   'iees',
   'p6630s4a1'
-  )], na.rm=TRUE)
+)], na.rm=TRUE)
 
-# Imputaciôn de promedio de ingresos por estrato para valores faltantes
-clean_geih <- clean_geih %>% 
-     group_by(estrato1) %>% 
-     mutate(mean_inglab = mean(inglab, na.rm=TRUE)) %>% 
-     ungroup() %>% 
-     mutate(mean_inglab = ifelse(is.na(mean_inglab) == TRUE, 0, mean_inglab)) %>% 
-     mutate(inglab = ifelse(is.na(inglab) == TRUE, mean_inglab, inglab))
+# Revisión de la variable ingresos laborales calculada
+sum(is.na(clean_geih$inglab)) # no tenemos NAs en la variable
+sum(clean_geih$inglab == 0) # tenemos 323 observaciones con ingresos = a cero lo cual no tiene sentido. 
+
+# Imputaciôn de promedio de ingresos por estrato y sexo para valores de ingreso que son iguales a cero.
+clean_geih <- clean_geih %>%
+  group_by(estrato1, sex) %>%
+  mutate(mean_inglab = mean(inglab[inglab != 0], na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(inglab = ifelse(inglab == 0, mean_inglab, inglab))
+#checkpoint: sum(clean_geih$inglab == 0)
 
 # Cálculo e imputación de horas trabajadas por mes
 clean_geih <- clean_geih %>% 
@@ -269,38 +248,48 @@ clean_geih <- clean_geih %>%
   mutate(hour_month2 = (hoursWorkActualSecondJob * 49) / 12)
 
 clean_geih$total_hours <- rowSums(clean_geih[, c('hour_month1', 'hour_month2')], na.rm=TRUE) 
-
-clean_geih <- clean_geih %>% 
-     group_by(estrato1) %>% 
-     mutate(mean_hours = mean(total_hours, na.rm=TRUE)) %>% 
-     ungroup() %>% 
-     mutate(total_hours = ifelse(is.na(total_hours) == TRUE, mean_hours, total_hours))
+summary(clean_geih$total_hours)
 
 # Cálculo de ingresos laborales por hora
 clean_geih <- clean_geih %>% 
   mutate(hourly_inglab = inglab / total_hours)
 
-#Selección de las variables definitivas 
-clean_geih <- clean_geih %>% 
-  mutate(female = ifelse(sex == 1, 0, 1)) %>%
-  mutate(p6210 = ifelse(p6210 == 9, 1, p6210)) %>%
-     select(
-       'id', 
-       'hourly_inglab', 
-       'age', 
-       'female', 
-       'p6210', 
-       'cuentaPropia', 
-       'estrato1', 
-       'formal', 
-       'sizeFirm', 
-       'oficio', 
-       'relab')
+# Checkpoint sexo pretransformación: 
+# table(clean_geih$female)
 
+# Convirtiendo la variable sexo a female
+clean_geih <- clean_geih %>% 
+  mutate(female = ifelse(sex == 1, 0, 1)) %>%   # Variable female para el análisis de brecha de género
+  mutate(p6210 = ifelse(p6210 == 9, 1, p6210)) %>%
+  mutate(log_hourly_inglab = log(hourly_inglab)) %>% # creando la variable log del salario hora
+  select(                                            # seleccionando las variables
+    'id', 
+    'hourly_inglab',
+    'log_hourly_inglab',
+    'age', 
+    'female', 
+    'p6210', 
+    'cuentaPropia', 
+    'estrato1', 
+    'formal', 
+    'sizeFirm', 
+    'oficio', 
+    'relab')
+
+# Checkpoint sexo pretransformación: 
+# table(clean_geih$female)
+
+# checkpoint de valores na, nan o infinitos en la variable ingresos log
+#sum(is.na(clean_geih$log_hourly_inglab))  # Check for NA values
+#sum(is.nan(clean_geih$log_hourly_inglab)) # Check for NaN values
+#sum(is.infinite(clean_geih$log_hourly_inglab)) # Check for Inf values
+
+# haciendo una revisión rápida de las variables
 skim(clean_geih)
+
 ```
 
-# Perfil ingreso - edad
+#3. Perfil ingreso - edad
 
 ## Rubrica
 
@@ -439,7 +428,7 @@ ggplot(clean_geih, aes(x = clean_geih$age, y = pred_log_w)) +
 
 ```
 
-# Brecha salarial por género
+#4. Brecha salarial por género
 
 ## Rubrica
 
@@ -456,6 +445,21 @@ log(w) = \beta_1 + \beta_2Female + u
 $$
 
 donde *Female* es un indicador que toma el valor de uno si el individuo en la muestra se identifica como mujer.
+
+```{r}
+modelo_unconditional <- lm(log_hourly_inglab ~ as.factor(female), data=clean_geih)
+
+stargazer(modelo_unconditional, type = "text",
+          title = "Regression Results",
+          dep.var.labels = "log_hourly_inglab",
+          covariate.labels = c("Female"),
+          omit.stat = c("ser", "f"),
+          star.cutoffs = NA,
+          notes = "Standard errors in parentheses.",
+          notes.align = "l",
+          report = "vc*p")
+
+```
 
 b\. Un eslogan común es "igual salario por igual trabajo". Una forma de interpretar esto es que, para empleados con características laborales y personales similares, no debería existir una brecha salarial de género. Para analizar esto, estima la brecha salarial condicional incorporando variables de control como características del trabajador y del puesto de trabajo.
 
@@ -546,7 +550,7 @@ Edad pico
 
 Se estima la 'edad pico' por género con sus correspondientes errores estándar, y se argumenta su similitud o disimilitud estadística.
 
-# Predicción del salario
+#5. Predicción del salario
 
 ## Rubrica
 
@@ -617,3 +621,43 @@ entreno <- createDataPartition(
 -   El código en el repositorio es legible.
 
 -   El código es reproducible descargandose directamente del repositorio.
+
+### **Tables**
+
+-   Columns must be in vertical (or portrait) orientation.
+
+-   Tables must be no more than 9 columns wide including row
+    headings.
+
+-   Number your tables consecutively with Arabic numerals.
+
+-   Use only horizontal lines and additional blank space to show
+    space distinction.
+
+-   Do not use shading.
+
+-   Do not abbreviate in column headings.
+
+-   To denote sections of a table, use Panel A, Panel B, etc.
+
+-   Place a zero in front of the decimal point in all decimal
+    fractions (e.g., 0.357, not .357).
+
+-   For footnotes pertaining to specific table entries, footnote
+    keys should be lowercase letters (a, b, c, etc.). 
+
+-   Do not use asterisks to denote significance of estimation
+    results. Report the standard errors in parentheses.
+
+-   Place source note, if any, after other notes related to the
+    table.
+
+-   Include full citations of sources in the references.
+
+    ```{r, echo=FALSE}
+
+    # Ejemplo de tabla de stargazer para cumplir con AER guidelines
+    stargazer(model, type = "text", title = "Resultados de Regresión",
+              align = TRUE, notes = "Nota: Errores estándar entre paréntesis.")
+
+    ```
