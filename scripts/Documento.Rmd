@@ -38,7 +38,7 @@ figure_results_path <- "../results/figures"
 
 ```
 
-# 1. Introducción
+# 1. Introducción (Cami)
 
 ## Problema
 
@@ -78,7 +78,7 @@ Contiene un resumen de los resultados,
 
 Se presentan breves conclusiones del análisis.
 
-# 2. Datos
+# 2. Datos (Mateo / Javier)
 
 ## Rubrica
 
@@ -289,7 +289,7 @@ skim(clean_geih)
 
 ```
 
-#3. Perfil ingreso - edad
+#3. Perfil ingreso - edad (Cami)
 
 ## Rubrica
 
@@ -428,7 +428,7 @@ ggplot(clean_geih, aes(x = clean_geih$age, y = pred_log_w)) +
 
 ```
 
-#4. Brecha salarial por género
+#4. Brecha salarial por género (Javier / Mateo)
 
 ## Rubrica
 
@@ -550,7 +550,7 @@ Edad pico
 
 Se estima la 'edad pico' por género con sus correspondientes errores estándar, y se argumenta su similitud o disimilitud estadística.
 
-#5. Predicción del salario
+#5. Predicción del salario (Nico / Cami)
 
 ## Rubrica
 
