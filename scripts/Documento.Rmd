@@ -42,25 +42,82 @@ figure_results_path <- "../results/figures"
 
 ## Problema
 
-Parte de los obstáculos más significativos para la equidad tributaria y la sostenibilidad fiscal en Colombia es la falta de información precisa sobre los ingresos reales de los contribuyentes, lo que facilita la subdeclaración de renta. Tanto en el sector formal como en el informal, esta práctica dificulta la correcta determinación de la base gravable y genera distorsiones en la distribución de la carga tributaria. Como resultado, se establece una dinámica desigual en la que quienes cumplen con sus obligaciones fiscales terminan asumiendo una mayor carga impositiva para compensar la evasión de quienes subdeclaran sus ingresos. Esta situación no solo afecta la equidad del sistema tributario, sino que también debilita la confianza en la administración fiscal y en el cumplimiento de las normas tributarias.
+Parte de los obstáculos más significativos para la equidad
+tributaria y la sostenibilidad fiscal en Colombia es la falta de
+información precisa sobre los ingresos reales de los
+contribuyentes, lo que facilita la subdeclaración de renta. Tanto
+en el sector formal como en el informal, esta práctica dificulta
+la correcta determinación de la base gravable y genera
+distorsiones en la distribución de la carga tributaria. Como
+resultado, se establece una dinámica desigual en la que quienes
+cumplen con sus obligaciones fiscales terminan asumiendo una
+mayor carga impositiva para compensar la evasión de quienes
+subdeclaran sus ingresos. Esta situación no solo afecta la
+equidad del sistema tributario, sino que también debilita la
+confianza en la administración fiscal y en el cumplimiento de las
+normas tributarias.
 
-La subdeclaración de ingresos tiene un impacto directo en el déficit fiscal del país, que, según el [**Marco Fiscal de Mediano Plazo**](minhacienda.gov.co/w/minhacienda-presenta-el-marco-fiscal-de-mediano-plazo-2024), representa aproximadamente el 5,6% del Producto Interno Bruto (PIB), equivalente a cerca de **US\$17.000 millones anuales**. En un contexto donde el Gobierno busca fortalecer su capacidad de inversión y cumplir con compromisos sociales, la insuficiencia de ingresos tributarios aumenta la necesidad de recurrir al endeudamiento, lo que pone en riesgo la sostenibilidad del gasto público. Esta limitación compromete la capacidad del Estado para financiar servicios esenciales e implementar programas sociales, afectando de manera desproporcionada a las poblaciones más vulnerables y profundizando las desigualdades estructurales del país.
+La subdeclaración de ingresos tiene un impacto directo en el
+déficit fiscal del país, que, según el [**Marco Fiscal de Mediano
+Plazo**](minhacienda.gov.co/w/minhacienda-presenta-el-marco-fiscal-de-mediano-plazo-2024),
+representa aproximadamente el 5,6% del Producto Interno Bruto
+(PIB), equivalente a cerca de **US\$17.000 millones anuales**. En
+un contexto donde el Gobierno busca fortalecer su capacidad de
+inversión y cumplir con compromisos sociales, la insuficiencia de
+ingresos tributarios aumenta la necesidad de recurrir al
+endeudamiento, lo que pone en riesgo la sostenibilidad del gasto
+público. Esta limitación compromete la capacidad del Estado para
+financiar servicios esenciales e implementar programas sociales,
+afectando de manera desproporcionada a las poblaciones más
+vulnerables y profundizando las desigualdades estructurales del
+país.
 
-La mejora en la distribución del ingreso, más allá de la simple reducción de la pobreza, se ha convertido en un objetivo prioritario de la política pública en general y de la política fiscal en particular (Henríquez, 2015). En este sentido, la elevada informalidad en la economía colombiana agrava la problemática de la subdeclaración, ya que muchas transacciones quedan fuera del control del Estado, impidiendo una redistribución eficiente de los recursos.
+La mejora en la distribución del ingreso, más allá de la simple
+reducción de la pobreza, se ha convertido en un objetivo
+prioritario de la política pública en general y de la política
+fiscal en particular (Henríquez, 2015). En este sentido, la
+elevada informalidad en la economía colombiana agrava la
+problemática de la subdeclaración, ya que muchas transacciones
+quedan fuera del control del Estado, impidiendo una
+redistribución eficiente de los recursos.
 
-Considerando lo anterior, la implementación de modelos predictivos en la fiscalización tributaria representa una herramienta clave para mejorar la detección de fraudes fiscales y optimizar la recaudación. Estos modelos no solo permiten identificar con mayor precisión a los evasores, sino que también fortalecen la equidad en la distribución de la carga impositiva, lo que a su vez favorece una asignación más eficiente de los recursos destinados al financiamiento de políticas sociales. Asimismo, su aplicación contribuye a reducir los costos administrativos de los métodos tradicionales de fiscalización y a abordar el problema del subreporte de información, mejorando la calidad y precisión de los datos tributarios. De esta manera, facilita la elaboración de presupuestos más ajustados a la realidad fiscal del país, promoviendo una gestión pública más eficiente.
+Considerando lo anterior, la implementación de modelos
+predictivos en la fiscalización tributaria representa una
+herramienta clave para mejorar la detección de fraudes fiscales y
+optimizar la recaudación. Estos modelos no solo permiten
+identificar con mayor precisión a los evasores, sino que también
+fortalecen la equidad en la distribución de la carga impositiva,
+lo que a su vez favorece una asignación más eficiente de los
+recursos destinados al financiamiento de políticas sociales.
+Asimismo, su aplicación contribuye a reducir los costos
+administrativos de los métodos tradicionales de fiscalización y a
+abordar el problema del subreporte de información, mejorando la
+calidad y precisión de los datos tributarios. De esta manera,
+facilita la elaboración de presupuestos más ajustados a la
+realidad fiscal del país, promoviendo una gestión pública más
+eficiente.
 
-Yáñez Henríquez, J. (2016). Evasión tributaria: atentado a la equidad. *Revista De Estudios Tributarios*, (13), pág. 171–206. Recuperado a partir de https://revistaestudiostributarios.uchile.cl/index.php/RET/article/view/39874
+Yáñez Henríquez, J. (2016). Evasión tributaria: atentado a la
+equidad. *Revista De Estudios Tributarios*, (13), pág. 171–206.
+Recuperado a partir de
+<https://revistaestudiostributarios.uchile.cl/index.php/RET/article/view/39874>
 
-De esta manera, el principal objetivo es construir un modelo de salario por horas individual:
+De esta manera, el principal objetivo es construir un modelo de
+salario por horas individual:
 
 $$
 w = f(X) + u
 $$
 
-horas, y $X$ es la matriz que incluye las variables/predictores potenciales explicativos. En este problem set nos vamos a enfocar en $$f(X) = X\beta$$
+horas, y $X$ es la matriz que incluye las variables/predictores
+potenciales explicativos. En este problem set nos vamos a enfocar
+en $$f(X) = X\beta$$
 
-en el que $w$ es el salario por h*The introduction briefly states the problem and if there are any antecedents. It briefly describes the data and its suitability to address the problem set question. It contains a preview of the results and main takeaways.*
+en el que $w$ es el salario por h*The introduction briefly states
+the problem and if there are any antecedents. It briefly
+describes the data and its suitability to address the problem set
+question. It contains a preview of the results and main
+takeaways.*
 
 ## Antecedentes
 
@@ -68,7 +125,8 @@ Se mencionan antecedentes relevantes y debidamente documentados,
 
 ## Presentación breve de los datos
 
-Se presentan brevemente los datos y la pertinencia para responder el problema planteado en el taller,
+Se presentan brevemente los datos y la pertinencia para responder
+el problema planteado en el taller,
 
 ## Resultados
 
@@ -82,77 +140,245 @@ Se presentan breves conclusiones del análisis.
 
 ## Rubrica
 
-Esto debe ser transversal a todas las secciones: se utiliza el conocimiento profesional y los antecedentes para agregar valor a la sección.
+Esto debe ser transversal a todas las secciones: se utiliza el
+conocimiento profesional y los antecedentes para agregar valor a
+la sección.
 
 ### Fuente original y webscraping
 
-Se realiza una descripción completa de la fuente de datos original, así como de la técnica de webscraping para su recolección, resaltando las restricciones para el acceso a los datos en caso de haberlas,
+Se realiza una descripción completa de la fuente de datos
+original, así como de la técnica de webscraping para su
+recolección, resaltando las restricciones para el acceso a los
+datos en caso de haberlas,
 
 ### Utilidad de la base para la solución del problema
 
-Se discute la utilidad de la base para la solución del problema planteado en el taller,
+Se discute la utilidad de la base para la solución del problema
+planteado en el taller,
 
 ### Limpieza de datos
 
-Se describe cómo se obtiene la muestra final incluyendo la unión entre las bases de datos, la transformación de variables, las variables incluidas en el análisis, y el tratamiento a observaciones faltantes y datos atípicos
+Se describe cómo se obtiene la muestra final incluyendo la unión
+entre las bases de datos, la transformación de variables, las
+variables incluidas en el análisis, y el tratamiento a
+observaciones faltantes y datos atípicos
 
 ### Análisis descriptivo
 
-Se realiza un análisis descriptivo de las variables utilizadas en el análisis mediante tablas y/o gráficos que son autocontenidos y debidamente formateadas, con el formato sugerido. Las tablas no son pantallazos de R/Python (o el software utilizado), y tienen título y notas que permitan entenderlas sin recurrir al documento. Las gráficas tienen título, ejes, leyenda y notas que permiten entenderlas sin recurrir al documento.
+Se realiza un análisis descriptivo de las variables utilizadas en
+el análisis mediante tablas y/o gráficos que son autocontenidos y
+debidamente formateadas, con el formato sugerido. Las tablas no
+son pantallazos de R/Python (o el software utilizado), y tienen
+título y notas que permitan entenderlas sin recurrir al
+documento. Las gráficas tienen título, ejes, leyenda y notas que
+permiten entenderlas sin recurrir al documento.
 
-El análisis descriptivo permite al lector entender la variación de los datos y la elección de las variables,
+El análisis descriptivo permite al lector entender la variación
+de los datos y la elección de las variables,
 
 ## Redacción previa - Mateo
 
--   Describa los datos brevemente, incluyendo su propósito y cualquier otra información relevante.
+-   Describa los datos brevemente, incluyendo su propósito y
+    cualquier otra información relevante.
 
 \
-(b) Describa el proceso de adquisición de los datos y si existen restricciones para acceder a ellos o para realizar scraping.
+(b) Describa el proceso de adquisición de los datos y si existen
+restricciones para acceder a ellos o para realizar scraping.
 
-Para extraer los datos, primero accedimos al enlace [GEIH 2018 Sample](https://ignaciomsarmiento.github.io/GEIH2018_sample/page1.html) e inspeccionamos el código HTML subyacente. En este proceso, identificamos el elemento `<table>` que contenía los datos de interés. Sin embargo, al intentar extraer la tabla utilizando el paquete `rvest` en R, el resultado fue un objeto vacío. Al analizar con más detenimiento la carga de la página, notamos que la tabla se encontraba entre los últimos elementos en aparecer, lo que nos llevó a suponer que, aunque nuestro código lograba acceder al HTML de la página, el elemento `<table>` aún no estaba disponible cuando finalizaba la secuencia de extracción en R.
+Para extraer los datos, primero accedimos al enlace [GEIH 2018
+Sample](https://ignaciomsarmiento.github.io/GEIH2018_sample/page1.html)
+e inspeccionamos el código HTML subyacente. En este proceso,
+identificamos el elemento `<table>` que contenía los datos de
+interés. Sin embargo, al intentar extraer la tabla utilizando el
+paquete `rvest` en R, el resultado fue un objeto vacío. Al
+analizar con más detenimiento la carga de la página, notamos que
+la tabla se encontraba entre los últimos elementos en aparecer,
+lo que nos llevó a suponer que, aunque nuestro código lograba
+acceder al HTML de la página, el elemento `<table>` aún no estaba
+disponible cuando finalizaba la secuencia de extracción en R.
 
-Ante esta situación, decidimos revisar la pestaña "Network" del inspector web y recargar la página para observar la secuencia en la que se cargaban los elementos. En este análisis, identificamos que el archivo `geih_page_1.html` contenía exclusivamente la tabla con los datos deseados y que su Request URL era [GEIH Page 1](https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_1.html). Al acceder directamente a este enlace, confirmamos que la tabla se encontraba allí sin necesidad de esperar tiempos de carga adicionales.
+Ante esta situación, decidimos revisar la pestaña "Network" del
+inspector web y recargar la página para observar la secuencia en
+la que se cargaban los elementos. En este análisis, identificamos
+que el archivo `geih_page_1.html` contenía exclusivamente la
+tabla con los datos deseados y que su Request URL era [GEIH Page
+1](https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_1.html).
+Al acceder directamente a este enlace, confirmamos que la tabla
+se encontraba allí sin necesidad de esperar tiempos de carga
+adicionales.
 
-Con esta información, utilizamos `rvest` para extraer la tabla y convertirla en un `data.frame`. Luego, implementamos un bucle en R para iterar sobre las diferentes páginas de datos, siguiendo el patrón de URL `"https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_%d.html"`. El bucle se ejecutó 10 veces, reemplazando `%d` con el número correspondiente a cada iteración y concatenando progresivamente las tablas extraídas. Al finalizar este proceso, obtuvimos una tabla consolidada con dimensiones **32,177 x 177**, lista para su análisis.
+Con esta información, utilizamos `rvest` para extraer la tabla y
+convertirla en un `data.frame`. Luego, implementamos un bucle en
+R para iterar sobre las diferentes páginas de datos, siguiendo el
+patrón de URL
+`"https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_%d.html"`.
+El bucle se ejecutó 10 veces, reemplazando `%d` con el número
+correspondiente a cada iteración y concatenando progresivamente
+las tablas extraídas. Al finalizar este proceso, obtuvimos una
+tabla consolidada con dimensiones **32,177 x 177**, lista para su
+análisis.
 
 \
 (c) Describa el proceso de limpieza de los datos.
 
 #### Proceso de filtrado y preparación de datos
 
-Para el análisis, filtramos la base de datos para incluir únicamente las observaciones correspondientes a individuos ocupados (`ocu == 1`) mayores de edad (`age >= 18`). Con el objetivo de garantizar la coherencia de los datos, verificamos que la población en edad de trabajar (`wap == 1`) incluyera tanto a la población económicamente activa (`pea == 1`) como a la población inactiva (`inac == 1`). Adicionalmente, corroboramos que la población económicamente activa estuviera compuesta por ocupados y desocupados (`dsi == 1`). Una vez confirmada la consistencia de estas categorías, procedimos con el filtrado de datos.
+Para el análisis, filtramos la base de datos para incluir
+únicamente las observaciones correspondientes a individuos
+ocupados (`ocu == 1`) mayores de edad (`age >= 18`). Con el
+objetivo de garantizar la coherencia de los datos, verificamos
+que la población en edad de trabajar (`wap == 1`) incluyera tanto
+a la población económicamente activa (`pea == 1`) como a la
+población inactiva (`inac == 1`). Adicionalmente, corroboramos
+que la población económicamente activa estuviera compuesta por
+ocupados y desocupados (`dsi == 1`). Una vez confirmada la
+consistencia de estas categorías, procedimos con el filtrado de
+datos.
 
-Posteriormente, asignamos un identificador único a cada observación mediante la concatenación de los valores de las variables `directorio`, `secuencia_p` y `oeden`, que corresponden al identificador de vivienda, hogar y persona, respectivamente. Antes de este proceso, verificamos que la combinación de estos códigos fuera única para cada fila, garantizando la integridad de la identificación individual.
+Posteriormente, asignamos un identificador único a cada
+observación mediante la concatenación de los valores de las
+variables `directorio`, `secuencia_p` y `oeden`, que corresponden
+al identificador de vivienda, hogar y persona, respectivamente.
+Antes de este proceso, verificamos que la combinación de estos
+códigos fuera única para cada fila, garantizando la integridad de
+la identificación individual.
 
 #### Construcción de variables
 
-Una vez establecidos los filtros y las identificaciones, seleccionamos las variables relevantes para el análisis. La variable dependiente se construyó a partir de la suma de diversas categorías de ingresos (`impa`, `impaes`, `isa`, `isaes`, `ie`, `iees`, `p6630s4a1`). En particular, la variable `p6630s4a1`, que representa el valor de los viáticos recibidos en el año anterior, fue ajustada dividiéndola entre 12 para mantener la unidad temporal mensual, alineándola con el resto de los conceptos de ingresos.
+Una vez establecidos los filtros y las identificaciones,
+seleccionamos las variables relevantes para el análisis. La
+variable dependiente se construyó a partir de la suma de diversas
+categorías de ingresos (`impa`, `impaes`, `isa`, `isaes`, `ie`,
+`iees`, `p6630s4a1`). En particular, la variable `p6630s4a1`, que
+representa el valor de los viáticos recibidos en el año anterior,
+fue ajustada dividiéndola entre 12 para mantener la unidad
+temporal mensual, alineándola con el resto de los conceptos de
+ingresos.
 
-Adicionalmente, construimos una variable representativa de las horas trabajadas mensualmente por cada individuo. Para ello, utilizamos las variables `hoursWorkUsual` y `hoursWorkActualSecondJob`, que indican la cantidad de horas trabajadas durante la semana anterior. Para obtener una estimación anual, multiplicamos ambas variables por 49, asumiendo que en Colombia se trabajan 52 semanas al año menos tres semanas correspondientes a los 15 días hábiles de vacaciones que, en promedio, los trabajadores formales reciben anualmente. Finalmente, dividimos el resultado entre 12 para obtener la estimación mensual de horas trabajadas y sumamos ambas columnas para obtener el total de horas trabajadas por mes.
+Adicionalmente, construimos una variable representativa de las
+horas trabajadas mensualmente por cada individuo. Para ello,
+utilizamos las variables `hoursWorkUsual` y
+`hoursWorkActualSecondJob`, que indican la cantidad de horas
+trabajadas durante la semana anterior. Para obtener una
+estimación anual, multiplicamos ambas variables por 49, asumiendo
+que en Colombia se trabajan 52 semanas al año menos tres semanas
+correspondientes a los 15 días hábiles de vacaciones que, en
+promedio, los trabajadores formales reciben anualmente.
+Finalmente, dividimos el resultado entre 12 para obtener la
+estimación mensual de horas trabajadas y sumamos ambas columnas
+para obtener el total de horas trabajadas por mes.
 
 #### Imputación de datos faltantes
 
-Dado que algunas observaciones presentaban valores faltantes en las variables de ingresos y horas trabajadas, realizamos un procedimiento de imputación. Para ello, agrupamos las observaciones por estrato socioeconómico y calculamos el promedio de ingresos y de horas trabajadas dentro de cada grupo, utilizando estos valores como imputaciones para las observaciones con datos faltantes. Posteriormente, construimos la variable `hourly_inglab`, que representa el ingreso laboral por hora trabajada, dividiendo los ingresos mensuales por la cantidad de horas trabajadas mensualmente.
+Dado que algunas observaciones presentaban valores faltantes en
+las variables de ingresos y horas trabajadas, realizamos un
+procedimiento de imputación. Para ello, agrupamos las
+observaciones por estrato socioeconómico y calculamos el promedio
+de ingresos y de horas trabajadas dentro de cada grupo,
+utilizando estos valores como imputaciones para las observaciones
+con datos faltantes. Posteriormente, construimos la variable
+`hourly_inglab`, que representa el ingreso laboral por hora
+trabajada, dividiendo los ingresos mensuales por la cantidad de
+horas trabajadas mensualmente.
 
 #### Ajustes finales
 
-Finalmente, con el fin de facilitar la interpretación de la variable `sex`, invertimos su codificación y la renombramos como `female`, de modo que su valor fuera 0 para hombres y 1 para mujeres, siguiendo las especificaciones del taller en cuanto a las variables de interés.
+Finalmente, con el fin de facilitar la interpretación de la
+variable `sex`, invertimos su codificación y la renombramos como
+`female`, de modo que su valor fuera 0 para hombres y 1 para
+mujeres, siguiendo las especificaciones del taller en cuanto a
+las variables de interés.
 
 \
-(d) Describa las variables incluidas en su análisis. Como mínimo, se debe incluir una tabla de estadísticas descriptivas con su interpretación. Sin embargo, espero un análisis profundo que ayude al lector a comprender los datos, su variación y la justificación de la elección de los datos. Utilice su conocimiento profesional para agregar valor a esta sección. No lo presente como una lista "seca" de ingredientes.
+(d) Describa las variables incluidas en su análisis. Como mínimo,
+se debe incluir una tabla de estadísticas descriptivas con su
+interpretación. Sin embargo, espero un análisis profundo que
+ayude al lector a comprender los datos, su variación y la
+justificación de la elección de los datos. Utilice su
+conocimiento profesional para agregar valor a esta sección. No lo
+presente como una lista "seca" de ingredientes.
 
-Nuestra variable explicada, `hourly_inglab`, requirió un proceso detallado de construcción, dado que no se encontraba directamente en la base de datos de la Gran Encuesta Integrada de Hogares (GEIH). Para su cálculo, partimos de diversas fuentes de ingreso laboral que fueron seleccionadas considerando el concepto de rentas laborales definido por la Dirección de Impuestos y Aduanas Nacionales (DIAN), el cual comprende exclusivamente aquellos ingresos derivados de la actividad laboral de una persona. La variable se construyó a partir del ingreso mensual por la primera actividad antes de imputación (`impa`), el ingreso mensual imputado por la primera actividad (`impaes`), el ingreso mensual por la segunda actividad antes de imputación (`isa`), el ingreso mensual imputado por la segunda actividad (`isaes`), el ingreso mensual en especie antes de imputación (`ie`), el ingreso mensual en especie imputado (`iees`) y el valor anual de viáticos (`p6630s4a1`), que fue ajustado a valores mensuales dividiéndolo entre doce.
+Nuestra variable explicada, `hourly_inglab`, requirió un proceso
+detallado de construcción, dado que no se encontraba directamente
+en la base de datos de la Gran Encuesta Integrada de Hogares
+(GEIH). Para su cálculo, partimos de diversas fuentes de ingreso
+laboral que fueron seleccionadas considerando el concepto de
+rentas laborales definido por la Dirección de Impuestos y Aduanas
+Nacionales (DIAN), el cual comprende exclusivamente aquellos
+ingresos derivados de la actividad laboral de una persona. La
+variable se construyó a partir del ingreso mensual por la primera
+actividad antes de imputación (`impa`), el ingreso mensual
+imputado por la primera actividad (`impaes`), el ingreso mensual
+por la segunda actividad antes de imputación (`isa`), el ingreso
+mensual imputado por la segunda actividad (`isaes`), el ingreso
+mensual en especie antes de imputación (`ie`), el ingreso mensual
+en especie imputado (`iees`) y el valor anual de viáticos
+(`p6630s4a1`), que fue ajustado a valores mensuales dividiéndolo
+entre doce.
 
-Si bien la base de datos incluía la variable `ingtot`, que representa la suma total de ingresos reportados por cada individuo, esta no era adecuada para nuestro análisis, pues incorpora fuentes de ingreso no laborales, tales como arriendos, dividendos y pensiones. Debido a que nuestro interés radica en analizar el ingreso laboral, optamos por construir `hourly_inglab` exclusivamente a partir de los componentes mencionados. Posteriormente, para obtener el ingreso por hora, dividimos el ingreso mensual total por la cantidad de horas trabajadas reportadas por cada individuo. Como resultado, la media de la variable fue de \$9.323 COP, con un rango que va desde \$0 hasta \$888.775 COP. La mediana, en contraste, se ubicó en \$5.204 COP, lo que evidencia un sesgo a la derecha en la distribución de la variable, dado que la diferencia entre la mediana y la media es considerable.
+Si bien la base de datos incluía la variable `ingtot`, que
+representa la suma total de ingresos reportados por cada
+individuo, esta no era adecuada para nuestro análisis, pues
+incorpora fuentes de ingreso no laborales, tales como arriendos,
+dividendos y pensiones. Debido a que nuestro interés radica en
+analizar el ingreso laboral, optamos por construir
+`hourly_inglab` exclusivamente a partir de los componentes
+mencionados. Posteriormente, para obtener el ingreso por hora,
+dividimos el ingreso mensual total por la cantidad de horas
+trabajadas reportadas por cada individuo. Como resultado, la
+media de la variable fue de \$9.323 COP, con un rango que va
+desde \$0 hasta \$888.775 COP. La mediana, en contraste, se ubicó
+en \$5.204 COP, lo que evidencia un sesgo a la derecha en la
+distribución de la variable, dado que la diferencia entre la
+mediana y la media es considerable.
 
-Dentro de nuestras variables explicativas, incluimos la edad, cuya media es de 39 años, con un rango que oscila entre los 18 y los 94 años, mostrando una distribución aproximadamente normal. También consideramos el sexo de los individuos a través de la variable dicotómica `female`, en la que el 47% de los encuestados son mujeres y el 53% son hombres. Adicionalmente, incluimos el nivel educativo de los encuestados mediante la variable `p6210`, que toma valores entre 1 y 6, donde 1 corresponde a personas sin educación formal y 6 a aquellas con educación universitaria, mientras que los valores intermedios reflejan distintos niveles educativos. En nuestra muestra, la media de esta variable se encuentra en 5, lo que indica que el nivel educativo más frecuente es la educación secundaria. La inclusión de esta variable responde a la importancia ampliamente documentada que tiene el acceso a la educación en la determinación del nivel de ingresos de una persona.
+Dentro de nuestras variables explicativas, incluimos la edad,
+cuya media es de 39 años, con un rango que oscila entre los 18 y
+los 94 años, mostrando una distribución aproximadamente normal.
+También consideramos el sexo de los individuos a través de la
+variable dicotómica `female`, en la que el 47% de los encuestados
+son mujeres y el 53% son hombres. Adicionalmente, incluimos el
+nivel educativo de los encuestados mediante la variable `p6210`,
+que toma valores entre 1 y 6, donde 1 corresponde a personas sin
+educación formal y 6 a aquellas con educación universitaria,
+mientras que los valores intermedios reflejan distintos niveles
+educativos. En nuestra muestra, la media de esta variable se
+encuentra en 5, lo que indica que el nivel educativo más
+frecuente es la educación secundaria. La inclusión de esta
+variable responde a la importancia ampliamente documentada que
+tiene el acceso a la educación en la determinación del nivel de
+ingresos de una persona.
 
-Además de estas variables principales, incluimos otras variables de control que consideramos relevantes para el análisis. La variable `oficio` recoge información sobre la ocupación de los individuos y está categorizada en 80 tipos de actividades diferentes. Dentro de nuestra muestra, la ocupación más frecuente corresponde a vendedores ambulantes, a domicilio, de loterías y periódicos, y mercaderistas. De manera similar, la variable `relab` clasifica la relación laboral de los individuos en nueve categorías distintas, siendo la más común la de obrero o empleado de empresa particular. Estas variables son relevantes porque el tipo de actividad que desempeña una persona puede determinar significativamente su nivel de ingresos, incluso más allá de la cantidad de horas trabajadas o su nivel educativo.
+Además de estas variables principales, incluimos otras variables
+de control que consideramos relevantes para el análisis. La
+variable `oficio` recoge información sobre la ocupación de los
+individuos y está categorizada en 80 tipos de actividades
+diferentes. Dentro de nuestra muestra, la ocupación más frecuente
+corresponde a vendedores ambulantes, a domicilio, de loterías y
+periódicos, y mercaderistas. De manera similar, la variable
+`relab` clasifica la relación laboral de los individuos en nueve
+categorías distintas, siendo la más común la de obrero o empleado
+de empresa particular. Estas variables son relevantes porque el
+tipo de actividad que desempeña una persona puede determinar
+significativamente su nivel de ingresos, incluso más allá de la
+cantidad de horas trabajadas o su nivel educativo.
 
-Otra variable que consideramos fundamental en nuestro análisis es `formal`, que indica si un trabajador está afiliado o no a la seguridad social. En nuestra muestra, el 58.6% de los individuos es formal, lo que coincide con las cifras reportadas en el Boletín Técnico GEIH del DANE para el periodo diciembre 2018 - febrero 2019, donde se registró un 60.7% de trabajadores formales en Bogotá.
+Otra variable que consideramos fundamental en nuestro análisis es
+`formal`, que indica si un trabajador está afiliado o no a la
+seguridad social. En nuestra muestra, el 58.6% de los individuos
+es formal, lo que coincide con las cifras reportadas en el
+Boletín Técnico GEIH del DANE para el periodo diciembre 2018 -
+febrero 2019, donde se registró un 60.7% de trabajadores formales
+en Bogotá.
 
-Por último, decidimos incluir el estrato socioeconómico de los individuos como un indicador adicional de sus condiciones de vida. Esta variable tiene un rango de 1 a 6, con una media de 2.6 y una mediana de 2. Al igual que la variable de ingresos, el estrato presenta un sesgo hacia la derecha, dado que hasta el percentil 75 los individuos de la muestra pertenecen al estrato 3, lo que indica que solo el 25% de los encuestados reside en estratos superiores de servicios públicos domiciliarios.
-
+Por último, decidimos incluir el estrato socioeconómico de los
+individuos como un indicador adicional de sus condiciones de
+vida. Esta variable tiene un rango de 1 a 6, con una media de 2.6
+y una mediana de 2. Al igual que la variable de ingresos, el
+estrato presenta un sesgo hacia la derecha, dado que hasta el
+percentil 75 los individuos de la muestra pertenecen al estrato
+3, lo que indica que solo el 25% de los encuestados reside en
+estratos superiores de servicios públicos domiciliarios.
 
 ```{r}
 # Haciendo el webscraping - 
@@ -294,19 +520,36 @@ skim(clean_geih)
 ## Rubrica
 
 1.  Formato de tablas y gráficas
-2.  Se presenta los resultados de la estimación en una tabla que no es un pantallazo sino que está debidamente formateada, con el formato indicado, y contiene título y notas que permiten entenderla sin recurrir al documento,
+2.  Se presenta los resultados de la estimación en una tabla que
+    no es un pantallazo sino que está debidamente formateada, con
+    el formato indicado, y contiene título y notas que permiten
+    entenderla sin recurrir al documento,
 3.  Interpretación de coeficientes
-4.  Se interpreta los coeficientes y se discute su significancia tanto económica como estadística,
+4.  Se interpreta los coeficientes y se discute su significancia
+    tanto económica como estadística,
 5.  Discusión del ajuste del modelo
 6.  Se discute el ajuste del modelo sobre la muestra
 7.  Predicción de la edad-salario
-8.  Se presenta el perfil edad-salario predicho y sus intervalos de confianza en una gráfica autocontenida y debidamente formateada, con el formato indicado. Contiene título, ejes, leyenda, y notas que permiten entender sin recurrir al documento,
+8.  Se presenta el perfil edad-salario predicho y sus intervalos
+    de confianza en una gráfica autocontenida y debidamente
+    formateada, con el formato indicado. Contiene título, ejes,
+    leyenda, y notas que permiten entender sin recurrir al
+    documento,
 9.  Edad pico
-10. Se estima la 'edad pico' con sus correspondientes errores estándar, interpretando los resultados y su significancia tanto económica como estadística.
+10. Se estima la 'edad pico' con sus correspondientes errores
+    estándar, interpretando los resultados y su significancia
+    tanto económica como estadística.
 
 ## Contenido redactado previamente Cami-Nico
 
-Una gran cantidad de evidencia en economía laboral sugiere que el perfil típico de edad-salario de los trabajadores sigue un patrón predecible: los salarios tienden a ser bajos cuando el trabajador es joven, aumentan a medida que envejece, alcanzando su punto máximo alrededor de los 50 años, y luego tienden a mantenerse estables o disminuir ligeramente después de esa edad. En esta subsección, estimaremos el perfil de edad-salario para los individuos de esta muestra.
+Una gran cantidad de evidencia en economía laboral sugiere que el
+perfil típico de edad-salario de los trabajadores sigue un patrón
+predecible: los salarios tienden a ser bajos cuando el trabajador
+es joven, aumentan a medida que envejece, alcanzando su punto
+máximo alrededor de los 50 años, y luego tienden a mantenerse
+estables o disminuir ligeramente después de esa edad. En esta
+subsección, estimaremos el perfil de edad-salario para los
+individuos de esta muestra.
 
 $$
 log(w) = \beta_1 + \beta_2Edad + \beta_3 Edad^2 + u
@@ -339,19 +582,51 @@ $$ Al presentar y discutir tus resultados, incluye:
 
 -   Una interpretación de los coeficientes y su significancia.
 
-La transformación de los datos en el modelo permite capturar relaciones no lineales entre la edad y el ingreso laboral por hora, lo que resulta fundamental para comprender cómo varía el efecto de la edad a lo largo de la vida laboral. En este caso, la inclusión del término cuadrático responde a la necesidad de modelar un comportamiento que no es constante: aunque el salario tiende a aumentar con la edad, este crecimiento no es indefinido.
+La transformación de los datos en el modelo permite capturar
+relaciones no lineales entre la edad y el ingreso laboral por
+hora, lo que resulta fundamental para comprender cómo varía el
+efecto de la edad a lo largo de la vida laboral. En este caso, la
+inclusión del término cuadrático responde a la necesidad de
+modelar un comportamiento que no es constante: aunque el salario
+tiende a aumentar con la edad, este crecimiento no es indefinido.
 
-Los coeficientes obtenidos, ambos significativos, indican que existe un punto máximo a partir del cual la edad deja de ser un factor positivo en el incremento salarial y, en su lugar, comienza a generar rendimientos decrecientes. Específicamente, el coeficiente positivo del término lineal de la edad sugiere que, en las primeras etapas de la vida laboral, el salario crece a medida que una persona adquiere experiencia y habilidades. Sin embargo, el coeficiente negativo del término cuadrático evidencia que este crecimiento se desacelera con el tiempo y, eventualmente, se revierte, lo que implica que los aumentos salariales se reducen hasta alcanzar un umbral en el que la edad deja de ser un factor de incremento.
+Los coeficientes obtenidos, ambos significativos, indican que
+existe un punto máximo a partir del cual la edad deja de ser un
+factor positivo en el incremento salarial y, en su lugar,
+comienza a generar rendimientos decrecientes. Específicamente, el
+coeficiente positivo del término lineal de la edad sugiere que,
+en las primeras etapas de la vida laboral, el salario crece a
+medida que una persona adquiere experiencia y habilidades. Sin
+embargo, el coeficiente negativo del término cuadrático evidencia
+que este crecimiento se desacelera con el tiempo y,
+eventualmente, se revierte, lo que implica que los aumentos
+salariales se reducen hasta alcanzar un umbral en el que la edad
+deja de ser un factor de incremento.
 
-Esta transformación, por tanto, permite capturar la evolución realista de los ingresos a lo largo del ciclo laboral, proporcionando una interpretación más precisa del impacto de la edad sobre el salario y evitando suposiciones e
+Esta transformación, por tanto, permite capturar la evolución
+realista de los ingresos a lo largo del ciclo laboral,
+proporcionando una interpretación más precisa del impacto de la
+edad sobre el salario y evitando suposiciones e
 
 rróneas de una relación lineal constante.
 
-**Agregar la discusion de la significancia economica de estos coeficientes**
+**Agregar la discusion de la significancia economica de estos
+coeficientes**
 
--   Una discusión sobre el ajuste del modelo dentro de la muestra.
+-   Una discusión sobre el ajuste del modelo dentro de la
+    muestra.
 
-Con base en las métricas aprendidas, el R2 ajustado que penaliza la inclusión de variables irrelevantes pues logra capturar la varianza de la variable de ingresos laborales por hora en relación con la edad. Para este ejemplo, el valor del r2 ajustado sugiere que el modelo solo explica el 1.6% de la variabilidad en la variabilidad del ingreso por hora. En este sentido, esto indica que el poder explicativo del modelo es bajo y la mayoría de la variabilidad en log(w) no está siendo capturada por las variables de la edad y su transformación al cuadrado. Proporción de la variabilidad total de la variable dependiente que es explicada por el modelo de regresión.
+Con base en las métricas aprendidas, el R2 ajustado que penaliza
+la inclusión de variables irrelevantes pues logra capturar la
+varianza de la variable de ingresos laborales por hora en
+relación con la edad. Para este ejemplo, el valor del r2 ajustado
+sugiere que el modelo solo explica el 1.6% de la variabilidad en
+la variabilidad del ingreso por hora. En este sentido, esto
+indica que el poder explicativo del modelo es bajo y la mayoría
+de la variabilidad en log(w) no está siendo capturada por las
+variables de la edad y su transformación al cuadrado. Proporción
+de la variabilidad total de la variable dependiente que es
+explicada por el modelo de regresión.
 
 ```{r}
 
@@ -363,7 +638,11 @@ print(rmse_original)
 
 ```
 
--   Un gráfico del perfil estimado de edad-ingresos implícito en la ecuación anterior, incluyendo un análisis de la edad en la que se alcanza el pico con sus respectivos intervalos de confianza. *(Nota: Usa bootstrap para construir los intervalos de confianza.)*
+-   Un gráfico del perfil estimado de edad-ingresos implícito en
+    la ecuación anterior, incluyendo un análisis de la edad en la
+    que se alcanza el pico con sus respectivos intervalos de
+    confianza. *(Nota: Usa bootstrap para construir los
+    intervalos de confianza.)*
 
 Derivando la ecuación con respecto a la edad e igualando a cero
 
@@ -371,7 +650,9 @@ $$ \frac{\delta log(w)}{\delta Edad} = 0,0065 -2(000,1)Edad  =0 $$
 
 $$ Edad = 32,5 $$
 
-Esto significa que el salario crece con la edad hasta aproximadamente los 32 años de edad, a partir de este punto el salario empieza a disminuir.
+Esto significa que el salario crece con la edad hasta
+aproximadamente los 32 años de edad, a partir de este punto el
+salario empieza a disminuir.
 
 ```{r}
 
@@ -432,22 +713,32 @@ ggplot(clean_geih, aes(x = clean_geih$age, y = pred_log_w)) +
 
 ## Rubrica
 
-Se presenta la estimación de la brecha salarial de género incondicional y condicional en una misma tabla, con las estimaciones lado a lado. La tabla no es un pantallazo, sino que está debidamente formateada, con título y notas que permitan entenderla sin recurrir al documento. Por ejemplo, listando las variables control utilizadas. Se justifica la inclusión de los diferentes controles.
+Se presenta la estimación de la brecha salarial de género
+incondicional y condicional en una misma tabla, con las
+estimaciones lado a lado. La tabla no es un pantallazo, sino que
+está debidamente formateada, con título y notas que permitan
+entenderla sin recurrir al documento. Por ejemplo, listando las
+variables control utilizadas. Se justifica la inclusión de los
+diferentes controles.
 
 ## Descripción taller
 
-La brecha salarial de género. Los formuladores de políticas han estado preocupados durante mucho tiempo por la brecha salarial de género, y este será nuestro enfoque en esta subsección.
+La brecha salarial de género. Los formuladores de políticas han
+estado preocupados durante mucho tiempo por la brecha salarial de
+género, y este será nuestro enfoque en esta subsección.
 
-a\. Comience estimando y discutiendo la brecha salarial incondicional:
+a\. Comience estimando y discutiendo la brecha salarial
+incondicional:
 
 $$
 log(w) = \beta_1 + \beta_2Female + u
 $$
 
-donde *Female* es un indicador que toma el valor de uno si el individuo en la muestra se identifica como mujer.
+donde *Female* es un indicador que toma el valor de uno si el
+individuo en la muestra se identifica como mujer.
 
 ```{r}
-modelo_unconditional <- lm(log_hourly_inglab ~ as.factor(female), data=clean_geih)
+modelo_unconditional <- lm(log_hourly_inglab ~ female, data=clean_geih)
 
 stargazer(modelo_unconditional, type = "text",
           title = "Regression Results",
@@ -461,30 +752,38 @@ stargazer(modelo_unconditional, type = "text",
 
 ```
 
-b\. Un eslogan común es "igual salario por igual trabajo". Una forma de interpretar esto es que, para empleados con características laborales y personales similares, no debería existir una brecha salarial de género. Para analizar esto, estima la brecha salarial condicional incorporando variables de control como características del trabajador y del puesto de trabajo.
-
-```{r}
-modelo_simple <- lm(log(hourly_inglab + 1) ~ female, data=clean_geih)
-
-stargazer(modelo_simple, type = "text")
-```
+b\. Un eslogan común es "igual salario por igual trabajo". Una
+forma de interpretar esto es que, para empleados con
+características laborales y personales similares, no debería
+existir una brecha salarial de género. Para analizar esto, estima
+la brecha salarial condicional incorporando variables de control
+como características del trabajador y del puesto de trabajo.
 
 En esta sección, estima la brecha salarial condicional:\
 i. Primero, utilizando FWL.\
 
 ```{r}
-modelo_lm <- lm(log(hourly_inglab + 1) ~ female + factor(oficio) + factor(relab) + age + factor(p6210) + factor(formal), data=clean_geih)
+modelo_multiple <- lm(log_hourly_inglab ~ female + factor(oficio) + factor(relab) + age + factor(p6210) + factor(formal), data=clean_geih)
 
 # Teorema Frisch-Waugh-Lovell
-res_inglab <- residuals(lm(log(hourly_inglab + 1) ~ factor(oficio) + factor(relab) + age + factor(p6210) + factor(formal), data=clean_geih))
+res_inglab <- residuals(lm(log_hourly_inglab ~ factor(oficio) + factor(relab) + age + factor(p6210) + factor(formal), data=clean_geih))
 
 res_female <- residuals(lm(female ~ factor(oficio) + factor(relab) + age + factor(p6210) + factor(formal), data=clean_geih))
 
-modelo_fwl <- lm(res_inglab ~ res_female)
+modelo_multiple_fwl <- lm(res_inglab ~ res_female)
 
-stargazer(modelo_simple, modelo_lm, modelo_fwl, type = "text",
-          keep = c("female", "res_female", "age"),
-          column.labels = c("Simple", "Múltiple", "FWL"))
+stargazer(modelo_unconditional, modelo_multiple, modelo_multiple_fwl, 
+          type = "text",
+          keep = c('female', 'res_female'),
+          column.labels = c("Simple", "Múltiple", "FWL"),
+          title = "Regression Results",
+          dep.var.labels = "log_hourly_inglab",
+          covariate.labels = c("Female", "Female", "Female"),
+          omit.stat = c("ser", "f"),
+          star.cutoffs = NA,
+          notes = "Standard errors in parentheses.",
+          notes.align = "l",
+          report = "vc*p")
 ```
 
 ii. Segundo, utilizando FWL con bootstrap.
@@ -496,47 +795,78 @@ mod_boot_fn<-function(data, index){
   
   sample_data <- data[index, ]
   
-  r_inglab_boot <- residuals(lm(log(hourly_inglab + 1) ~ factor(oficio) + factor(relab) + age + factor(p6210) + factor(formal), data = data, subset = index))
+  r_inglab_boot <- residuals(lm(log_hourly_inglab ~ factor(oficio) + factor(relab) + age + factor(p6210) + factor(formal), data = data, subset = index))
   
   r_female_boot <- residuals(lm(female ~ factor(oficio) + factor(relab) + age + factor(p6210) + factor(formal), data = data, subset = index))
   
   return (coef(lm(r_inglab_boot ~ r_female_boot))[2])
 }
 
-modelo2_boot <- boot(clean_geih, mod_boot_fn, R = 10)
+modelo_boot_fwl <- boot(clean_geih, mod_boot_fn, R = 10)
 
-print(modelo2_boot)
+tabla_comparacion <- data.frame(
+  Modelo = c("Coeficientes", "SE"),
+  modelo_multiple_fwl = rbind(modelo_multiple_fwl$coefficients[[2]], coef(summary(modelo_multiple_fwl))["res_female", "Std. Error"]),
+  modelo_boot_fwl = rbind(mean(modelo_boot_fwl$t), sd(modelo_boot_fwl$t))
+)
+
+print(tabla_comparacion)
 ```
 
 Compare las estimaciones y los errores estándar.
 
-c\. Luego, grafique el perfil de edad-salario predicho y estima las edades en las que se alcanza el pico salarial, junto con los respectivos intervalos de confianza por género.
+c\. Luego, grafique el perfil de edad-salario predicho y estima
+las edades en las que se alcanza el pico salarial, junto con los
+respectivos intervalos de confianza por género.
 
 Al presentar y discutir tus resultados, incluya:
 
--   Una ecuación de estimación, explicando las variables de control incluidas (ten cuidado con los *bad controls*).
+-   Una ecuación de estimación, explicando las variables de
+    control incluidas (ten cuidado con los *bad controls*).
 
--   Una tabla de regresión con las estimaciones de las brechas salariales condicional e incondicional, presentadas lado a lado y resaltando el coeficiente de interés. Las variables de control no deben incluirse en la tabla, pero sí mencionarse adecuadamente.
+-   Una tabla de regresión con las estimaciones de las brechas
+    salariales condicional e incondicional, presentadas lado a
+    lado y resaltando el coeficiente de interés. Las variables de
+    control no deben incluirse en la tabla, pero sí mencionarse
+    adecuadamente.
 
--   Una interpretación de los coeficientes de *Female*, una comparación entre los modelos y el ajuste dentro de la muestra.
+-   Una interpretación de los coeficientes de *Female*, una
+    comparación entre los modelos y el ajuste dentro de la
+    muestra.
 
--   Un análisis de las edades en las que se alcanza el pico salarial y su similitud/diferencia estadística.
+-   Un análisis de las edades en las que se alcanza el pico
+    salarial y su similitud/diferencia estadística.
 
--   Una discusión reflexiva sobre la brecha salarial condicional e incondicional, evaluando si los cambios en el coeficiente son evidencia de un problema de selección, discriminación, una combinación de ambos o si no están relacionados con estos factores.
+-   Una discusión reflexiva sobre la brecha salarial condicional
+    e incondicional, evaluando si los cambios en el coeficiente
+    son evidencia de un problema de selección, discriminación,
+    una combinación de ambos o si no están relacionados con estos
+    factores.
 
 ## Rubrica
 
 Brecha condicional e incondicional
 
-Se presenta la estimación de la brecha salarial de género incondicional y condicional en una misma tabla, con las estimaciones lado a lado. La tabla no es un pantallazo, sino que está debidamente formateada, con título y notas que permitan entenderla sin recurrir al documento. Por ejemplo, listando las variables control utilizadas. Se justifica la inclusión de los diferentes controles.
+Se presenta la estimación de la brecha salarial de género
+incondicional y condicional en una misma tabla, con las
+estimaciones lado a lado. La tabla no es un pantallazo, sino que
+está debidamente formateada, con título y notas que permitan
+entenderla sin recurrir al documento. Por ejemplo, listando las
+variables control utilizadas. Se justifica la inclusión de los
+diferentes controles.
 
 Interpretación de coeficientes
 
-Se interpreta los coeficientes asociados al género y se discute su significancia, tanto económica como estadística, haciendo énfasis en si los resultados son consecuencia de un problema de selección, de discriminación, una mezcla entre los dos, o ninguno de ellos.
+Se interpreta los coeficientes asociados al género y se discute
+su significancia, tanto económica como estadística, haciendo
+énfasis en si los resultados son consecuencia de un problema de
+selección, de discriminación, una mezcla entre los dos, o ninguno
+de ellos.
 
 FWL vs FWL bootstrap
 
-Se discute la diferencia entre los coeficientes de los diferentes modelos, y entre los errores estándar de FWL y FWL con bootstrap,
+Se discute la diferencia entre los coeficientes de los diferentes
+modelos, y entre los errores estándar de FWL y FWL con bootstrap,
 
 Ajuste del modelo
 
@@ -544,27 +874,43 @@ Se discute el ajuste del modelo sobre la muestra,
 
 Predicción edad-salario
 
-Se presenta el perfil edad-salario predicho y sus intervalos de confianza desagregando por género en una gráfica autocontenida con título, ejes, leyenda, y notas que permiten entender sin recurrir al documento.
+Se presenta el perfil edad-salario predicho y sus intervalos de
+confianza desagregando por género en una gráfica autocontenida
+con título, ejes, leyenda, y notas que permiten entender sin
+recurrir al documento.
 
 Edad pico
 
-Se estima la 'edad pico' por género con sus correspondientes errores estándar, y se argumenta su similitud o disimilitud estadística.
+Se estima la 'edad pico' por género con sus correspondientes
+errores estándar, y se argumenta su similitud o disimilitud
+estadística.
 
 #5. Predicción del salario (Nico / Cami)
 
 ## Rubrica
 
--   Se divide la muestra en una proporción 70-30, y se incluye una semilla que permita la reproducibilidad.
+-   Se divide la muestra en una proporción 70-30, y se incluye
+    una semilla que permita la reproducibilidad.
 
--   Se presenta una tabla que resume el desempeño predictivo de las tres especificaciones anteriores en términos del RMSE.
+-   Se presenta una tabla que resume el desempeño predictivo de
+    las tres especificaciones anteriores en términos del RMSE.
 
--   Se calcula el desempeño predictivo para, al menos, cinco especificaciones adicionales que exploran no-linealidades y mayor complejidad.
+-   Se calcula el desempeño predictivo para, al menos, cinco
+    especificaciones adicionales que exploran no-linealidades y
+    mayor complejidad.
 
--   Se interpreta el desempeño de los diferentes modelos y se describe, detalladamente, la especificación con mejor desempeño.
+-   Se interpreta el desempeño de los diferentes modelos y se
+    describe, detalladamente, la especificación con mejor
+    desempeño.
 
--   Se presenta una gráfica con la distribución de los errores en el modelo con mejor desempeño predictivo y diagnostica los outilers de la muestra, argumentando si se deben a la naturaleza de los datos o al modelo.
+-   Se presenta una gráfica con la distribución de los errores en
+    el modelo con mejor desempeño predictivo y diagnostica los
+    outilers de la muestra, argumentando si se deben a la
+    naturaleza de los datos o al modelo.
 
--   Se presenta una tabla con el LOOCV para los dos modelos con el menor error predictivo y compara los resultados con los obtenidos mediante el enfoque de validación.
+-   Se presenta una tabla con el LOOCV para los dos modelos con
+    el menor error predictivo y compara los resultados con los
+    obtenidos mediante el enfoque de validación.
 
 Notas de clase Gustavo:
 
@@ -572,9 +918,14 @@ En cada uno de los folds se esta cambiando la muestra.
 
 ## Contenido redactado previamente
 
-En las secciones anteriores, estimaste algunas especificaciones con un enfoque en la inferencia. En esta subsección, evaluaremos el poder predictivo de estas especificaciones.
+En las secciones anteriores, estimaste algunas especificaciones
+con un enfoque en la inferencia. En esta subsección, evaluaremos
+el poder predictivo de estas especificaciones.
 
-(a) Divida la muestra en dos grupos: una muestra de entrenamiento (70%) y una de prueba (30%). (No olvide fijar una semilla para garantizar la reproducibilidad. En R, por ejemplo, puede usar `set.seed(10101)`, donde 10101 es la semilla).
+(a) Divida la muestra en dos grupos: una muestra de entrenamiento
+    (70%) y una de prueba (30%). (No olvide fijar una semilla
+    para garantizar la reproducibilidad. En R, por ejemplo, puede
+    usar `set.seed(10101)`, donde 10101 es la semilla).
 
 ```{r}
 #Definimos la semilla indicada
@@ -591,7 +942,10 @@ entreno <- createDataPartition(
 
 ```
 
-(a) Reporte y compare el desempeño predictivo en términos del RMSE de todas las especificaciones anteriores junto con al menos cinco (5) especificaciones adicionales que exploren no linealidades y mayor complejidad.
+(a) Reporte y compare el desempeño predictivo en términos del
+    RMSE de todas las especificaciones anteriores junto con al
+    menos cinco (5) especificaciones adicionales que exploren no
+    linealidades y mayor complejidad.
 
     ```{r}
 
@@ -602,25 +956,47 @@ entreno <- createDataPartition(
     i\. El desempeño general de los modelos.\
 
     ii. La especificación con el menor error de predicción.\
-    iii. Para la especificación con el menor error de predicción, analice aquellas observaciones que parecen desviarse significativamente. Para ello, calcule los errores de predicción en la muestra de prueba y examine su distribución. ¿Hay observaciones en los extremos de la distribución del error de predicción? ¿Estos valores atípicos podrían representar personas que la DIAN debería investigar, o son simplemente el resultado de un modelo defectuoso?
+    iii. Para la especificación con el menor error de predicción,
+         analice aquellas observaciones que parecen desviarse
+         significativamente. Para ello, calcule los errores de
+         predicción en la muestra de prueba y examine su
+         distribución. ¿Hay observaciones en los extremos de la
+         distribución del error de predicción? ¿Estos valores
+         atípicos podrían representar personas que la DIAN
+         debería investigar, o son simplemente el resultado de un
+         modelo defectuoso?
 
-(c) **LOOCV.** Para los dos modelos con el menor error de predicción en la sección anterior, calcule el error de predicción utilizando *Leave-One-Out Cross-Validation* (LOOCV). Compare los resultados del error de prueba con aquellos obtenidos mediante el enfoque de conjunto de validación y explore los posibles vínculos con la estadística de influencia. *(Nota: al realizar esta subsección, los cálculos pueden tomar mucho tiempo dependiendo de sus habilidades de programación, planifique en consecuencia).*
+(c) **LOOCV.** Para los dos modelos con el menor error de
+    predicción en la sección anterior, calcule el error de
+    predicción utilizando *Leave-One-Out Cross-Validation*
+    (LOOCV). Compare los resultados del error de prueba con
+    aquellos obtenidos mediante el enfoque de conjunto de
+    validación y explore los posibles vínculos con la estadística
+    de influencia. *(Nota: al realizar esta subsección, los
+    cálculos pueden tomar mucho tiempo dependiendo de sus
+    habilidades de programación, planifique en consecuencia).*
 
 # Repositorio y código
 
 ### Rubrica
 
--   El documento es autocontenido, no excede las 10 páginas y las 8 tablas o figuras,
+-   El documento es autocontenido, no excede las 10 páginas y las
+    8 tablas o figuras,
 
 -   Existe el repositorio siguiendo el template provisto,
 
--   Contiene un README que ayuda al lector a navegar el repositorio e incluye instrucciones breves para replicar completamente el trabajo,
+-   Contiene un README que ayuda al lector a navegar el
+    repositorio e incluye instrucciones breves para replicar
+    completamente el trabajo,
 
--   La rama del repositorio principal muestra al menos cinco (5) contribuciones que aportan significativamente al taller, por parte de cada miembro del equipo,
+-   La rama del repositorio principal muestra al menos cinco (5)
+    contribuciones que aportan significativamente al taller, por
+    parte de cada miembro del equipo,
 
 -   El código en el repositorio es legible.
 
--   El código es reproducible descargandose directamente del repositorio.
+-   El código es reproducible descargandose directamente del
+    repositorio.
 
 ### **Tables**
 
