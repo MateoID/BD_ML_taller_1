@@ -49,9 +49,7 @@ Considerando lo anterior, la implementación de modelos predictivos en la fiscal
 
 Yáñez Henríquez, J. (2016). Evasión tributaria: atentado a la equidad. *Revista De Estudios Tributarios*, (13), pág. 171–206. Recuperado a partir de https://revistaestudiostributarios.uchile.cl/index.php/RET/article/view/39874
 
-De esta manera,
-
-El principal objetivo es construir un modelo de salario por horas individual:
+De esta manera, el principal objetivo es construir un modelo de salario por horas individual:
 
 $$
 w = f(X) + u
@@ -356,7 +354,11 @@ La transformación de los datos en el modelo permite capturar relaciones no line
 
 Los coeficientes obtenidos, ambos significativos, indican que existe un punto máximo a partir del cual la edad deja de ser un factor positivo en el incremento salarial y, en su lugar, comienza a generar rendimientos decrecientes. Específicamente, el coeficiente positivo del término lineal de la edad sugiere que, en las primeras etapas de la vida laboral, el salario crece a medida que una persona adquiere experiencia y habilidades. Sin embargo, el coeficiente negativo del término cuadrático evidencia que este crecimiento se desacelera con el tiempo y, eventualmente, se revierte, lo que implica que los aumentos salariales se reducen hasta alcanzar un umbral en el que la edad deja de ser un factor de incremento.
 
-Esta transformación, por tanto, permite capturar la evolución realista de los ingresos a lo largo del ciclo laboral, proporcionando una interpretación más precisa del impacto de la edad sobre el salario y evitando suposiciones erróneas de una relación lineal constante.
+Esta transformación, por tanto, permite capturar la evolución realista de los ingresos a lo largo del ciclo laboral, proporcionando una interpretación más precisa del impacto de la edad sobre el salario y evitando suposiciones e
+
+rróneas de una relación lineal constante.
+
+**Agregar la discusion de la significancia economica de estos coeficientes**
 
 -   Una discusión sobre el ajuste del modelo dentro de la muestra.
 
@@ -434,7 +436,6 @@ ggplot(clean_geih, aes(x = clean_geih$age, y = pred_log_w)) +
   labs(title = "Perfil Edad-Ingresos en la Muestra",
        x = "Edad",
        y = "Salario Estimado")
-
 
 ```
 
@@ -560,6 +561,10 @@ Se estima la 'edad pico' por género con sus correspondientes errores estándar,
 -   Se presenta una gráfica con la distribución de los errores en el modelo con mejor desempeño predictivo y diagnostica los outilers de la muestra, argumentando si se deben a la naturaleza de los datos o al modelo.
 
 -   Se presenta una tabla con el LOOCV para los dos modelos con el menor error predictivo y compara los resultados con los obtenidos mediante el enfoque de validación.
+
+Notas de clase Gustavo:
+
+En cada uno de los folds se esta cambiando la muestra.
 
 ## Contenido redactado previamente
 
