@@ -681,7 +681,7 @@ boot_func <- function(data,index)
 }
 
 #Se aplica el bootstrap 
-boot_result <- boot(clean_geih, boot_func,1000)
+boot_result <- boot(clean_geih, boot_func,10)
 boot_result
 
 #Para obtener los intervalos de confianza
@@ -806,8 +806,8 @@ modelo_boot_fwl <- boot(clean_geih, mod_boot_fn, R = 10)
 
 tabla_comparacion <- data.frame(
   Modelo = c("Coeficientes", "SE"),
-  modelo_multiple_fwl = rbind(modelo_multiple_fwl$coefficients[[2]], coef(summary(modelo_multiple_fwl))["res_female", "Std. Error"]),
-  modelo_boot_fwl = rbind(mean(modelo_boot_fwl$t), sd(modelo_boot_fwl$t))
+  Regresión_FWL = rbind(modelo_multiple_fwl$coefficients[[2]], coef(summary(modelo_multiple_fwl))["res_female", "Std. Error"]),
+  Regresión_FWL_Bootstrap = rbind(mean(modelo_boot_fwl$t), sd(modelo_boot_fwl$t))
 )
 
 print(tabla_comparacion)
@@ -815,9 +815,67 @@ print(tabla_comparacion)
 
 Compare las estimaciones y los errores estándar.
 
+Como se aprecia en la tabla, los coeficientes obtenidos con ambos métodos tienen el mismo signo, lo que implica que en promedio una mujer recibe menos ingresos por hora que un hombre. La magnitud de ambos coeficientes es similar, dado que corresponde a 0.11 y la diferencia es de 0.0023. Concretamente, el coeficiente obtenido con FWL implica que una mujer recibe de media 11.06% menos ingresos por hora que un hombre, mientras que con el coeficiente de bootstrap una mujer recibe en promedio 10.83% menos ingresos por hora que un hombre. Es decir que al calcular el coeficiente usando FWL con una sola iteración y la muestra original, una mujer obtiene 0.23 puntos porcentuales más en sus ingresos por hora que obteniendo el mismo coeficiente como el promedio de 1000 iteraciones con remuestreo bootstrap.
+
+Por su parte, el error estándar para ambos métodos se diferencia en 0.0011, siendo mayor el obtenido con bootstrap, pero sin que por ello pueda considerarse no significativo estadísticamente el coeficiente a un nivel de significancia inferior al 5%. El coeficiente obtenido con bootstrap es más preciso pues corresponde a la desviación estandar del conjunto de coeficientes obtenidos para cada iteración con el remuestreo bootstrap, por lo que el acervo de datos es mayor que para el método de FWL sencillo. Adicionalmente, para ambos métodos está ausente el supuesto de homoscedasticidad, por lo que el error estándar calculado se ajusta más a la realidad. 
+
 c\. Luego, grafique el perfil de edad-salario predicho y estima
 las edades en las que se alcanza el pico salarial, junto con los
 respectivos intervalos de confianza por género.
+
+```{r}
+fwl_boot_fn <- function(data, index) {
+  sample_data <- data[index, ]
+  
+  r_wage <- residuals(lm(log_hourly_inglab ~ factor(oficio) + factor(relab) + factor(p6210) + factor(formal), data = sample_data))
+  r_age <- residuals(lm(age ~ factor(oficio) + factor(relab) + factor(p6210) + factor(formal), data = sample_data))
+  r_female <- residuals(lm(female ~ factor(oficio) + factor(relab) + factor(p6210) + factor(formal), data = sample_data))
+  
+  coef(lm(r_wage ~ r_age + I(r_age^2) + r_female))
+}
+
+# Aplicamos bootstrap con 1000 iteraciones
+set.seed(10101)
+fwl_boot <- boot(clean_geih, fwl_boot_fn, R = 10)
+
+# Extraer estimaciones
+boot_coefs <- apply(fwl_boot$t, 2, mean)  # Media de los coeficientes
+
+edad_seq <- seq(18, 94, by = 1)
+
+# Transformar predicciones de log-salario a salario en COP
+# Para hombres
+salario_pred_male <- exp(8.301 + boot_coefs[2] * edad_seq + boot_coefs[3] * edad_seq^2)
+salario_pred_female <- exp(8.301 + boot_coefs[2] * edad_seq + boot_coefs[3] * edad_seq^2 + boot_coefs[4])
+
+salario_boot_pred_male <- apply(fwl_boot$t, 1, function(b) exp(8.301 + b[2] * edad_seq + b[3] * edad_seq^2))
+salario_ic_male <- apply(salario_boot_pred_male, 1, quantile, probs = c(0.025, 0.975))
+
+salario_boot_pred_female <- apply(fwl_boot$t, 1, function(b) exp(8.301 + b[2] * edad_seq + b[3] * edad_seq^2 + b[4]))
+salario_ic_female <- apply(salario_boot_pred_female, 1, quantile, probs = c(0.025, 0.975))
+
+# Crear data frame para ggplot
+df_plot <- data.frame(
+  edad = rep(edad_seq, 2),  
+  salario = c(salario_pred_male, salario_pred_female),
+  salario_lower = c(salario_ic_male[1,], salario_ic_female[1,]),
+  salario_upper = c(salario_ic_male[2,], salario_ic_female[2,]),
+  gender = rep(c("Male", "Female"), each = length(edad_seq))
+)
+
+# Gráfica con ggplot2
+ggplot(df_plot, aes(x = edad, y = salario, color = gender, fill = gender)) +
+  geom_line(size = 1) +
+  geom_ribbon(aes(ymin = salario_lower, ymax = salario_upper), alpha = 0.2) +
+  scale_y_continuous(labels = scales::comma_format(scale = 1)) +  # Formato de miles de COP
+  labs(title = "Perfil de edad-salario predicho por género",
+       x = "Edad",
+       y = "Salario por hora (miles de COP)",
+       color = "Género",
+       fill = "Género") +
+  theme_minimal()
+
+```
 
 Al presentar y discutir tus resultados, incluya:
 
