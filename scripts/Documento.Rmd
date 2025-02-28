@@ -42,44 +42,37 @@ figure_results_path <- "../results/figures"
 
 ## Problema
 
-Parte de los obstáculos más significativos para la equidad
-tributaria y la sostenibilidad fiscal en Colombia es la falta de
-información precisa sobre los ingresos reales de los
-contribuyentes, lo que facilita la subdeclaración de renta. Tanto
-en el sector formal como en el informal, esta práctica dificulta
-la correcta determinación de la base gravable y genera
-distorsiones en la distribución de la carga tributaria. Como
-resultado, se establece una dinámica desigual en la que quienes
-cumplen con sus obligaciones fiscales terminan asumiendo una
-mayor carga impositiva para compensar la evasión de quienes
-subdeclaran sus ingresos. Esta situación no solo afecta la
-equidad del sistema tributario, sino que también debilita la
-confianza en la administración fiscal y en el cumplimiento de las
-normas tributarias.
+Uno de los principañes desafíos para la equidad tributaria y la
+sostenibilidad fiscal en Colombia es la subdeclaración de
+ingresos, una práctica facilitada por la falta de información
+precisa sobre los ingresos reales de los contribuyentes. Esto en
+particular, afecta tanto al sector formal como el informal,
+dificultando la correcta determinación de la base gravable y
+generando distorsiones en la distribución de la carga tributaria.
 
-La subdeclaración de ingresos tiene un impacto directo en el
-déficit fiscal del país, que, según el [**Marco Fiscal de Mediano
-Plazo**](minhacienda.gov.co/w/minhacienda-presenta-el-marco-fiscal-de-mediano-plazo-2024),
-representa aproximadamente el 5,6% del Producto Interno Bruto
-(PIB), equivalente a cerca de **US\$17.000 millones anuales**. En
-un contexto donde el Gobierno busca fortalecer su capacidad de
+En este sentido, la subdeclaración de ingresos incide
+directamente en el déficit fiscal del país, que, según el
+[**Marco Fiscal de Mediano Plazo**](#0), representa
+aproximadamente el 5,6% del Producto Interno Bruto (PIB),
+equivalente a cerca de **US\$17.000 millones anuales**. En un
+contexto donde el Gobierno busca fortalecer su capacidad de
 inversión y cumplir con compromisos sociales, la insuficiencia de
 ingresos tributarios aumenta la necesidad de recurrir al
-endeudamiento, lo que pone en riesgo la sostenibilidad del gasto
-público. Esta limitación compromete la capacidad del Estado para
-financiar servicios esenciales e implementar programas sociales,
-afectando de manera desproporcionada a las poblaciones más
+endeudamiento público, poniendo en riesgo la sostenibilidad del
+gasto. Asimismo, esta limitación compromete la capacidad del
+Estado para financiar servicios esenciales y ejecutar programas
+sociales, afectando de manera directa a las poblaciones más
 vulnerables y profundizando las desigualdades estructurales del
 país.
 
 La mejora en la distribución del ingreso, más allá de la simple
 reducción de la pobreza, se ha convertido en un objetivo
 prioritario de la política pública en general y de la política
-fiscal en particular (Henríquez, 2015). En este sentido, la
-elevada informalidad en la economía colombiana agrava la
-problemática de la subdeclaración, ya que muchas transacciones
-quedan fuera del control del Estado, impidiendo una
-redistribución eficiente de los recursos.
+fiscal en particular (Henríquez, 2015). En este contexto, la alta
+informalidad en la economía colombiana agrava la problemática de
+la subdeclaración, ya que un gran volumen de transacciones quedan
+fuera del control del Estado, impidiendo una redistribución
+eficiente de los recursos.
 
 Considerando lo anterior, la implementación de modelos
 predictivos en la fiscalización tributaria representa una
@@ -92,10 +85,9 @@ recursos destinados al financiamiento de políticas sociales.
 Asimismo, su aplicación contribuye a reducir los costos
 administrativos de los métodos tradicionales de fiscalización y a
 abordar el problema del subreporte de información, mejorando la
-calidad y precisión de los datos tributarios. De esta manera,
-facilita la elaboración de presupuestos más ajustados a la
-realidad fiscal del país, promoviendo una gestión pública más
-eficiente.
+calidad y precisión de los datos tributarios, facilitando la
+elaboración de presupuestos más ajustados a la realidad fiscal
+del país y promoviendo una gestión pública más eficiente.
 
 Yáñez Henríquez, J. (2016). Evasión tributaria: atentado a la
 equidad. *Revista De Estudios Tributarios*, (13), pág. 171–206.
@@ -185,79 +177,65 @@ de los datos y la elección de las variables,
 (b) Describa el proceso de adquisición de los datos y si existen
 restricciones para acceder a ellos o para realizar scraping.
 
-Para extraer los datos, primero accedimos al enlace [GEIH 2018
-Sample](https://ignaciomsarmiento.github.io/GEIH2018_sample/page1.html)
-e inspeccionamos el código HTML subyacente. En este proceso,
-identificamos el elemento `<table>` que contenía los datos de
-interés. Sin embargo, al intentar extraer la tabla utilizando el
-paquete `rvest` en R, el resultado fue un objeto vacío. Al
-analizar con más detenimiento la carga de la página, notamos que
-la tabla se encontraba entre los últimos elementos en aparecer,
-lo que nos llevó a suponer que, aunque nuestro código lograba
-acceder al HTML de la página, el elemento `<table>` aún no estaba
-disponible cuando finalizaba la secuencia de extracción en R.
+A partir del enlace [**GEIH 2018
+Sample**](https://ignaciomsarmiento.github.io/GEIH2018_sample/page1.html),
+se analizó el código HTML subyacente para identificar la etiqueta
+correspondiente a la tabla que contenía los datos de interés. Sin
+embargo, al extraer la información, el resultado obtenido fue un
+objeto vacío. Para abordar este desafío, se inspeccionó la
+pestaña Network del inspector web con el fin de analizar la
+secuencia de carga de los elementos.
 
-Ante esta situación, decidimos revisar la pestaña "Network" del
-inspector web y recargar la página para observar la secuencia en
-la que se cargaban los elementos. En este análisis, identificamos
-que el archivo `geih_page_1.html` contenía exclusivamente la
-tabla con los datos deseados y que su Request URL era [GEIH Page
-1](https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_1.html).
-Al acceder directamente a este enlace, confirmamos que la tabla
-se encontraba allí sin necesidad de esperar tiempos de carga
-adicionales.
-
-Con esta información, utilizamos `rvest` para extraer la tabla y
-convertirla en un `data.frame`. Luego, implementamos un bucle en
-R para iterar sobre las diferentes páginas de datos, siguiendo el
-patrón de URL
-`"https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_%d.html"`.
-El bucle se ejecutó 10 veces, reemplazando `%d` con el número
-correspondiente a cada iteración y concatenando progresivamente
-las tablas extraídas. Al finalizar este proceso, obtuvimos una
-tabla consolidada con dimensiones **32,177 x 177**, lista para su
-análisis.
+Durante este análisis, se identificó que el archivo con los datos
+requeridos estaba asociado a una [Request URL
+específica](https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_1.html).
+Una vez localizada la fuente de los datos, se empleó la técnica
+de web scraping aprendida en clase, utilizando el paquete `rvest`
+en R, para extraer la información de manera estructurada.
+Posteriormente, se implementó un bucle que se ejecutó 10 veces,
+permitiendo iterar sobre las distintas páginas de datos,
+concatenando progresivamente las tablas extraídas. Como
+resultado, se obtuvo un dataframe con dimensiones 32,177 x 177.
 
 \
 (c) Describa el proceso de limpieza de los datos.
 
 #### Proceso de filtrado y preparación de datos
 
-Para el análisis, filtramos la base de datos para incluir
+Para el análisis, se filtró la base de datos para incluir
 únicamente las observaciones correspondientes a individuos
-ocupados (`ocu == 1`) mayores de edad (`age >= 18`). Con el
-objetivo de garantizar la coherencia de los datos, verificamos
-que la población en edad de trabajar (`wap == 1`) incluyera tanto
-a la población económicamente activa (`pea == 1`) como a la
-población inactiva (`inac == 1`). Adicionalmente, corroboramos
-que la población económicamente activa estuviera compuesta por
-ocupados y desocupados (`dsi == 1`). Una vez confirmada la
-consistencia de estas categorías, procedimos con el filtrado de
-datos.
+ocupados (`ocu == 1`) mayores de edad (`age ≥ 18`). Con el fin de
+garantizar la coherencia de los datos, se verificó que la
+población en edad de trabajar (`wap == 1`) incluyera tanto a la
+población económicamente activa (`pea == 1`) como a la población
+inactiva (`inac == 1`). Asimismo, se corroboró que la población
+económicamente activa estuviera compuesta por individuos ocupados
+y desocupados (`dsi == 1`). Una vez confirmada la consistencia de
+estas categorías, se procedió con el filtrado de datos.
 
-Posteriormente, asignamos un identificador único a cada
+Posteriormente, se asignó un identificador único a cada
 observación mediante la concatenación de los valores de las
-variables `directorio`, `secuencia_p` y `oeden`, que corresponden
-al identificador de vivienda, hogar y persona, respectivamente.
-Antes de este proceso, verificamos que la combinación de estos
-códigos fuera única para cada fila, garantizando la integridad de
-la identificación individual.
+variables directorio, secuencia_p y orden, que corresponden al
+identificador de vivienda, hogar y persona, respectivamente.
+Previo a este procedimiento, se verificó que la combinación de
+estos códigos fuera única para cada fila, garantizando la
+integridad en la identificación individual.
 
 #### Construcción de variables
 
-Una vez establecidos los filtros y las identificaciones,
-seleccionamos las variables relevantes para el análisis. La
-variable dependiente se construyó a partir de la suma de diversas
-categorías de ingresos (`impa`, `impaes`, `isa`, `isaes`, `ie`,
-`iees`, `p6630s4a1`). En particular, la variable `p6630s4a1`, que
-representa el valor de los viáticos recibidos en el año anterior,
-fue ajustada dividiéndola entre 12 para mantener la unidad
-temporal mensual, alineándola con el resto de los conceptos de
-ingresos.
+Una vez establecidos los filtros y asginados los identificadores,
+se seleccionaron las variables relevantes para el análisis. En
+primer lugar, la variable dependiente se construyó a partir de la
+suma de diversas categorías de ingresos (`impa`, `impaes`, `isa`,
+`isaes`, `ie`, `iees`, `p6630s4a1`). En particular, la variable
+`p6630s4a1`, que representa el valor de los viáticos recibidos en
+el año anterior, fue ajustada dividiéndola entre 12 para mantener
+la unidad temporal mensual, alineándola con el resto de los
+conceptos de ingresos.
 
-Adicionalmente, construimos una variable representativa de las
-horas trabajadas mensualmente por cada individuo. Para ello,
-utilizamos las variables `hoursWorkUsual` y
+Adicionalmente, se construyó una variable representativa de las
+horas trabajadas mensualmente por cada individuo. Para ello, se
+utilizaron las variables `hoursWorkUsual` y
 `hoursWorkActualSecondJob`, que indican la cantidad de horas
 trabajadas durante la semana anterior. Para obtener una
 estimación anual, multiplicamos ambas variables por 49, asumiendo
@@ -272,14 +250,13 @@ para obtener el total de horas trabajadas por mes.
 
 Dado que algunas observaciones presentaban valores faltantes en
 las variables de ingresos y horas trabajadas, realizamos un
-procedimiento de imputación. Para ello, agrupamos las
+procedimiento de imputación. Para ello, se agruparon las
 observaciones por estrato socioeconómico y calculamos el promedio
 de ingresos y de horas trabajadas dentro de cada grupo,
-utilizando estos valores como imputaciones para las observaciones
-con datos faltantes. Posteriormente, construimos la variable
-`hourly_inglab`, que representa el ingreso laboral por hora
-trabajada, dividiendo los ingresos mensuales por la cantidad de
-horas trabajadas mensualmente.
+utilizando estos valores como imputaciones. Posteriormente, se
+cosntruyó la variable `log_hourly_inglab`, que representa el
+ingreso laboral por hora trabajada, dividiendo los ingresos
+mensuales por la cantidad de horas trabajadas mensualmente.
 
 #### Ajustes finales
 
@@ -298,21 +275,50 @@ justificación de la elección de los datos. Utilice su
 conocimiento profesional para agregar valor a esta sección. No lo
 presente como una lista "seca" de ingredientes.
 
-Nuestra variable explicada, `hourly_inglab`, requirió un proceso
-detallado de construcción, dado que no se encontraba directamente
-en la base de datos de la Gran Encuesta Integrada de Hogares
-(GEIH). Para su cálculo, partimos de diversas fuentes de ingreso
-laboral que fueron seleccionadas considerando el concepto de
-rentas laborales definido por la Dirección de Impuestos y Aduanas
-Nacionales (DIAN), el cual comprende exclusivamente aquellos
-ingresos derivados de la actividad laboral de una persona. La
-variable se construyó a partir del ingreso mensual por la primera
-actividad antes de imputación (`impa`), el ingreso mensual
-imputado por la primera actividad (`impaes`), el ingreso mensual
-por la segunda actividad antes de imputación (`isa`), el ingreso
-mensual imputado por la segunda actividad (`isaes`), el ingreso
-mensual en especie antes de imputación (`ie`), el ingreso mensual
-en especie imputado (`iees`) y el valor anual de viáticos
+*La decisión de construir nuestra propia variable de ingresos por
+hora, **log_hourly_inglab**, se fundamentó en dos razones
+principales: una metodológica y otra basada en intuición
+económica. Desde un punto de vista metodológico, la variable de
+ingresos por hora disponible creada en la base de datos inicial
+presentaba una cantidad considerable de valores faltantes, lo que
+reducía la muestra en aproximadamente un 40% tras la aplicación
+de los filtros de selección. Esta pérdida de observaciones habría
+limitado la el nuestro análisis, disminuyendo la robustez de las
+estimaciones.*
+
+*Por otro lado, desde una perspectiva de intuición económica, el
+análisis detallado de la documentación de la GEIH reveló la
+existencia de variables adicionales que permitían estimar de
+manera más integral los ingresos laborales. Para su cálculo, se
+tomaron en cuenta múltiples fuentes de ingreso laboral, siguiendo
+el concepto de rentas laborales definido por la Dirección de
+Impuestos y Aduanas Nacionales (DIAN), el cual incluye
+exclusivamente ingresos derivados de la actividad laboral de una
+persona.*
+
+*estaPara ello, combinamos diversas categorías de ingresos
+laborales, incluyendo remuneraciones por la primera y segunda
+actividad, tanto antes como después de imputación, ingresos en
+especie y viáticos ajustados a valores mensuales. De esta manera,
+logramos reducir la cantidad de valores faltantes y mejorar la
+calidad de la variable dependiente, alineándola mejor con la
+realidad económica del país.*
+
+Nuestra variable explicada, `log_hourly_inglab`, requirió un
+proceso detallado de construcción, dado que no se encontraba
+directamente en la base de datos de la Gran Encuesta Integrada de
+Hogares (GEIH). Para su cálculo, partimos de diversas fuentes de
+ingreso laboral que fueron seleccionadas considerando el concepto
+de rentas laborales definido por la Dirección de Impuestos y
+Aduanas Nacionales (DIAN), el cual comprende exclusivamente
+aquellos ingresos derivados de la actividad laboral de una
+persona. La variable se construyó a partir del ingreso mensual
+por la primera actividad antes de imputación (`impa`), el ingreso
+mensual imputado por la primera actividad (`impaes`), el ingreso
+mensual por la segunda actividad antes de imputación (`isa`), el
+ingreso mensual imputado por la segunda actividad (`isaes`), el
+ingreso mensual en especie antes de imputación (`ie`), el ingreso
+mensual en especie imputado (`iees`) y el valor anual de viáticos
 (`p6630s4a1`), que fue ajustado a valores mensuales dividiéndolo
 entre doce.
 
@@ -332,22 +338,99 @@ en \$5.204 COP, lo que evidencia un sesgo a la derecha en la
 distribución de la variable, dado que la diferencia entre la
 mediana y la media es considerable.
 
-Dentro de nuestras variables explicativas, incluimos la edad,
-cuya media es de 39 años, con un rango que oscila entre los 18 y
-los 94 años, mostrando una distribución aproximadamente normal.
-También consideramos el sexo de los individuos a través de la
-variable dicotómica `female`, en la que el 47% de los encuestados
-son mujeres y el 53% son hombres. Adicionalmente, incluimos el
-nivel educativo de los encuestados mediante la variable `p6210`,
-que toma valores entre 1 y 6, donde 1 corresponde a personas sin
-educación formal y 6 a aquellas con educación universitaria,
-mientras que los valores intermedios reflejan distintos niveles
-educativos. En nuestra muestra, la media de esta variable se
-encuentra en 5, lo que indica que el nivel educativo más
-frecuente es la educación secundaria. La inclusión de esta
-variable responde a la importancia ampliamente documentada que
-tiene el acceso a la educación en la determinación del nivel de
-ingresos de una persona.
+*Entre las variables explicativas, se incluyó la **edad**, dado
+que es un factor reconocido en la literatura como determinante
+del ingreso laboral pues refleja tanto la acumulación de
+experiencia como la posible depreciación del capital humano en
+edades avanzadas. Esta variable obtuvo como media 39 años, con un
+rango que oscila entre los 18 y los 94 años, mostrando una
+distribución aproximadamente normal.*
+
+*Como parte del anális, se incorporó la variable de género para
+analizar la brecha de ingresos entre hombres y mujeres, a su vez
+que permite evaluar si incluso controlando por otras
+características individuales y laborales, persisten disparidades
+en su ingreso. La variable **female**, que identifica a las
+mujeres en la muestra, refleja una distribución del 47% para
+mujeres y 53% para hombres.*
+
+*Asimismo, se incluyó el **nivel educativo** como un factor
+determinante en los ingresos. Esta variable toma valores de 1 a
+6, donde 1 corresponde a personas sin educación formal y 6 a
+aquellas con educación universitaria, mientras que los valores
+intermedios representan distintos niveles educativos. En la
+muestra, con la frecuencia más alta se encuentra la categoría 5,
+lo que indica que la educación secundaria es el nivel educativo
+más recurrente entre los entrevistados.*
+
+*De igual manera, se consideró que las características laborales
+desempeñan un papel clave en las diferencias salariales. Por esta
+razón, se incluyó la variable de **ocupación**, que clasifica a
+los individuos según su actividad económica. Dicha variable
+abarca 80 categorías distintas y permite identificar cómo la
+remuneración varía entre sectores y tipos de empleo. En la
+muestra, las ocupaciones más frecuentes corresponden a vendedores
+ambulantes, domiciliarios, vendedores de loterías, periódicos y
+comerciantes.*
+
+*Por otro lado, se incorporó la variable de relación laboral, la
+cual distingue entre trabajadores asalariados, independientes y
+otras formas de vinculación laboral. Esta variable cuenta con
+nueve categorías, siendo las más comunes las de obrero o empleado
+de una empresa particular. De este modo, su inclusión permite
+evaluar cómo el tipo de vínculo laboral influye en la estructura
+salarial y en las posibles diferencias en los ingresos.*
+
+*Otra de las variables clave para el análisis es **formal,** la
+cual indica si un trabajador está afiliado a la seguridad social.
+Su inclusión permite diferenciar entre empleos que ofrecen mayor
+estabilidad y beneficios frente a aquellos en condiciones más
+precarias, lo que es relevante para evaluar desigualdades en el
+mercado laboral. En nuestra muestra, el 58.6% de los individuos
+se clasifica como formal, una cifra consistente con el 60.7%
+reportado en el Boletín Técnico GEIH del DANE para el periodo
+diciembre 2018 - febrero 2019 en Bogotá, lo que refuerza la
+representatividad de los datos.*
+
+*Finalmente, se incorporó el **estrato socioeconómico** como un
+indicador complementario de las condiciones de vida de los
+individuos, proporcionando contexto sobre las diferencias en
+acceso a bienes y servicios. Esta variable oscila entre 1 y 6,
+con una media de 2.6 y una mediana de 2. Su distribución muestra
+un sesgo hacia la derecha, ya que hasta el percentil 75 los
+individuos pertenecen al estrato 3. Esto sugiere que solo el 25%
+de la muestra reside en estratos superiores, lo que refleja la
+concentración de la población en niveles socioeconómicos bajos y
+medios.*
+
+Asimismo, se incoporó la variable de **género** de los
+individuos, considerando la presencia de brecha de ingresos entre
+hombres y mujeres, lo que permite evaluar las diferencias. A
+través de la variable `female`, que identifica a las mujeres de
+la muestra la cual destaca en proporciones que corresponden al
+47% de los encuestados y el 53% corresponde a los hombres. En
+este mismo sentido, se incorporó el nivel educativo como un
+determinante en los ingresos, esta variable toma valores entre 1
+y 6, donde 1 corresponde a personas sin educación formal y 6 a
+aquellas con educación universitaria, mientras que los valores
+intermedios reflejan distintos niveles educativos. En la muestra,
+la media de esta variable se encuentra en 5, lo que indica que el
+nivel educativo más frecuente es la educación secundaria.
+
+Para el anális, se considera que las características laborales
+que son igualmente relevantes en la relación de las diferencias
+salariales. Por esto, la variable ocupación, que clasifica los
+individuos según su actividad económica, fue agregada en la base
+de datos. Esta variable en particular cuenta con 80 actividades
+diferentes pero permite reconocer que la remuneración entre
+sectores y tipo de empleo pueden. En la muestra, la ocupación más
+frecuente corresponde a vendedores ambulantes, domiciliarios,
+vendedores de loterías, periódicos y comerciantes. De igual
+forma, la variable vinculada a relación laboral, permite
+disntinguir entre los trabajadores asalariados, independientes, y
+aquellos con otro tipo de vinculación laboral. En esta variable
+de 9 categorías distintas, la actividad de obrero o empleado de
+una empresa particular estas dos son las más comunes.
 
 Además de estas variables principales, incluimos otras variables
 de control que consideramos relevantes para el análisis. La
@@ -815,9 +898,31 @@ print(tabla_comparacion)
 
 Compare las estimaciones y los errores estándar.
 
-Como se aprecia en la tabla, los coeficientes obtenidos con ambos métodos tienen el mismo signo, lo que implica que en promedio una mujer recibe menos ingresos por hora que un hombre. La magnitud de ambos coeficientes es similar, dado que corresponde a 0.11 y la diferencia es de 0.0023. Concretamente, el coeficiente obtenido con FWL implica que una mujer recibe de media 11.06% menos ingresos por hora que un hombre, mientras que con el coeficiente de bootstrap una mujer recibe en promedio 10.83% menos ingresos por hora que un hombre. Es decir que al calcular el coeficiente usando FWL con una sola iteración y la muestra original, una mujer obtiene 0.23 puntos porcentuales más en sus ingresos por hora que obteniendo el mismo coeficiente como el promedio de 1000 iteraciones con remuestreo bootstrap.
+Como se aprecia en la tabla, los coeficientes obtenidos con ambos
+métodos tienen el mismo signo, lo que implica que en promedio una
+mujer recibe menos ingresos por hora que un hombre. La magnitud
+de ambos coeficientes es similar, dado que corresponde a 0.11 y
+la diferencia es de 0.0023. Concretamente, el coeficiente
+obtenido con FWL implica que una mujer recibe de media 11.06%
+menos ingresos por hora que un hombre, mientras que con el
+coeficiente de bootstrap una mujer recibe en promedio 10.83%
+menos ingresos por hora que un hombre. Es decir que al calcular
+el coeficiente usando FWL con una sola iteración y la muestra
+original, una mujer obtiene 0.23 puntos porcentuales más en sus
+ingresos por hora que obteniendo el mismo coeficiente como el
+promedio de 1000 iteraciones con remuestreo bootstrap.
 
-Por su parte, el error estándar para ambos métodos se diferencia en 0.0011, siendo mayor el obtenido con bootstrap, pero sin que por ello pueda considerarse no significativo estadísticamente el coeficiente a un nivel de significancia inferior al 5%. El coeficiente obtenido con bootstrap es más preciso pues corresponde a la desviación estandar del conjunto de coeficientes obtenidos para cada iteración con el remuestreo bootstrap, por lo que el acervo de datos es mayor que para el método de FWL sencillo. Adicionalmente, para ambos métodos está ausente el supuesto de homoscedasticidad, por lo que el error estándar calculado se ajusta más a la realidad. 
+Por su parte, el error estándar para ambos métodos se diferencia
+en 0.0011, siendo mayor el obtenido con bootstrap, pero sin que
+por ello pueda considerarse no significativo estadísticamente el
+coeficiente a un nivel de significancia inferior al 5%. El
+coeficiente obtenido con bootstrap es más preciso pues
+corresponde a la desviación estandar del conjunto de coeficientes
+obtenidos para cada iteración con el remuestreo bootstrap, por lo
+que el acervo de datos es mayor que para el método de FWL
+sencillo. Adicionalmente, para ambos métodos está ausente el
+supuesto de homoscedasticidad, por lo que el error estándar
+calculado se ajusta más a la realidad.
 
 c\. Luego, grafique el perfil de edad-salario predicho y estima
 las edades en las que se alcanza el pico salarial, junto con los
