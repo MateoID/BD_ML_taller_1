@@ -45,15 +45,16 @@ figure_results_path <- "../results/figures"
 
 ## Problema
 
-Uno de los principales desafíos para la equidad tributaria y la
+*Uno de los principales desafíos para la equidad tributaria y la
 sostenibilidad fiscal en Colombia es la subdeclaración de
 ingresos, una práctica facilitada por la ausencia de información
 precisa sobre los ingresos reales de los contribuyentes. Esto en
 particular, afecta tanto al sector formal como el informal,
 dificultando la correcta determinación de la base gravable y
-generando distorsiones en la distribución de la carga tributaria.
+generando distorsiones en la distribución de la carga
+tributaria.*
 
-En este sentido, la subdeclaración de ingresos incide
+*En este sentido, la subdeclaración de ingresos incide
 directamente en el déficit fiscal del país, que, según el
 [**Marco Fiscal de Mediano Plazo**](#0), representa
 aproximadamente el 5,6% del Producto Interno Bruto (PIB),
@@ -66,18 +67,18 @@ gasto. Asimismo, esta limitación compromete la capacidad del
 Estado para financiar servicios esenciales y ejecutar programas
 sociales, afectando de manera directa a las poblaciones más
 vulnerables y profundizando las desigualdades estructurales del
-país.
+país.*
 
-La mejora en la distribución del ingreso, más allá de la simple
+*La mejora en la distribución del ingreso, más allá de la simple
 reducción de la pobreza, se ha convertido en un objetivo
 prioritario de la política pública en general y de la política
 fiscal en particular (Henríquez, 2015). En este contexto, la alta
 informalidad en la economía colombiana agrava la problemática de
 la subdeclaración, ya que un gran volumen de transacciones quedan
 fuera del control del Estado, impidiendo una redistribución
-eficiente de los recursos.
+eficiente de los recursos.*
 
-Considerando lo anterior, la implementación de modelos
+*Considerando lo anterior, la implementación de modelos
 predictivos en la fiscalización tributaria representa una
 herramienta clave para mejorar la detección de fraudes fiscales y
 optimizar la recaudación. Estos modelos no solo permiten
@@ -90,7 +91,7 @@ administrativos de los métodos tradicionales de fiscalización y a
 abordar el problema del subreporte de información, mejorando la
 calidad y precisión de los datos tributarios, facilitando la
 elaboración de presupuestos más ajustados a la realidad fiscal
-del país y promoviendo una gestión pública más eficiente.
+del país y promoviendo una gestión pública más eficiente.*
 
 Yáñez Henríquez, J. (2016). Evasión tributaria: atentado a la
 equidad. *Revista De Estudios Tributarios*, (13), pág. 171–206.
@@ -180,17 +181,17 @@ de los datos y la elección de las variables,
 (b) Describa el proceso de adquisición de los datos y si existen
 restricciones para acceder a ellos o para realizar scraping.
 
-A partir del enlace [**GEIH 2018
+*A partir del enlace [**GEIH 2018
 Sample**](https://ignaciomsarmiento.github.io/GEIH2018_sample/page1.html),
 se analizó el código HTML subyacente para identificar la etiqueta
 correspondiente a la tabla que contenía los datos de interés. Sin
 embargo, al extraer la información, el resultado obtenido fue un
 objeto vacío. Para abordar este desafío, se inspeccionó la
 pestaña Network del inspector web con el fin de analizar la
-secuencia de carga de los elementos.
+secuencia de carga de los elementos.*
 
-Durante este análisis, se identificó que el archivo con los datos
-requeridos estaba asociado a una [Request URL
+*Durante este análisis, se identificó que el archivo con los
+datos requeridos estaba asociado a una [Request URL
 específica](https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_1.html).
 Una vez localizada la fuente de los datos, se empleó la técnica
 de web scraping aprendida en clase, utilizando el paquete `rvest`
@@ -198,14 +199,14 @@ en R, para extraer la información de manera estructurada.
 Posteriormente, se implementó un bucle que se ejecutó 10 veces,
 permitiendo iterar sobre las distintas páginas de datos,
 concatenando progresivamente las tablas extraídas. Como
-resultado, se obtuvo un dataframe con dimensiones 32,177 x 177.
+resultado, se obtuvo un dataframe con dimensiones 32,177 x 177.*
 
 \
 (c) Describa el proceso de limpieza de los datos.
 
 #### Proceso de filtrado y preparación de datos
 
-Para el análisis, se filtró la base de datos para incluir
+*Para el análisis, se filtró la base de datos para incluir
 únicamente las observaciones correspondientes a individuos
 ocupados (`ocu == 1`) mayores de edad (`age ≥ 18`). Con el fin de
 garantizar la coherencia de los datos, se verificó que la
@@ -214,29 +215,29 @@ población económicamente activa (`pea == 1`) como a la población
 inactiva (`inac == 1`). Asimismo, se corroboró que la población
 económicamente activa estuviera compuesta por individuos ocupados
 y desocupados (`dsi == 1`). Una vez confirmada la consistencia de
-estas categorías, se procedió con el filtrado de datos.
+estas categorías, se procedió con el filtrado de datos.*
 
-Posteriormente, se asignó un identificador único a cada
+*Posteriormente, se asignó un identificador único a cada
 observación mediante la concatenación de los valores de las
 variables directorio, secuencia_p y orden, que corresponden al
 identificador de vivienda, hogar y persona, respectivamente.
 Previo a este procedimiento, se verificó que la combinación de
 estos códigos fuera única para cada fila, garantizando la
-integridad en la identificación individual.
+integridad en la identificación individual.*
 
 #### Construcción de variables
 
-Una vez establecidos los filtros y asginados los identificadores,
-se seleccionaron las variables relevantes para el análisis. En
-primer lugar, la variable dependiente se construyó a partir de la
-suma de diversas categorías de ingresos (`impa`, `impaes`, `isa`,
-`isaes`, `ie`, `iees`, `p6630s4a1`). En particular, la variable
-`p6630s4a1`, que representa el valor de los viáticos recibidos en
-el año anterior, fue ajustada dividiéndola entre 12 para mantener
-la unidad temporal mensual, alineándola con el resto de los
-conceptos de ingresos.
+*Una vez establecidos los filtros y asginados los
+identificadores, se seleccionaron las variables relevantes para
+el análisis. En primer lugar, la variable dependiente se
+construyó a partir de la suma de diversas categorías de ingresos
+(`impa`, `impaes`, `isa`, `isaes`, `ie`, `iees`, `p6630s4a1`). En
+particular, la variable `p6630s4a1`, que representa el valor de
+los viáticos recibidos en el año anterior, fue ajustada
+dividiéndola entre 12 para mantener la unidad temporal mensual,
+alineándola con el resto de los conceptos de ingresos.*
 
-Adicionalmente, se construyó una variable representativa de las
+*Adicionalmente, se construyó una variable representativa de las
 horas trabajadas mensualmente por cada individuo. Para ello, se
 utilizaron las variables `hoursWorkUsual` y
 `hoursWorkActualSecondJob`, que indican la cantidad de horas
@@ -247,11 +248,11 @@ correspondientes a los 15 días hábiles de vacaciones que, en
 promedio, los trabajadores formales reciben anualmente.
 Finalmente, dividimos el resultado entre 12 para obtener la
 estimación mensual de horas trabajadas y sumamos ambas columnas
-para obtener el total de horas trabajadas por mes.
+para obtener el total de horas trabajadas por mes.*
 
 #### Imputación de datos faltantes
 
-Dado que algunas observaciones presentaban valores faltantes en
+*Dado que algunas observaciones presentaban valores faltantes en
 las variables de ingresos y horas trabajadas, realizamos un
 procedimiento de imputación. Para ello, se agruparon las
 observaciones por estrato socioeconómico y calculamos el promedio
@@ -259,15 +260,15 @@ de ingresos y de horas trabajadas dentro de cada grupo,
 utilizando estos valores como imputaciones. Posteriormente, se
 cosntruyó la variable `log_hourly_inglab`, que representa el
 ingreso laboral por hora trabajada, dividiendo los ingresos
-mensuales por la cantidad de horas trabajadas mensualmente.
+mensuales por la cantidad de horas trabajadas mensualmente.*
 
 #### Ajustes finales
 
-Finalmente, con el fin de facilitar la interpretación de la
+*Finalmente, con el fin de facilitar la interpretación de la
 variable `sex`, invertimos su codificación y la renombramos como
 `female`, de modo que su valor fuera 0 para hombres y 1 para
 mujeres, siguiendo las especificaciones del taller en cuanto a
-las variables de interés.
+las variables de interés.*
 
 \
 (d) Describa las variables incluidas en su análisis. Como mínimo,
@@ -479,20 +480,20 @@ estratos superiores de servicios públicos domiciliarios.
 ```{r}
 # Haciendo el webscraping - 
 # Funciona pero lo desactivo mientras trabajamos. Hay que activarlo al final
-   tabla_geih <- data.frame()
+  # tabla_geih <- data.frame()
    
-   for (i in 1:10){
-     my_url <- sprintf("https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_%d.html", i)
-     my_table <- read_html(my_url) %>% 
-       html_elements(xpath='/html/body/table') %>% 
-       html_table()
+  # for (i in 1:10){
+    # my_url <- sprintf("https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_%d.html", i)
+    # my_table <- read_html(my_url) %>% 
+     #  html_elements(xpath='/html/body/table') %>% 
+     #  html_table()
      
-     my_table <- as.data.frame(my_table)
+  #   my_table <- as.data.frame(my_table)
      
-     tabla_geih <- rbind(tabla_geih, my_table)
-   }
+  #   tabla_geih <- rbind(tabla_geih, my_table)
+  # }
 
- rm(my_table) #activar cuando se active el webscraping
+ #rm(my_table) #activar cuando se active el webscraping
 
 # exportando la data cruda
 # exportando la data cruda
@@ -669,14 +670,16 @@ $$ Al presentar y discutir tus resultados, incluye:
 
     #Transformación directa de variables de interés para el modelo
     clean_geih <- clean_geih %>% mutate(age_sq = age^2) 
-    clean_geih <- clean_geih %>% mutate(log_inglab = log(hourly_inglab)) 
 
     #Calculamos el modelo 
-    modelo_edad <- lm(log_inglab ~ age + age_sq, data = clean_geih)
+    modelo_edad <- lm(log_hourly_inglab ~ age + age_sq, data = clean_geih)
 
     #Tabla de resultados
     stargazer(modelo_edad, type = "text")
     ```
+
+**Agregar la discusion de la significancia economica de estos
+coeficientes**
 
 -   Una interpretación de los coeficientes y su significancia.
 
@@ -708,9 +711,6 @@ proporcionando una interpretación más precisa del impacto de la
 edad sobre el salario y evitando suposiciones erróneas de una
 relación lineal constante.*
 
-**Agregar la discusion de la significancia economica de estos
-coeficientes**
-
 -   Una discusión sobre el ajuste del modelo dentro de la
     muestra.
 
@@ -725,23 +725,24 @@ en los ingresos por hora no está siendo capturada por la edad ni
 por su transformación cuadrática, lo que limita la capacidad del
 modelo para describir la relación entre estas variables.*
 
+Asimismo, el Error Cuadrático Medio se utiliza como la métrica
+que permite evaluar el ajuste del modelo, en este caso, dentro de
+la muestra. Para la discusión del ajuste en este modelo en
+particular, el valor de MSE transformado a la escala original
+tiene un valor de 1.30, lo cual indica que en promedio, las
+predicciones del ingreso pueden desviarse 1.30 veces del valor
+real.
+
 ```{r}
 
 #MSE dentro de la muestra 
 pred <- predict(modelo_edad, clean_geih)
-mse <- mean((log_hourly_inglab - pred)^2)
+mse <- mean((clean_geih$log_hourly_inglab - pred)^2)
 rmse <- sqrt(mse)
-rmse_og <- exp(rmse)
-print(rmse_og)
+exp_rmse <- exp(rmse) - 1
+exp_rmse
 
 ```
-
-*un Mse bajo significa que el modelo predice bien el log(w) por
-lo que las predicciones del salario w despues de exponenciarlas
-estarn cerca de los valores reales. Mi MSE mide el error en la
-escala logarítmica por lo que se si se toma la raiz cuadrada del
-MSE se obtiene un valor que representa el error medio en la
-escala del log salario.*
 
 -   Un gráfico del perfil estimado de edad-ingresos implícito en
     la ecuación anterior, incluyendo un análisis de la edad en la
@@ -751,20 +752,29 @@ escala del log salario.*
 
 ```{r}
 #Para encontrar la edad máxima
-boot_model<- lm(log_hourly_inglab ~ age + age_sq, data = clean_geih)
-coefs<-boot_model$coef
+profile_model<- lm(hourly_inglab ~ age + age_sq, data = clean_geih)
+coefs<-coef(profile_model)
 
 #Obtener los coeficientes de la regresión en escalares
-b0<-coefs[1] 
-b1<-coefs[2]
-b2<-coefs[3] 
+b1<-coefs[1]
+b2<-coefs[2] 
+
+#Perfil del ingreso
+
+elast <- b1*clean_geih$age + 2*b2*(clean_geih$age_sq)
 
 #Se calcula la edad máxima 
-age_max <- round((-b1/(2*b2)),1)
+age_max <- (-b1/(2*b2))
 print(age_max)
-```
 
-Derivando la ecuación con respecto a la edad e igualando a cero
+# Graficar la relación edad-ingreso
+ggplot(clean_geih, aes(x = age, y = elast)) +
+  geom_line(color = "#2DAA9E", size = 1) + 
+  labs(title = "Relación Edad-Ingreso Estimada",
+       x = "Edad",
+       y = "Ingreso laboral horario") +
+  theme_minimal()
+```
 
 Esto significa que el salario crece con la edad hasta
 aproximadamente los 41 años de edad, a partir de este punto el
@@ -777,13 +787,13 @@ boot_func <- function(data,index)
 {
     boot_sample <- data[index, ]
     boot_model <-lm(log_inglab ~ age + age_sq,data, subset = boot_sample)
-    beta2_boot <- coef(boot_model)["age"]
-    beta3_boot <-  coef(boot_model)["age_sq"]
+    beta2_boot <- boot_model$coefficients[1]
+    beta3_boot <-  boot_model$coe["age_sq"]
     return(- beta2_boot / (2 * beta3_boot))
 }
 
 #Se aplica el bootstrap 
-boot__age <- boot(clean_geih, boot_func,10)
+boot__age <- boot(clean_geih, boot_func, 4835)
 boot_result
 
 #Para obtener los intervalos de confianza
@@ -1159,7 +1169,7 @@ set.seed(10101)
 
 #Dividimos la muestra para el entrenamiento 
 indices <- createDataPartition(
-  y = clean_geih$hourly_inglab,  ## La variable de interes
+  y = clean_geih$log_hourly_inglab,  ## La variable de interes
   p = .70, ## Porcentaje del set de entrenamiento
   list = FALSE
 )
