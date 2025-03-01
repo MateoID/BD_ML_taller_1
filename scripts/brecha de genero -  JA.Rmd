@@ -1,0 +1,539 @@
+---
+title: 'Proble Set 1: Prediciendo el ingreso'
+author: "Maria Camila Caraballo, Javier Amaya, Nicolas Moreno, Mateo Isaza"
+date: "2025-02-01"
+output:
+  html_document:
+    df_print: paged
+editor_options:
+  markdown:
+    wrap: 65
+---
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Limpieza del ambiente
+  rm(list = ls())
+  cat("\f")
+
+# Cargando los paquetes requeriods para el analisis
+library(pacman)
+
+
+p_load(rio, 
+       tidyverse, 
+       caret, 
+       gridExtra, 
+       skimr,  
+       stargazer,
+       boot,
+       rvest, 
+       ggplot
+)   
+
+# Declarando las rutas
+data_raw_path <- "../data/raw"
+data_processed_path <- "../data/processed"
+table_results_path <- "../results/tables"
+figure_results_path <- "../results/figures"
+
+```
+
+```{r, echo=FALSE}
+# Haciendo el webscraping - 
+# Funciona pero lo desactivo mientras trabajamos. Hay que activarlo al final
+  # tabla_geih <- data.frame()
+  # 
+  # for (i in 1:10){
+  #   my_url <- sprintf("https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_%d.html", i)
+  #   my_table <- read_html(my_url) %>% 
+  #     html_elements(xpath='/html/body/table') %>% 
+  #     html_table()
+  #   
+  #   my_table <- as.data.frame(my_table)
+  #   
+  #   tabla_geih <- rbind(tabla_geih, my_table)
+  # }
+
+# rm(my_table) activar cuando se active el webscraping
+
+# exportando la data cruda
+# exportando la data cruda
+#saveRDS(tabla_geih, file = "../data/raw/data_GEIH_raw.rds")
+tabla_geih <- readRDS(file.path(data_raw_path,"Data_GEIH_raw.rds"))
+
+# Limpieza de los datos
+clean_geih <- tabla_geih %>% 
+  filter(age >= 18, ocu == 1) %>% 
+  mutate(
+    directorio = as.factor(directorio),
+    secuencia_p = as.factor(secuencia_p),
+    orden = as.factor(orden),
+    id = paste(directorio, secuencia_p, orden, sep = "")) %>% 
+  select(
+    # Variables demográficas
+    'id', # Identificador único por individuo
+    'age', # Edad
+    'sex', # Sexo
+    'p6210', # Nivel educativo alcanzado 
+    'p6426', #antiguedad en la empresa 
+    
+    # Variables para utilizar en el cálculo de los ingresos por hora
+    'impa', # Ingreso mensual por la primera actividad antes de imputación
+    'impaes', # Ingreso mensual imputado por la primera actividad
+    'isa', # Ingreso mensual por la segunda actividad antes de imputación
+    'isaes', # Ingreso mensual imputado por la segunda actividad
+    'ie', # Ingreso mensual en especie antes de imputación
+    'iees', # Ingreso mensual en especia imputado
+    'p6630s4a1', # Valor anual viáticos
+    'hoursWorkUsual', # Horas trabajadas en la última semana
+    'hoursWorkActualSecondJob', # Horas trabajadas en la última semana por la segunda actividad
+    
+    # Otras variables de interes
+    'formal', # empleo formal
+    'sizeFirm', # tamaño de la firma
+    'oficio', # Oficio de la persona
+    'relab', # tipo de ocupación
+    'cuentaPropia', # Independiente
+    'estrato1', # Estrato
+    )
+
+# Calculando la variable viáticos anuales a viáticos mensuales
+clean_geih <-  clean_geih %>% 
+  mutate(p6630s4a1 = p6630s4a1 / 12)
+
+# Exportando la tabla con las variables seleccionadas
+save(clean_geih, file = file.path(data_processed_path,"data_GEIH_seleccionada.RData"))
+
+# Sumando los ingresos por diferentes conceptos para cada persona
+clean_geih$inglab <- rowSums(clean_geih[, c(
+  'impa', 
+  'impaes', 
+  'isa', 
+  'isaes', 
+  'ie', 
+  'iees',
+  'p6630s4a1'
+)], na.rm=TRUE)
+
+# Revisión de la variable ingresos laborales calculada
+sum(is.na(clean_geih$inglab)) # no tenemos NAs en la variable
+sum(clean_geih$inglab == 0) # tenemos 323 observaciones con ingresos = a cero lo cual no tiene sentido. 
+
+# Imputaciôn de promedio de ingresos por estrato y sexo para valores de ingreso que son iguales a cero.
+clean_geih <- clean_geih %>%
+  group_by(estrato1, sex) %>%
+  mutate(mean_inglab = mean(inglab[inglab != 0], na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(inglab = ifelse(inglab == 0, mean_inglab, inglab))
+#checkpoint: sum(clean_geih$inglab == 0)
+
+# Cálculo e imputación de horas trabajadas por mes
+clean_geih <- clean_geih %>% 
+  mutate(hour_month1 = (hoursWorkUsual * 49) / 12) %>% 
+  mutate(hour_month2 = (hoursWorkActualSecondJob * 49) / 12)
+
+clean_geih$total_hours <- rowSums(clean_geih[, c('hour_month1', 'hour_month2')], na.rm=TRUE) 
+summary(clean_geih$total_hours)
+
+# Cálculo de ingresos laborales por hora
+clean_geih <- clean_geih %>% 
+  mutate(hourly_inglab = inglab / total_hours)
+
+# Checkpoint sexo pretransformación: 
+# table(clean_geih$female)
+
+# Convirtiendo la variable sexo a female
+clean_geih <- clean_geih %>% 
+  mutate(female = ifelse(sex == 1, 0, 1)) %>%   # Variable female para el análisis de brecha de género
+  mutate(p6210 = ifelse(p6210 == 9, 1, p6210)) %>%
+  mutate(log_hourly_inglab = log(hourly_inglab)) %>% # creando la variable log del salario hora
+  select(                                            # seleccionando las variables
+    'id', 
+    'hourly_inglab',
+    'log_hourly_inglab',
+    'age', 
+    'female', 
+    'p6210', 
+    'cuentaPropia', 
+    'estrato1', 
+    'formal', 
+    'sizeFirm', 
+    'oficio', 
+    'relab', 
+    'p6426')
+
+# Checkpoint sexo pretransformación: 
+# table(clean_geih$female)
+
+# checkpoint de valores na, nan o infinitos en la variable ingresos log
+#sum(is.na(clean_geih$log_hourly_inglab))  # Check for NA values
+#sum(is.nan(clean_geih$log_hourly_inglab)) # Check for NaN values
+#sum(is.infinite(clean_geih$log_hourly_inglab)) # Check for Inf values
+
+# haciendo una revisión rápida de las variables
+skim(clean_geih)
+
+```
+
+# 4. Brecha salarial por género (Javier / Mateo)
+
+## Rubrica
+
+Se presenta la estimación de la brecha salarial de género
+incondicional y condicional en una misma tabla, con las
+estimaciones lado a lado. La tabla no es un pantallazo, sino que
+está debidamente formateada, con título y notas que permitan
+entenderla sin recurrir al documento. Por ejemplo, listando las
+variables control utilizadas. Se justifica la inclusión de los
+diferentes controles.
+
+## Descripción taller
+
+La brecha salarial de género. Los formuladores de políticas han
+estado preocupados durante mucho tiempo por la brecha salarial de
+género, y este será nuestro enfoque en esta subsección.
+
+### [a. Comience estimando y discutiendo la brecha salarial incondicional:]{.underline}
+
+$$
+log(w) = \beta_1 + \beta_2Female + u
+$$
+
+donde *Female* es un indicador que toma el valor de uno si el
+individuo en la muestra se identifica como mujer.
+
+```{r, echo=FALSE}
+modelo_unconditional <- lm(log_hourly_inglab ~ female, data=clean_geih)
+
+stargazer(modelo_unconditional, type = "text",
+          title = "Regression Results",
+          dep.var.labels = "log_hourly_inglab",
+          covariate.labels = c("Female"),
+          omit.stat = c("ser", "f"),
+          star.cutoffs = NA,
+          notes = "Standard errors in parentheses.",
+          notes.align = "l",
+          report = "vc*p")
+
+```
+
+**respuesta:**
+
+Utilizando como referencia el "unconditional model" podemos
+discutir sobre los siguientes puntos:
+
+```{r, echo=FALSE}
+
+# Calculando el salario promedio de los hombres en salario por hora. 
+# Extraemos los coeficientes: 
+coeficientes <- coef(modelo_unconditional)
+constante <- coeficientes["(Intercept)"]
+
+# Ahora calculamos el salario real para hombres (constante)
+salario_real_hombres <- exp(constante)
+
+# Mostrar el resultado
+salario_real_hombres <- round(as.numeric(salario_real_hombres), 1)
+```
+
+-   Para el caso del intercepto, podemos sacarle el exponente
+    para obtener el salario promedio de los hombres que llega a
+    \$ `r  salario_real_hombres` por hora.
+
+-   En cuanto al coeficiente de ***female*** en el que se puede
+    observar que dicho coeficiente es estadisticamente diferente
+    de cero (*p value= 0.00001*), podemos interpretar que en
+    promedio el salario por hora de las mujeres es un 6.2% más
+    bajo que el salario de los hombres.
+
+-   En cuanto al $R^2$ ajustado se puede observar que es del 1%
+    lo que quiere decir que el modelo utilizando solo variable de
+    *female* explica el 1% de la variabilidad del logaritmo del
+    ingreso por hora. De alguna manera, esta es esperable porque
+    solo tenemos una variable predictora y esto deja por fuera
+    otras variables que pueden ser relevantes como la educación,
+    la edad, la experiencia, entre otras.
+
+### [b. Un eslogan común es "igual salario por igual trabajo". Una forma de interpretar esto es que, para empleados con características laborales y personales similares, no debería existir una brecha salarial de género. Para analizar esto, estima la brecha salarial condicional incorporando variables de control como características del trabajador y del puesto de trabajo.]{.underline}
+
+**Respuesta:** para llevar a cabo esta estimación de un modelo
+condicional se consideraron dos grandes grupos de variables
+control que pueden afectar la estimación de la relación de
+asociación entre el salario por hora y el género. El primer grupo
+son las variables relacionadas con las características del
+trabajador como el nivel de educación alcanzado (a mayores
+niveles de estudio se espera una mayor remuneración y el nivel de
+estudio máximo alcanzado puede ser diferente en mujeres vs
+hombres), la edad (algunas edades están relacionadas con mayores
+ingresos como personas entre 30 y 50 años y esto puede diferir
+entre hombres y mujeres por los patrones de
+embarazo-lactancia-maternidad) y la antiguedad del trabajador en
+la empresa (se espera que trabajadores con mayor antiguedad
+tengan un mayor ingreso). En el segundo grupo de variables se
+pueden encontrar variables como el tipo de oficio (algunas
+ocupaciones de predominio de hombres como la ingenieria tienden a
+tener mayotes salarios); informalidad (en algunos países las
+mujeres tienden a estar sobre representadas en el grupo de
+trabajadores informales, trabajos que usualmente reciben menos
+ingresos) y el tamaño de la empresa (puede ocurrir que en
+empresas pequeñas y medianas haya una mayor proporción de mujeres
+y en empresas grandes haya mayor proporción de hombres, siendo
+estas últimas lugares donde se espera mejores salarios).
+
+Lista de variables worker characteristics:
+
+age
+
+P6210 = máximo nivel educativo alcanzado
+
+P6426 = tiempo trabajado en la empresa (antiguedad)
+
+Lista de variables work characteristics:
+
+relab
+
+sizeFirm
+
+informal
+
+```         
+'formal', # empleo formal
+'sizeFirm', # tamaño de la firma
+'oficio', # Oficio de la persona
+'relab', # tipo de ocupación
+'cuentaPropia', # Independiente
+'estrato1', # Estrato
+```
+
+En esta sección, estima la brecha salarial condicional:\
+i. Primero, utilizando FWL.\
+
+```{r, echo=FALSE}
+conditional_model <- lm(log_hourly_inglab ~ female + 
+                          age +                     #worker:edad
+                          factor(p6210) +           #worker:educacion
+                          factor(p6426) +           #worker:antiguedad
+                          factor(oficio) +          #work:oficio
+                          factor(relab) +           #work:tipo ocupacion
+                          factor(formal) +          #work:formalidad
+                          factor(sizeFirm),         #work:tamaño empresa
+                        data=clean_geih)
+
+# Teorema Frisch-Waugh-Lovell
+residual_inglab <- residuals(lm(log_hourly_inglab ~ 
+                             age +                     #worker:edad
+                            factor(p6210) +           #worker:educacion
+                            factor(p6426) +           #worker:antiguedad
+                            factor(oficio) +          #work:oficio
+                            factor(relab) +           #work:tipo ocupacion
+                            factor(formal) +          #work:formalidad
+                            factor(sizeFirm),         #work:tamaño empresa
+                          data=clean_geih))
+
+
+
+residual_female <- residuals(lm(female ~ age +                     #worker:edad
+                          factor(p6210) +           #worker:educacion
+                          factor(p6426) +           #worker:antiguedad
+                          factor(oficio) +          #work:oficio
+                          factor(relab) +           #work:tipo ocupacion
+                          factor(formal) +          #work:formalidad
+                          factor(sizeFirm),         #work:tamaño empresa
+                        data=clean_geih))
+
+modelo_multiple_fwl <- lm(res_inglab ~ res_female)
+
+stargazer(modelo_unconditional, modelo_multiple, modelo_multiple_fwl, 
+          type = "text",
+          keep = c('female', 'res_female'),
+          column.labels = c("Simple", "Múltiple", "FWL"),
+          title = "Regression Results",
+          dep.var.labels = "log_hourly_inglab",
+          covariate.labels = c("Female", "Female", "Female"),
+          omit.stat = c("ser", "f"),
+          star.cutoffs = NA,
+          notes = "Standard errors in parentheses.",
+          notes.align = "l",
+          report = "vc*p")
+```
+
+ii. Segundo, utilizando FWL con bootstrap.
+
+```{r, echo=FALSE}
+set.seed(10101)
+
+mod_boot_fn<-function(data, index){
+  
+  sample_data <- data[index, ]
+  
+  r_inglab_boot <- residuals(lm(log_hourly_inglab ~ factor(oficio) + factor(relab) + age + factor(p6210) + factor(formal), data = data, subset = index))
+  
+  r_female_boot <- residuals(lm(female ~ factor(oficio) + factor(relab) + age + factor(p6210) + factor(formal), data = data, subset = index))
+  
+  return (coef(lm(r_inglab_boot ~ r_female_boot))[2])
+}
+
+modelo_boot_fwl <- boot(clean_geih, mod_boot_fn, R = 10)
+
+tabla_comparacion <- data.frame(
+  Modelo = c("Coeficientes", "SE"),
+  Regresión_FWL = rbind(modelo_multiple_fwl$coefficients[[2]], coef(summary(modelo_multiple_fwl))["res_female", "Std. Error"]),
+  Regresión_FWL_Bootstrap = rbind(mean(modelo_boot_fwl$t), sd(modelo_boot_fwl$t))
+)
+
+print(tabla_comparacion)
+```
+
+Compare las estimaciones y los errores estándar.
+
+Como se aprecia en la tabla, los coeficientes obtenidos con ambos
+métodos tienen el mismo signo, lo que implica que en promedio una
+mujer recibe menos ingresos por hora que un hombre. La magnitud
+de ambos coeficientes es similar, dado que corresponde a 0.11 y
+la diferencia es de 0.0023. Concretamente, el coeficiente
+obtenido con FWL implica que una mujer recibe de media 11.06%
+menos ingresos por hora que un hombre, mientras que con el
+coeficiente de bootstrap una mujer recibe en promedio 10.83%
+menos ingresos por hora que un hombre. Es decir que al calcular
+el coeficiente usando FWL con una sola iteración y la muestra
+original, una mujer obtiene 0.23 puntos porcentuales más en sus
+ingresos por hora que obteniendo el mismo coeficiente como el
+promedio de 1000 iteraciones con remuestreo bootstrap.
+
+Por su parte, el error estándar para ambos métodos se diferencia
+en 0.0011, siendo mayor el obtenido con bootstrap, pero sin que
+por ello pueda considerarse no significativo estadísticamente el
+coeficiente a un nivel de significancia inferior al 5%. El
+coeficiente obtenido con bootstrap es más preciso pues
+corresponde a la desviación estandar del conjunto de coeficientes
+obtenidos para cada iteración con el remuestreo bootstrap, por lo
+que el acervo de datos es mayor que para el método de FWL
+sencillo. Adicionalmente, para ambos métodos está ausente el
+supuesto de homoscedasticidad, por lo que el error estándar
+calculado se ajusta más a la realidad.
+
+c\. Luego, grafique el perfil de edad-salario predicho y estima
+las edades en las que se alcanza el pico salarial, junto con los
+respectivos intervalos de confianza por género.
+
+```{r, echo=FALSE}
+fwl_boot_fn <- function(data, index) {
+  sample_data <- data[index, ]
+  
+  r_wage <- residuals(lm(log_hourly_inglab ~ factor(oficio) + factor(relab) + factor(p6210) + factor(formal), data = sample_data))
+  r_age <- residuals(lm(age ~ factor(oficio) + factor(relab) + factor(p6210) + factor(formal), data = sample_data))
+  r_female <- residuals(lm(female ~ factor(oficio) + factor(relab) + factor(p6210) + factor(formal), data = sample_data))
+  
+  coef(lm(r_wage ~ r_age + I(r_age^2) + r_female))
+}
+
+# Aplicamos bootstrap con 1000 iteraciones
+set.seed(10101)
+fwl_boot <- boot(clean_geih, fwl_boot_fn, R = 10)
+
+# Extraer estimaciones
+boot_coefs <- apply(fwl_boot$t, 2, mean)  # Media de los coeficientes
+
+edad_seq <- seq(18, 94, by = 1)
+
+# Transformar predicciones de log-salario a salario en COP
+# Para hombres
+salario_pred_male <- exp(8.301 + boot_coefs[2] * edad_seq + boot_coefs[3] * edad_seq^2)
+salario_pred_female <- exp(8.301 + boot_coefs[2] * edad_seq + boot_coefs[3] * edad_seq^2 + boot_coefs[4])
+
+salario_boot_pred_male <- apply(fwl_boot$t, 1, function(b) exp(8.301 + b[2] * edad_seq + b[3] * edad_seq^2))
+salario_ic_male <- apply(salario_boot_pred_male, 1, quantile, probs = c(0.025, 0.975))
+
+salario_boot_pred_female <- apply(fwl_boot$t, 1, function(b) exp(8.301 + b[2] * edad_seq + b[3] * edad_seq^2 + b[4]))
+salario_ic_female <- apply(salario_boot_pred_female, 1, quantile, probs = c(0.025, 0.975))
+
+# Crear data frame para ggplot
+df_plot <- data.frame(
+  edad = rep(edad_seq, 2),  
+  salario = c(salario_pred_male, salario_pred_female),
+  salario_lower = c(salario_ic_male[1,], salario_ic_female[1,]),
+  salario_upper = c(salario_ic_male[2,], salario_ic_female[2,]),
+  gender = rep(c("Male", "Female"), each = length(edad_seq))
+)
+
+# Gráfica con ggplot2
+ggplot(df_plot, aes(x = edad, y = salario, color = gender, fill = gender)) +
+  geom_line(size = 1) +
+  geom_ribbon(aes(ymin = salario_lower, ymax = salario_upper), alpha = 0.2) +
+  scale_y_continuous(labels = scales::comma_format(scale = 1)) +  # Formato de miles de COP
+  labs(title = "Perfil de edad-salario predicho por género",
+       x = "Edad",
+       y = "Salario por hora (miles de COP)",
+       color = "Género",
+       fill = "Género") +
+  theme_minimal()
+
+```
+
+Al presentar y discutir tus resultados, incluya:
+
+-   Una ecuación de estimación, explicando las variables de
+    control incluidas (ten cuidado con los *bad controls*).
+
+-   Una tabla de regresión con las estimaciones de las brechas
+    salariales condicional e incondicional, presentadas lado a
+    lado y resaltando el coeficiente de interés. Las variables de
+    control no deben incluirse en la tabla, pero sí mencionarse
+    adecuadamente.
+
+-   Una interpretación de los coeficientes de *Female*, una
+    comparación entre los modelos y el ajuste dentro de la
+    muestra.
+
+-   Un análisis de las edades en las que se alcanza el pico
+    salarial y su similitud/diferencia estadística.
+
+-   Una discusión reflexiva sobre la brecha salarial condicional
+    e incondicional, evaluando si los cambios en el coeficiente
+    son evidencia de un problema de selección, discriminación,
+    una combinación de ambos o si no están relacionados con estos
+    factores.
+
+## Rubrica
+
+Brecha condicional e incondicional
+
+Se presenta la estimación de la brecha salarial de género
+incondicional y condicional en una misma tabla, con las
+estimaciones lado a lado. La tabla no es un pantallazo, sino que
+está debidamente formateada, con título y notas que permitan
+entenderla sin recurrir al documento. Por ejemplo, listando las
+variables control utilizadas. Se justifica la inclusión de los
+diferentes controles.
+
+Interpretación de coeficientes
+
+Se interpreta los coeficientes asociados al género y se discute
+su significancia, tanto económica como estadística, haciendo
+énfasis en si los resultados son consecuencia de un problema de
+selección, de discriminación, una mezcla entre los dos, o ninguno
+de ellos.
+
+FWL vs FWL bootstrap
+
+Se discute la diferencia entre los coeficientes de los diferentes
+modelos, y entre los errores estándar de FWL y FWL con bootstrap,
+
+Ajuste del modelo
+
+Se discute el ajuste del modelo sobre la muestra,
+
+Predicción edad-salario
+
+Se presenta el perfil edad-salario predicho y sus intervalos de
+confianza desagregando por género en una gráfica autocontenida
+con título, ejes, leyenda, y notas que permiten entender sin
+recurrir al documento.
+
+Edad pico
+
+Se estima la 'edad pico' por género con sus correspondientes
+errores estándar, y se argumenta su similitud o disimilitud
+estadística.

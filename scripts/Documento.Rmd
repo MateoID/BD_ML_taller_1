@@ -1,10 +1,12 @@
 ---
-title: "Proble Set 1: Prediciendo el ingreso"
+title: 'Proble Set 1: Prediciendo el ingreso'
 author: "Maria Camila Caraballo, Javier Amaya, Nicolas Moreno, Mateo Isaza"
 date: "2025-02-01"
-output: pdf_document
-editor_options: 
-  markdown: 
+output:
+  html_document:
+    df_print: paged
+editor_options:
+  markdown:
     wrap: 65
 ---
 
@@ -510,6 +512,7 @@ clean_geih <- tabla_geih %>%
     'age', # Edad
     'sex', # Sexo
     'p6210', # Nivel educativo alcanzado 
+    'p6426', #antiguedad en la empresa 
     
     # Variables para utilizar en el cálculo de los ingresos por hora
     'impa', # Ingreso mensual por la primera actividad antes de imputación
@@ -593,7 +596,8 @@ clean_geih <- clean_geih %>%
     'formal', 
     'sizeFirm', 
     'oficio', 
-    'relab')
+    'relab', 
+    'p6426')
 
 # Checkpoint sexo pretransformación: 
 # table(clean_geih$female)
@@ -822,8 +826,8 @@ La brecha salarial de género. Los formuladores de políticas han
 estado preocupados durante mucho tiempo por la brecha salarial de
 género, y este será nuestro enfoque en esta subsección.
 
-a\. Comience estimando y discutiendo la brecha salarial
-incondicional:
+[a. Comience estimando y discutiendo la brecha salarial
+incondicional:]{.underline}
 
 $$
 log(w) = \beta_1 + \beta_2Female + u
@@ -847,12 +851,58 @@ stargazer(modelo_unconditional, type = "text",
 
 ```
 
-b\. Un eslogan común es "igual salario por igual trabajo". Una
+**respuesta:**
+
+Utilizando como referencia el "unconditional model" podemos
+discutir sobre los siguientes puntos:
+
+```{r, echo=FALSE}
+
+# Calculando el salario promedio de los hombres en salario por hora. 
+# Extraemos los coeficientes: 
+coeficientes <- coef(modelo_unconditional)
+constante <- coeficientes["(Intercept)"]
+
+# Ahora calculamos el salario real para hombres (constante)
+salario_real_hombres <- exp(constante)
+
+# Mostrar el resultado
+salario_real_hombres <- round(as.numeric(salario_real_hombres), 1)
+```
+
+-   Para el caso del intercepto, podemos sacarle el exponente
+    para obtener el salario promedio de los hombres que llega a
+    \$ `r  salario_real_hombres` por hora.
+
+-   En cuanto al coeficiente de ***female*** en el que se puede
+    observar que dicho coeficiente es estadisticamente diferente
+    de cero (*p value= 0.00001*), podemos interpretar que en
+    promedio el salario por hora de las mujeres es un 6.2% más
+    bajo que el salario de los hombres.
+
+-   En cuanto al $R^2$ ajustado se puede observar que es del 1%
+    lo que quiere decir que el modelo utilizando solo variable de
+    *female* explica el 1% de la variabilidad del logaritmo del
+    ingreso por hora. De alguna manera, esta es esperable porque
+    solo tenemos una variable predictora y esto deja por fuera
+    otras variables que pueden ser relevantes como la educación,
+    la edad, la experiencia, entre otras.
+
+[b. Un eslogan común es "igual salario por igual trabajo". Una
 forma de interpretar esto es que, para empleados con
 características laborales y personales similares, no debería
 existir una brecha salarial de género. Para analizar esto, estima
 la brecha salarial condicional incorporando variables de control
-como características del trabajador y del puesto de trabajo.
+como características del trabajador y del puesto de
+trabajo.]{.underline}
+
+**Respuesta:** para llevar a cabo esta estimación de un modelo
+condicional se consideraron dos grandes grupos de variables
+control que pueden afectar la estimación de la relación de
+asociación entre el salario por hora y el género. El primer grupo
+son las variables relacionadas con las características del
+trabajador como el nivel de educación alcanzado (a mayores
+niveles )
 
 En esta sección, estima la brecha salarial condicional:\
 i. Primero, utilizando FWL.\
