@@ -478,20 +478,20 @@ estratos superiores de servicios públicos domiciliarios.
 ```{r}
 # Haciendo el webscraping - 
 # Funciona pero lo desactivo mientras trabajamos. Hay que activarlo al final
-  # tabla_geih <- data.frame()
-  # 
-  # for (i in 1:10){
-  #   my_url <- sprintf("https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_%d.html", i)
-  #   my_table <- read_html(my_url) %>% 
-  #     html_elements(xpath='/html/body/table') %>% 
-  #     html_table()
-  #   
-  #   my_table <- as.data.frame(my_table)
-  #   
-  #   tabla_geih <- rbind(tabla_geih, my_table)
-  # }
+   tabla_geih <- data.frame()
+   
+   for (i in 1:10){
+     my_url <- sprintf("https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_%d.html", i)
+     my_table <- read_html(my_url) %>% 
+       html_elements(xpath='/html/body/table') %>% 
+       html_table()
+     
+     my_table <- as.data.frame(my_table)
+     
+     tabla_geih <- rbind(tabla_geih, my_table)
+   }
 
-# rm(my_table) activar cuando se active el webscraping
+ rm(my_table) #activar cuando se active el webscraping
 
 # exportando la data cruda
 # exportando la data cruda
@@ -1158,22 +1158,97 @@ set.seed(10101)
 
 #Dividimos la muestra para el entrenamiento 
 
-entreno <- createDataPartition(
-  y = clean_geih$totalHoursWorked,  ## La variable de interes
+indices <- createDataPartition(
+  y = clean_geih$hourly_inglab,  ## La variable de interes
   p = .70, ## Porcentaje del set de entrenamiento
   list = FALSE
 )
 
+training <- clean_geih %>% 
+  filter(row_number() %in% indices)
 
+testing  <- clean_geih %>% 
+  filter(!row_number() %in% indices)
+
+split_data <- data.frame(
+  Split = factor(c("Training", "Testing")),
+  Count = c(nrow(training), nrow(testing)),
+  Percentage = c(nrow(training)/nrow(clean_geih)*100, nrow(testing)/nrow(clean_geih)*100)
+)
+
+# Create the visualization
+ggplot(split_data, aes(x = Split, y = Count)) +
+  geom_bar(stat = "identity", fill = "darkblue", width = 0.5) +
+  geom_text(aes(label = paste0(round(Percentage, 1), "%\n(n=", Count, ")")), 
+            vjust = -0.5, color = "black", size = 4) +
+  labs(title = "Train-Test Split Distribution",
+       y = "Number of Observations",
+       x = "") +
+  theme_bw() +
+  ylim(0, max(split_data$Count) * 1.2) 
 ```
 
-(a) Reporte y compare el desempeño predictivo en términos del
+(b) Reporte y compare el desempeño predictivo en términos del
     RMSE de todas las especificaciones anteriores junto con al
     menos cinco (5) especificaciones adicionales que exploren no
     linealidades y mayor complejidad.
 
     ```{r}
 
+# Predecir en el conjunto de prueba
+    
+#modelo 1    
+modelo_edad <- lm(log_hourly_inglab ~ age + age_sq, data = clean_geih)
+    
+#modelo 2 
+boot_model<- lm(log_hourly_inglab ~ age + age_sq, data = clean_geih)
+
+#Explora si el efecto de la edad (age) sobre el ingreso varía según el género (female).
+
+modelo_interaccion_age_female <- lm(log_hourly_inglab ~ age + age_sq + female + age:female, data = clean_geih)
+
+#Incluye un término cúbico para age y explora si el efecto de la edad varía según la formalidad laboral (formal).
+
+modelo_polinomico_age_formal <- lm(log_hourly_inglab ~ age + age_sq + I(age^3) + formal + age:formal, data = clean_geih)
+
+#Explora si el efecto del estrato socioeconómico (estrato) sobre el ingreso varía según el tamaño de la empresa (sizefirm).
+
+modelo_interaccion_estrato_sizefirm <- lm(log_hourly_inglab ~ age + age_sq + estrato1 + sizeFirm + estrato1:sizeFirm, data = clean_geih)
+
+#Incluye una transformación logarítmica para sizefirm y explora si el efecto del tamaño de la empresa varía según el tipo de empleo (cuentapropia).
+
+modelo_log_sizefirm_cuentapropia <- lm(log_hourly_inglab ~ age + age_sq + log(sizeFirm + 1) + cuentaPropia + log(sizeFirm + 1):cuentaPropia, data = clean_geih)
+
+#Incluye efectos fijos para la ocupación (oficio) y un término cuadrático y cúbico para age.
+
+modelo_efectos_fijos_oficio <- lm(log_hourly_inglab ~ age + age_sq + I(age^3) + factor(oficio), data = clean_geih)
+    
+predicciones1 <- predict(modelo_edad, newdata = testing)
+predicciones2 <- predict(boot_model, newdata = testing, interval = "confidence")
+predicciones3 <- predict(modelo_interaccion_age_female, newdata = testing)
+predicciones4 <- predict(modelo_polinomico_age_formal, newdata = testing)
+predicciones5 <- predict(modelo_interaccion_estrato_sizefirm, newdata = testing)
+predicciones6 <- predict(modelo_log_sizefirm_cuentapropia, newdata = testing)
+predicciones7 <- predict(modelo_efectos_fijos_oficio, newdata = testing)
+
+# Calcular RMSE para cada modelo
+rmse1 <- sqrt(mean((testing$log_hourly_inglab - predicciones1)^2))
+rmse2 <- sqrt(mean((testing$log_hourly_inglab - predicciones2)^2))
+rmse3 <- sqrt(mean((testing$log_hourly_inglab - predicciones3)^2))
+rmse4 <- sqrt(mean((testing$log_hourly_inglab - predicciones4)^2))
+rmse5 <- sqrt(mean((testing$log_hourly_inglab - predicciones5)^2))
+rmse6 <- sqrt(mean((testing$log_hourly_inglab - predicciones6)^2))
+rmse7 <- sqrt(mean((testing$log_hourly_inglab - predicciones7)^2))
+
+
+# Crear una tabla con los resultados
+resultados <- data.frame(
+  Modelo = c("Modelo lineal", "Modelo bootstrap", "Modelo age:female", "Modelo age:formal", "Modelo estrato:sizefirm", "Modelo log(sizefirm):cuentapropia", "Modelo efectos fijos"),
+  RMSE = c(rmse1, rmse2, rmse3, rmse4, rmse5, rmse6, rmse7 )
+)
+
+print(resultados)
+    
     ```
 
 (b) En la discusión de los resultados, comente:
