@@ -1153,30 +1153,31 @@ el poder predictivo de estas especificaciones.
     usar `set.seed(10101)`, donde 10101 es la semilla).
 
 ```{r}
-#Definimos la semilla indicada
+#Definimos la semilla
 set.seed(10101)
 
 #Dividimos la muestra para el entrenamiento 
-
 indices <- createDataPartition(
   y = clean_geih$hourly_inglab,  ## La variable de interes
   p = .70, ## Porcentaje del set de entrenamiento
   list = FALSE
 )
 
+#Definición de datasets
 training <- clean_geih %>% 
   filter(row_number() %in% indices)
 
 testing  <- clean_geih %>% 
   filter(!row_number() %in% indices)
 
+#Crear data para visualización
 split_data <- data.frame(
   Split = factor(c("Training", "Testing")),
   Count = c(nrow(training), nrow(testing)),
   Percentage = c(nrow(training)/nrow(clean_geih)*100, nrow(testing)/nrow(clean_geih)*100)
 )
 
-# Create the visualization
+#Crear visualización
 ggplot(split_data, aes(x = Split, y = Count)) +
   geom_bar(stat = "identity", fill = "darkblue", width = 0.5) +
   geom_text(aes(label = paste0(round(Percentage, 1), "%\n(n=", Count, ")")), 
@@ -1197,29 +1198,29 @@ ggplot(split_data, aes(x = Split, y = Count)) +
 
 # Predecir en el conjunto de prueba
     
-#modelo 1    
+#modelo edad lineal   
 modelo_edad <- lm(log_hourly_inglab ~ age + age_sq, data = clean_geih)
     
-#modelo 2 
+#modelo edad bootstrap
 boot_model<- lm(log_hourly_inglab ~ age + age_sq, data = clean_geih)
 
-#Explora si el efecto de la edad (age) sobre el ingreso varía según el género (female).
+#modelo efecto de la edad (age) sobre el ingreso varía según el género (female).
 
 modelo_interaccion_age_female <- lm(log_hourly_inglab ~ age + age_sq + female + age:female, data = clean_geih)
 
-#Incluye un término cúbico para age y explora si el efecto de la edad varía según la formalidad laboral (formal).
+#Modelo si el efecto de la edad varía según la formalidad laboral (formal).
 
 modelo_polinomico_age_formal <- lm(log_hourly_inglab ~ age + age_sq + I(age^3) + formal + age:formal, data = clean_geih)
 
-#Explora si el efecto del estrato socioeconómico (estrato) sobre el ingreso varía según el tamaño de la empresa (sizefirm).
+#Modelo si el efecto del estrato socioeconómico (estrato) sobre el ingreso varía según el tamaño de la empresa (sizefirm).
 
 modelo_interaccion_estrato_sizefirm <- lm(log_hourly_inglab ~ age + age_sq + estrato1 + sizeFirm + estrato1:sizeFirm, data = clean_geih)
 
-#Incluye una transformación logarítmica para sizefirm y explora si el efecto del tamaño de la empresa varía según el tipo de empleo (cuentapropia).
+#Modelo si el efecto del tamaño de la empresa varía según el tipo de empleo (cuentapropia).
 
 modelo_log_sizefirm_cuentapropia <- lm(log_hourly_inglab ~ age + age_sq + log(sizeFirm + 1) + cuentaPropia + log(sizeFirm + 1):cuentaPropia, data = clean_geih)
 
-#Incluye efectos fijos para la ocupación (oficio) y un término cuadrático y cúbico para age.
+#Modelo efectos fijos para la ocupación (oficio).
 
 modelo_efectos_fijos_oficio <- lm(log_hourly_inglab ~ age + age_sq + I(age^3) + factor(oficio), data = clean_geih)
     
@@ -1324,27 +1325,95 @@ Los outliers están concentrados en ciertos grupos (estratos 2 y 3, empresas peq
     cálculos pueden tomar mucho tiempo dependiendo de sus
     habilidades de programación, planifique en consecuencia).*
     
+
 ```{r}
-calcular_loocv <- function(modelo, datos) {
-  n <- nrow(datos)
+library(parallel)
+
+# Función para LOOCV
+loocv_lm <- function(formula, data) {
+  n <- nrow(data)
   errores <- numeric(n)
   
-  for (i in 1:n) {
-    # Entrenar el modelo dejando fuera la i-ésima observación
-    modelo_loocv <- update(modelo, data = datos[-i, ])
-    
-    # Predecir la observación dejada fuera
-    prediccion <- predict(modelo_loocv, newdata = datos[i, ])
-    
-    # Calcular el error
-    errores[i] <- datos$log_hourly_inglab[i] - prediccion
+  if ("age_sq" %in% all.vars(formula)) {
+    data$age_sq <- data$age^2
   }
   
+  # Ajustar el modelo y predecir en una observación
+  ajustar_y_predecir <- function(i) {
+    modelo <- lm.fit(x = model.matrix(formula, data[-i, ]), y = data$log_hourly_inglab[-i])
+    prediccion <- sum(model.matrix(formula, data[i, ]) * modelo$coefficients)
+    return(data$log_hourly_inglab[i] - prediccion)
+  }
+  
+  # Usar paralelización
+  cl <- makeCluster(detectCores() - 1)
+  clusterExport(cl, c("formula", "data", "lm.fit", "model.matrix"))
+  errores <- parSapply(cl, 1:n, ajustar_y_predecir)
+  stopCluster(cl)
+  
   # Calcular RMSE
-  rmse_loocv <- sqrt(mean(errores^2))
-  return(rmse_loocv)
+  rmse <- sqrt(mean(errores^2))
+  return(list(rmse = rmse, errores = errores))
 }
 
+# Definir las fórmulas de los dos modelos
+formula_estrato_sizefirm <- log_hourly_inglab ~ age + age_sq + estrato1 + sizeFirm + estrato1:sizeFirm
+formula_edad_formal <- log_hourly_inglab ~ age + age_sq + I(age^3) + formal + age:formal
+
+# Calcular LOOCV para ambos modelos
+start_time <- Sys.time()
+cat("Starting LOOCV for Modelo estrato:sizefirm...\n")
+resultados_estrato_sizefirm <- loocv_lm(formula_estrato_sizefirm, clean_geih)
+cat("LOOCV for Modelo estrato:sizefirm completed.\n")
+
+cat("Starting LOOCV for Modelo efectos fijos...\n")
+resultados_edad_formal <- loocv_lm(formula_edad_formal, clean_geih)
+cat("LOOCV for Modelo Edad Formal completed.\n")
+
+end_time <- Sys.time()
+training_time <- difftime(end_time, start_time, units = "mins")
+cat("\nTotal LOOCV training completed in:", round(training_time, 2), "minutes\n")
+
+# Mostrar resultados de LOOCV
+cat("RMSE (Modelo estrato:sizefirm):", resultados_estrato_sizefirm$rmse, "\n")
+cat("RMSE (Modelo edad:formal):", resultados_edad_formal$rmse, "\n")
+```
+```{r}
+# Identificación observaciones influyentes
+outliers_estrato_sizefirm <- which(abs(resultados_estrato_sizefirm$errores) > 2 * sd(resultados_estrato_sizefirm$errores))
+outliers_edad_formal <- which(abs(resultados_edad_formal$errores) > 2 * sd(resultados_edad_formal$errores))
+
+# Mostrar observaciones influyentes
+cat("Outliers en Modelo estrato:sizefirm:", length(outliers_estrato_sizefirm), "\n")
+cat("Outliers en Modelo edad:formal", length(outliers_edad_formal), "\n")
+
+# Analisis características de los outliers
+cat("\nCaracterísticas de los outliers en Modelo estrato:sizefirm:\n")
+print(summary(clean_geih[outliers_estrato_sizefirm, ]))
+
+cat("\nCaracterísticas de los outliers en Modelo efectos edad:formal\n")
+print(summary(clean_geih[outliers_edad_formal, ]))
+```
+El Modelo estrato:sizefirm tiene un RMSE de LOOCV (0.6969082) ligeramente menor que el RMSE de validación (0.7069517), lo que sugiere que generaliza bien.
+
+El Modelo edad:formal tiene un RMSE de LOOCV (0.782132) mayor que el RMSE de validación (0.7926872), lo que indica que puede estar sobreajustado.
+
+Conclusiones: 
+
+El Modelo estrato:sizefirm es el mejor modelo en términos de desempeño predictivo, con un RMSE más bajo y menos outliers.
+
+El Modelo edad:formal tiene un desempeño inferior, con un RMSE más alto y más outliers.
+Los outliers en ambos modelos deben investigarse para determinar si son errores en los datos o casos atípicos que requieren un tratamiento especial.
+
+```{r}
+resultados <- data.frame(
+  Modelo = c("Estrato:SizeFirm", "Edad:Formal"),
+  RMSE_LOOCV = c(resultados_estrato_sizefirm$rmse, resultados_edad_formal$rmse),
+  RMSE_Validacion = c(rmse5, rmse4)
+)
+
+# Mostrar la tabla
+print(resultados)
 ```
 
 
