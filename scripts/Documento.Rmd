@@ -1251,11 +1251,16 @@ print(resultados)
     
     ```
 
-(b) En la discusión de los resultados, comente:
+(c) En la discusión de los resultados, comente:
 
     i\. El desempeño general de los modelos.\
+    
+    Los modelos que incluyen interacciones y efectos fijos (estrato:sizefirm y efectos fijos) tienen un desempeño predictivo superior en comparación con los modelos más simples (lineal y bootstrap). Esto sugiere que las relaciones no lineales y las interacciones entre variables son importantes para predecir el ingreso laboral.
 
     ii. La especificación con el menor error de predicción.\
+    
+La especificación con el menor error de predicción es el Modelo estrato:sizefirm , con un RMSE de 0.7069517. Este modelo incluye una interacción entre el estrato socioeconómico (estrato) y el tamaño de la empresa (sizefirm), lo que parece capturar mejor la variabilidad en los ingresos laborales.
+    
     iii. Para la especificación con el menor error de predicción,
          analice aquellas observaciones que parecen desviarse
          significativamente. Para ello, calcule los errores de
@@ -1265,6 +1270,48 @@ print(resultados)
          atípicos podrían representar personas que la DIAN
          debería investigar, o son simplemente el resultado de un
          modelo defectuoso?
+         
+```{r}
+errores <- testing$log_hourly_inglab - predicciones5
+
+hist(errores, breaks = 30, main = "Distribución de los Errores", xlab = "Errores de Predicción")
+
+outliers <- which(abs(errores) > 2 * sd(errores))
+print(paste("Número de outliers:", length(outliers)))
+```
+Hay 278 observaciones en la muestra de prueba cuyos errores de predicción son significativamente grandes (por ejemplo, errores que superan 2 desviaciones estándar de la media de los errores). Estos outliers representan casos donde el modelo no logra predecir adecuadamente el ingreso laboral (log_hourly_inglab).
+
+Investigación de la DIAN
+
+Los outliers podrían representar casos de interés para la DIAN (Dirección de Impuestos y Aduanas Nacionales), especialmente si:
+Los ingresos reales son significativamente más altos que los predichos (posible subdeclaración de ingresos).
+Los ingresos reales son significativamente más bajos que los predichos (posible evasión fiscal o ingresos no declarados).
+Recomendación: La DIAN podría investigar estos casos para verificar la consistencia de los datos y detectar posibles irregularidades.
+
+ Análisis de los outliers:
+
+```{r}
+# Identificar outliers
+outliers <- which(abs(errores) > 2 * sd(errores))
+
+# Filtrar las observaciones outliers
+outliers_data <- testing[outliers, ]
+
+# Resumen de las características de los outliers
+summary(outliers_data)
+
+# Distribución de los outliers por estrato socioeconómico
+table(outliers_data$estrato1)
+
+# Distribución de los outliers por tamaño de la empresa
+table(outliers_data$sizeFirm)
+
+# Gráfico de dispersión de edad vs. ingreso para los outliers
+plot(outliers_data$age, outliers_data$log_hourly_inglab, 
+     main = "Outliers: Edad vs. Ingreso", 
+     xlab = "Edad", ylab = "Log Ingreso Laboral")
+```
+Los outliers están concentrados en ciertos grupos (estratos 2 y 3, empresas pequeñas, mujeres, trabajadores por cuenta propia y sector formal), lo que sugiere que el modelo actual tiene dificultades para predecir los ingresos en estos grupos.
 
 (c) **LOOCV.** Para los dos modelos con el menor error de
     predicción en la sección anterior, calcule el error de
