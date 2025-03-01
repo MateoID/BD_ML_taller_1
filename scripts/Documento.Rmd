@@ -1196,83 +1196,95 @@ ggplot(split_data, aes(x = Split, y = Count)) +
 
     ```{r}
 
-# Predecir en el conjunto de prueba
-    
-#modelo edad lineal   
-modelo_edad <- lm(log_hourly_inglab ~ age + age_sq, data = clean_geih)
-    
-#modelo edad bootstrap
-boot_model<- lm(log_hourly_inglab ~ age + age_sq, data = clean_geih)
+    # Predecir en el conjunto de prueba
 
-#modelo efecto de la edad (age) sobre el ingreso varía según el género (female).
+    #modelo edad lineal   
+    modelo_edad <- lm(log_hourly_inglab ~ age + age_sq, data = clean_geih)
 
-modelo_interaccion_age_female <- lm(log_hourly_inglab ~ age + age_sq + female + age:female, data = clean_geih)
+    #modelo edad bootstrap
+    boot_model<- lm(log_hourly_inglab ~ age + age_sq, data = clean_geih)
 
-#Modelo si el efecto de la edad varía según la formalidad laboral (formal).
+    #modelo efecto de la edad (age) sobre el ingreso varía según el género (female).
 
-modelo_polinomico_age_formal <- lm(log_hourly_inglab ~ age + age_sq + I(age^3) + formal + age:formal, data = clean_geih)
+    modelo_interaccion_age_female <- lm(log_hourly_inglab ~ age + age_sq + female + age:female, data = clean_geih)
 
-#Modelo si el efecto del estrato socioeconómico (estrato) sobre el ingreso varía según el tamaño de la empresa (sizefirm).
+    #Modelo si el efecto de la edad varía según la formalidad laboral (formal).
 
-modelo_interaccion_estrato_sizefirm <- lm(log_hourly_inglab ~ age + age_sq + estrato1 + sizeFirm + estrato1:sizeFirm, data = clean_geih)
+    modelo_polinomico_age_formal <- lm(log_hourly_inglab ~ age + age_sq + I(age^3) + formal + age:formal, data = clean_geih)
 
-#Modelo si el efecto del tamaño de la empresa varía según el tipo de empleo (cuentapropia).
+    #Modelo si el efecto del estrato socioeconómico (estrato) sobre el ingreso varía según el tamaño de la empresa (sizefirm).
 
-modelo_log_sizefirm_cuentapropia <- lm(log_hourly_inglab ~ age + age_sq + log(sizeFirm + 1) + cuentaPropia + log(sizeFirm + 1):cuentaPropia, data = clean_geih)
+    modelo_interaccion_estrato_sizefirm <- lm(log_hourly_inglab ~ age + age_sq + estrato1 + sizeFirm + estrato1:sizeFirm, data = clean_geih)
 
-#Modelo efectos fijos para la ocupación (oficio).
+    #Modelo si el efecto del tamaño de la empresa varía según el tipo de empleo (cuentapropia).
 
-modelo_efectos_fijos_oficio <- lm(log_hourly_inglab ~ age + age_sq + I(age^3) + factor(oficio), data = clean_geih)
-    
-predicciones1 <- predict(modelo_edad, newdata = testing)
-predicciones2 <- predict(boot_model, newdata = testing, interval = "confidence")
-predicciones3 <- predict(modelo_interaccion_age_female, newdata = testing)
-predicciones4 <- predict(modelo_polinomico_age_formal, newdata = testing)
-predicciones5 <- predict(modelo_interaccion_estrato_sizefirm, newdata = testing)
-predicciones6 <- predict(modelo_log_sizefirm_cuentapropia, newdata = testing)
-predicciones7 <- predict(modelo_efectos_fijos_oficio, newdata = testing)
+    modelo_log_sizefirm_cuentapropia <- lm(log_hourly_inglab ~ age + age_sq + log(sizeFirm + 1) + cuentaPropia + log(sizeFirm + 1):cuentaPropia, data = clean_geih)
 
-# Calcular RMSE para cada modelo
+    #Modelo efectos fijos para la ocupación (oficio).
 
-rmse1 <- RMSE(predicciones1, testing$log_hourly_inglab)
-rmse2 <- RMSE(predicciones2, testing$log_hourly_inglab)
-rmse3 <- RMSE(predicciones3, testing$log_hourly_inglab)
-rmse4 <- RMSE(predicciones4, testing$log_hourly_inglab)
-rmse5 <- RMSE(predicciones5, testing$log_hourly_inglab)
-rmse6 <- RMSE(predicciones6, testing$log_hourly_inglab)
-rmse7 <- RMSE(predicciones7, testing$log_hourly_inglab)
+    modelo_efectos_fijos_oficio <- lm(log_hourly_inglab ~ age + age_sq + I(age^3) + factor(oficio), data = clean_geih)
+
+    predicciones1 <- predict(modelo_edad, newdata = testing)
+    predicciones2 <- predict(boot_model, newdata = testing, interval = "confidence")
+    predicciones3 <- predict(modelo_interaccion_age_female, newdata = testing)
+    predicciones4 <- predict(modelo_polinomico_age_formal, newdata = testing)
+    predicciones5 <- predict(modelo_interaccion_estrato_sizefirm, newdata = testing)
+    predicciones6 <- predict(modelo_log_sizefirm_cuentapropia, newdata = testing)
+    predicciones7 <- predict(modelo_efectos_fijos_oficio, newdata = testing)
+
+    # Calcular RMSE para cada modelo
+
+    rmse1 <- RMSE(predicciones1, testing$log_hourly_inglab)
+    rmse2 <- RMSE(predicciones2, testing$log_hourly_inglab)
+    rmse3 <- RMSE(predicciones3, testing$log_hourly_inglab)
+    rmse4 <- RMSE(predicciones4, testing$log_hourly_inglab)
+    rmse5 <- RMSE(predicciones5, testing$log_hourly_inglab)
+    rmse6 <- RMSE(predicciones6, testing$log_hourly_inglab)
+    rmse7 <- RMSE(predicciones7, testing$log_hourly_inglab)
 
 
-# Crear una tabla con los resultados
-resultados <- data.frame(
-  Modelo = c("Modelo lineal", "Modelo bootstrap", "Modelo age:female", "Modelo age:formal", "Modelo estrato:sizefirm", "Modelo log(sizefirm):cuentapropia", "Modelo efectos fijos"),
-  RMSE = c(rmse1, rmse2, rmse3, rmse4, rmse5, rmse6, rmse7 )
-)
+    # Crear una tabla con los resultados
+    resultados <- data.frame(
+      Modelo = c("Modelo lineal", "Modelo bootstrap", "Modelo age:female", "Modelo age:formal", "Modelo estrato:sizefirm", "Modelo log(sizefirm):cuentapropia", "Modelo efectos fijos"),
+      RMSE = c(rmse1, rmse2, rmse3, rmse4, rmse5, rmse6, rmse7 )
+    )
 
-print(resultados)
-    
+    print(resultados)
+
     ```
 
 (c) En la discusión de los resultados, comente:
 
     i\. El desempeño general de los modelos.\
-    
-    Los modelos que incluyen interacciones y efectos fijos (estrato:sizefirm y efectos fijos) tienen un desempeño predictivo superior en comparación con los modelos más simples (lineal y bootstrap). Esto sugiere que las relaciones no lineales y las interacciones entre variables son importantes para predecir el ingreso laboral.
+
+    Los modelos que incluyen interacciones y efectos fijos
+    (estrato:sizefirm y efectos fijos) tienen un desempeño
+    predictivo superior en comparación con los modelos más
+    simples (lineal y bootstrap). Esto sugiere que las relaciones
+    no lineales y las interacciones entre variables son
+    importantes para predecir el ingreso laboral.
 
     ii. La especificación con el menor error de predicción.\
-    
-La especificación con el menor error de predicción es el Modelo estrato:sizefirm , con un RMSE de 0.7069517. Este modelo incluye una interacción entre el estrato socioeconómico (estrato) y el tamaño de la empresa (sizefirm), lo que parece capturar mejor la variabilidad en los ingresos laborales.
-    
-    iii. Para la especificación con el menor error de predicción,
-         analice aquellas observaciones que parecen desviarse
-         significativamente. Para ello, calcule los errores de
-         predicción en la muestra de prueba y examine su
-         distribución. ¿Hay observaciones en los extremos de la
-         distribución del error de predicción? ¿Estos valores
-         atípicos podrían representar personas que la DIAN
-         debería investigar, o son simplemente el resultado de un
-         modelo defectuoso?
-         
+
+La especificación con el menor error de predicción es el Modelo
+estrato:sizefirm , con un RMSE de 0.7069517. Este modelo incluye
+una interacción entre el estrato socioeconómico (estrato) y el
+tamaño de la empresa (sizefirm), lo que parece capturar mejor la
+variabilidad en los ingresos laborales.
+
+```         
+iii. Para la especificación con el menor error de predicción,
+     analice aquellas observaciones que parecen desviarse
+     significativamente. Para ello, calcule los errores de
+     predicción en la muestra de prueba y examine su
+     distribución. ¿Hay observaciones en los extremos de la
+     distribución del error de predicción? ¿Estos valores
+     atípicos podrían representar personas que la DIAN
+     debería investigar, o son simplemente el resultado de un
+     modelo defectuoso?
+     
+```
+
 ```{r}
 errores <- testing$log_hourly_inglab - predicciones5
 
@@ -1281,16 +1293,25 @@ hist(errores, breaks = 30, main = "Distribución de los Errores", xlab = "Errore
 outliers <- which(abs(errores) > 2 * sd(errores))
 print(paste("Número de outliers:", length(outliers)))
 ```
-Hay 278 observaciones en la muestra de prueba cuyos errores de predicción son significativamente grandes (por ejemplo, errores que superan 2 desviaciones estándar de la media de los errores). Estos outliers representan casos donde el modelo no logra predecir adecuadamente el ingreso laboral (log_hourly_inglab).
+
+Hay 278 observaciones en la muestra de prueba cuyos errores de
+predicción son significativamente grandes (por ejemplo, errores
+que superan 2 desviaciones estándar de la media de los errores).
+Estos outliers representan casos donde el modelo no logra
+predecir adecuadamente el ingreso laboral (log_hourly_inglab).
 
 Investigación de la DIAN
 
-Los outliers podrían representar casos de interés para la DIAN (Dirección de Impuestos y Aduanas Nacionales), especialmente si:
-Los ingresos reales son significativamente más altos que los predichos (posible subdeclaración de ingresos).
-Los ingresos reales son significativamente más bajos que los predichos (posible evasión fiscal o ingresos no declarados).
-Recomendación: La DIAN podría investigar estos casos para verificar la consistencia de los datos y detectar posibles irregularidades.
+Los outliers podrían representar casos de interés para la DIAN
+(Dirección de Impuestos y Aduanas Nacionales), especialmente si:
+Los ingresos reales son significativamente más altos que los
+predichos (posible subdeclaración de ingresos). Los ingresos
+reales son significativamente más bajos que los predichos
+(posible evasión fiscal o ingresos no declarados). Recomendación:
+La DIAN podría investigar estos casos para verificar la
+consistencia de los datos y detectar posibles irregularidades.
 
- Análisis de los outliers:
+Análisis de los outliers:
 
 ```{r}
 # Identificar outliers
@@ -1313,7 +1334,11 @@ plot(outliers_data$age, outliers_data$log_hourly_inglab,
      main = "Outliers: Edad vs. Ingreso", 
      xlab = "Edad", ylab = "Log Ingreso Laboral")
 ```
-Los outliers están concentrados en ciertos grupos (estratos 2 y 3, empresas pequeñas, mujeres, trabajadores por cuenta propia y sector formal), lo que sugiere que el modelo actual tiene dificultades para predecir los ingresos en estos grupos.
+
+Los outliers están concentrados en ciertos grupos (estratos 2 y
+3, empresas pequeñas, mujeres, trabajadores por cuenta propia y
+sector formal), lo que sugiere que el modelo actual tiene
+dificultades para predecir los ingresos en estos grupos.
 
 (d) **LOOCV.** Para los dos modelos con el menor error de
     predicción en la sección anterior, calcule el error de
@@ -1324,7 +1349,6 @@ Los outliers están concentrados en ciertos grupos (estratos 2 y 3, empresas peq
     de influencia. *(Nota: al realizar esta subsección, los
     cálculos pueden tomar mucho tiempo dependiendo de sus
     habilidades de programación, planifique en consecuencia).*
-    
 
 ```{r}
 library(parallel)
@@ -1378,6 +1402,7 @@ cat("\nTotal LOOCV training completed in:", round(training_time, 2), "minutes\n"
 cat("RMSE (Modelo estrato:sizefirm):", resultados_estrato_sizefirm$rmse, "\n")
 cat("RMSE (Modelo edad:formal):", resultados_edad_formal$rmse, "\n")
 ```
+
 ```{r}
 # Identificación observaciones influyentes
 outliers_estrato_sizefirm <- which(abs(resultados_estrato_sizefirm$errores) > 2 * sd(resultados_estrato_sizefirm$errores))
@@ -1394,16 +1419,24 @@ print(summary(clean_geih[outliers_estrato_sizefirm, ]))
 cat("\nCaracterísticas de los outliers en Modelo efectos edad:formal\n")
 print(summary(clean_geih[outliers_edad_formal, ]))
 ```
-El Modelo estrato:sizefirm tiene un RMSE de LOOCV (0.6969082) ligeramente menor que el RMSE de validación (0.7069517), lo que sugiere que generaliza bien.
 
-El Modelo edad:formal tiene un RMSE de LOOCV (0.782132) mayor que el RMSE de validación (0.7926872), lo que indica que puede estar sobreajustado.
+El Modelo estrato:sizefirm tiene un RMSE de LOOCV (0.6969082)
+ligeramente menor que el RMSE de validación (0.7069517), lo que
+sugiere que generaliza bien.
 
-Conclusiones: 
+El Modelo edad:formal tiene un RMSE de LOOCV (0.782132) mayor que
+el RMSE de validación (0.7926872), lo que indica que puede estar
+sobreajustado.
 
-El Modelo estrato:sizefirm es el mejor modelo en términos de desempeño predictivo, con un RMSE más bajo y menos outliers.
+Conclusiones:
 
-El Modelo edad:formal tiene un desempeño inferior, con un RMSE más alto y más outliers.
-Los outliers en ambos modelos deben investigarse para determinar si son errores en los datos o casos atípicos que requieren un tratamiento especial.
+El Modelo estrato:sizefirm es el mejor modelo en términos de
+desempeño predictivo, con un RMSE más bajo y menos outliers.
+
+El Modelo edad:formal tiene un desempeño inferior, con un RMSE
+más alto y más outliers. Los outliers en ambos modelos deben
+investigarse para determinar si son errores en los datos o casos
+atípicos que requieren un tratamiento especial.
 
 ```{r}
 resultados <- data.frame(
@@ -1415,7 +1448,6 @@ resultados <- data.frame(
 # Mostrar la tabla
 print(resultados)
 ```
-
 
 # Repositorio y código
 
