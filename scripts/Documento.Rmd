@@ -42,9 +42,9 @@ figure_results_path <- "../results/figures"
 
 ## Problema
 
-Uno de los principañes desafíos para la equidad tributaria y la
+Uno de los principales desafíos para la equidad tributaria y la
 sostenibilidad fiscal en Colombia es la subdeclaración de
-ingresos, una práctica facilitada por la falta de información
+ingresos, una práctica facilitada por la ausencia de información
 precisa sobre los ingresos reales de los contribuyentes. Esto en
 particular, afecta tanto al sector formal como el informal,
 dificultando la correcta determinación de la base gravable y
@@ -283,7 +283,7 @@ ingresos por hora disponible creada en la base de datos inicial
 presentaba una cantidad considerable de valores faltantes, lo que
 reducía la muestra en aproximadamente un 40% tras la aplicación
 de los filtros de selección. Esta pérdida de observaciones habría
-limitado la el nuestro análisis, disminuyendo la robustez de las
+limitado el análisis, disminuyendo la robustez de las
 estimaciones.*
 
 *Por otro lado, desde una perspectiva de intuición económica, el
@@ -296,47 +296,23 @@ Impuestos y Aduanas Nacionales (DIAN), el cual incluye
 exclusivamente ingresos derivados de la actividad laboral de una
 persona.*
 
-*estaPara ello, combinamos diversas categorías de ingresos
-laborales, incluyendo remuneraciones por la primera y segunda
-actividad, tanto antes como después de imputación, ingresos en
-especie y viáticos ajustados a valores mensuales. De esta manera,
-logramos reducir la cantidad de valores faltantes y mejorar la
-calidad de la variable dependiente, alineándola mejor con la
-realidad económica del país.*
+*Para ello, se combinaron diversas categorías de ingresos
+laborales con el objetivo de minimizar la cantidad de valores
+faltantes. Las versiones imputadas y no imputadas de cada fuente
+de ingreso laboral permitó obtener una variable consolidada que
+luego se sumó junto con el ingreso en especie y los viáticos
+ajustados a valores mensuales. De esta manera, se mejorar la
+calidad de la variable dependiente, alineándola con la realidad
+económica del país.*
 
-Nuestra variable explicada, `log_hourly_inglab`, requirió un
-proceso detallado de construcción, dado que no se encontraba
-directamente en la base de datos de la Gran Encuesta Integrada de
-Hogares (GEIH). Para su cálculo, partimos de diversas fuentes de
-ingreso laboral que fueron seleccionadas considerando el concepto
-de rentas laborales definido por la Dirección de Impuestos y
-Aduanas Nacionales (DIAN), el cual comprende exclusivamente
-aquellos ingresos derivados de la actividad laboral de una
-persona. La variable se construyó a partir del ingreso mensual
-por la primera actividad antes de imputación (`impa`), el ingreso
-mensual imputado por la primera actividad (`impaes`), el ingreso
-mensual por la segunda actividad antes de imputación (`isa`), el
-ingreso mensual imputado por la segunda actividad (`isaes`), el
-ingreso mensual en especie antes de imputación (`ie`), el ingreso
-mensual en especie imputado (`iees`) y el valor anual de viáticos
-(`p6630s4a1`), que fue ajustado a valores mensuales dividiéndolo
-entre doce.
-
-Si bien la base de datos incluía la variable `ingtot`, que
-representa la suma total de ingresos reportados por cada
-individuo, esta no era adecuada para nuestro análisis, pues
-incorpora fuentes de ingreso no laborales, tales como arriendos,
-dividendos y pensiones. Debido a que nuestro interés radica en
-analizar el ingreso laboral, optamos por construir
-`hourly_inglab` exclusivamente a partir de los componentes
-mencionados. Posteriormente, para obtener el ingreso por hora,
-dividimos el ingreso mensual total por la cantidad de horas
-trabajadas reportadas por cada individuo. Como resultado, la
-media de la variable fue de \$9.323 COP, con un rango que va
-desde \$0 hasta \$888.775 COP. La mediana, en contraste, se ubicó
-en \$5.204 COP, lo que evidencia un sesgo a la derecha en la
-distribución de la variable, dado que la diferencia entre la
-mediana y la media es considerable.
+*Posteriormente, para obtener el ingreso por hora, se dividió el
+ingreso mensual total por la cantidad de horas trabajadas
+reportadas por cada individuo. Como resultado, la media de la
+variable fue de \$9.323 COP, con un rango que va desde \$0 hasta
+\$888.775 COP. La mediana, en contraste, se ubicó en \$5.204 COP,
+lo que evidencia un sesgo a la derecha en la distribución de la
+variable, dado que la diferencia entre la mediana y la media es
+considerable*
 
 *Entre las variables explicativas, se incluyó la **edad**, dado
 que es un factor reconocido en la literatura como determinante
@@ -386,11 +362,11 @@ cual indica si un trabajador está afiliado a la seguridad social.
 Su inclusión permite diferenciar entre empleos que ofrecen mayor
 estabilidad y beneficios frente a aquellos en condiciones más
 precarias, lo que es relevante para evaluar desigualdades en el
-mercado laboral. En nuestra muestra, el 58.6% de los individuos
-se clasifica como formal, una cifra consistente con el 60.7%
-reportado en el Boletín Técnico GEIH del DANE para el periodo
-diciembre 2018 - febrero 2019 en Bogotá, lo que refuerza la
-representatividad de los datos.*
+ingreso por actividad laboral. En nuestra muestra, el 58.6% de
+los individuos se clasifica como formal, una cifra consistente
+con el 60.7% reportado en el Boletín Técnico GEIH del DANE para
+el periodo diciembre 2018 - febrero 2019 en Bogotá, lo que
+refuerza la representatividad de los datos.*
 
 *Finalmente, se incorporó el **estrato socioeconómico** como un
 indicador complementario de las condiciones de vida de los
@@ -402,6 +378,40 @@ individuos pertenecen al estrato 3. Esto sugiere que solo el 25%
 de la muestra reside en estratos superiores, lo que refleja la
 concentración de la población en niveles socioeconómicos bajos y
 medios.*
+
+Nuestra variable explicada, `log_hourly_inglab`, requirió un
+proceso detallado de construcción, dado que no se encontraba
+directamente en la base de datos de la Gran Encuesta Integrada de
+Hogares (GEIH). Para su cálculo, partimos de diversas fuentes de
+ingreso laboral que fueron seleccionadas considerando el concepto
+de rentas laborales definido por la Dirección de Impuestos y
+Aduanas Nacionales (DIAN), el cual comprende exclusivamente
+aquellos ingresos derivados de la actividad laboral de una
+persona. La variable se construyó a partir del ingreso mensual
+por la primera actividad antes de imputación (`impa`), el ingreso
+mensual imputado por la primera actividad (`impaes`), el ingreso
+mensual por la segunda actividad antes de imputación (`isa`), el
+ingreso mensual imputado por la segunda actividad (`isaes`), el
+ingreso mensual en especie antes de imputación (`ie`), el ingreso
+mensual en especie imputado (`iees`) y el valor anual de viáticos
+(`p6630s4a1`), que fue ajustado a valores mensuales dividiéndolo
+entre doce.
+
+Si bien la base de datos incluía la variable `ingtot`, que
+representa la suma total de ingresos reportados por cada
+individuo, esta no era adecuada para nuestro análisis, pues
+incorpora fuentes de ingreso no laborales, tales como arriendos,
+dividendos y pensiones. Debido a que nuestro interés radica en
+analizar el ingreso laboral, optamos por construir
+`hourly_inglab` exclusivamente a partir de los componentes
+mencionados. Posteriormente, para obtener el ingreso por hora,
+dividimos el ingreso mensual total por la cantidad de horas
+trabajadas reportadas por cada individuo. Como resultado, la
+media de la variable fue de \$9.323 COP, con un rango que va
+desde \$0 hasta \$888.775 COP. La mediana, en contraste, se ubicó
+en \$5.204 COP, lo que evidencia un sesgo a la derecha en la
+distribución de la variable, dado que la diferencia entre la
+mediana y la media es considerable.
 
 Asimismo, se incoporó la variable de **género** de los
 individuos, considerando la presencia de brecha de ingresos entre
@@ -483,7 +493,7 @@ estratos superiores de servicios públicos domiciliarios.
 
 # exportando la data cruda
 # exportando la data cruda
-#saveRDS(tabla_geih, file = "../data/raw/data_GEIH_raw.rds")
+saveRDS(tabla_geih, file = "../data/raw/data_GEIH_raw.rds")
 tabla_geih <- readRDS(file.path(data_raw_path,"Data_GEIH_raw.rds"))
 
 # Limpieza de los datos
@@ -657,23 +667,24 @@ $$ Al presentar y discutir tus resultados, incluye:
     clean_geih <- clean_geih %>% mutate(log_inglab = log(hourly_inglab)) 
 
     #Calculamos el modelo 
-    modelo <- lm(log_inglab ~ age + age_sq, data = clean_geih)
+    modelo_edad <- lm(log_inglab ~ age + age_sq, data = clean_geih)
 
     #Tabla de resultados
-    stargazer(modelo, type = "text")
+    stargazer(modelo_edad, type = "text")
     ```
 
 -   Una interpretación de los coeficientes y su significancia.
 
-La transformación de los datos en el modelo permite capturar
+*La transformación de los datos en el modelo permite capturar
 relaciones no lineales entre la edad y el ingreso laboral por
 hora, lo que resulta fundamental para comprender cómo varía el
 efecto de la edad a lo largo de la vida laboral. En este caso, la
 inclusión del término cuadrático responde a la necesidad de
 modelar un comportamiento que no es constante: aunque el salario
-tiende a aumentar con la edad, este crecimiento no es indefinido.
+tiende a aumentar con la edad, este crecimiento no es
+indefinido.*
 
-Los coeficientes obtenidos, ambos significativos, indican que
+*Los coeficientes obtenidos, ambos significativos, indican que
 existe un punto máximo a partir del cual la edad deja de ser un
 factor positivo en el incremento salarial y, en su lugar,
 comienza a generar rendimientos decrecientes. Específicamente, el
@@ -684,14 +695,13 @@ embargo, el coeficiente negativo del término cuadrático evidencia
 que este crecimiento se desacelera con el tiempo y,
 eventualmente, se revierte, lo que implica que los aumentos
 salariales se reducen hasta alcanzar un umbral en el que la edad
-deja de ser un factor de incremento.
+deja de ser un factor de incremento.*
 
-Esta transformación, por tanto, permite capturar la evolución
+*Esta transformación, por tanto, permite capturar la evolución
 realista de los ingresos a lo largo del ciclo laboral,
 proporcionando una interpretación más precisa del impacto de la
-edad sobre el salario y evitando suposiciones e
-
-rróneas de una relación lineal constante.
+edad sobre el salario y evitando suposiciones erróneas de una
+relación lineal constante.*
 
 **Agregar la discusion de la significancia economica de estos
 coeficientes**
@@ -699,27 +709,34 @@ coeficientes**
 -   Una discusión sobre el ajuste del modelo dentro de la
     muestra.
 
-Con base en las métricas aprendidas, el R2 ajustado que penaliza
-la inclusión de variables irrelevantes pues logra capturar la
-varianza de la variable de ingresos laborales por hora en
-relación con la edad. Para este ejemplo, el valor del r2 ajustado
-sugiere que el modelo solo explica el 1.6% de la variabilidad en
-la variabilidad del ingreso por hora. En este sentido, esto
-indica que el poder explicativo del modelo es bajo y la mayoría
-de la variabilidad en log(w) no está siendo capturada por las
-variables de la edad y su transformación al cuadrado. Proporción
-de la variabilidad total de la variable dependiente que es
-explicada por el modelo de regresión.
+*De acuerdo con las métricas analizadas, el* $R^2$ *ajustado, que
+penaliza la inclusión de variables irrelevantes, permite evaluar
+la proporción de la variabilidad en los ingresos laborales por
+hora que es explicada por la edad. En este caso, el valor del*
+$R^2$ *ajustado indica que el modelo solo explica el 1.6% de la
+variabilidad en* $log(w)$*, lo que sugiere un bajo poder
+explicativo. Esto implica que la mayor parte de la variabilidad
+en los ingresos por hora no está siendo capturada por la edad ni
+por su transformación cuadrática, lo que limita la capacidad del
+modelo para describir la relación entre estas variables.*
 
 ```{r}
 
 #MSE dentro de la muestra 
-pred <- predict(modelo, clean_geih)
-pred_orig <- exp(pred)  # Llevar predicciones a la escala original
-rmse_original <- RMSE(pred_orig, exp(clean_geih$log_inglab))  
-print(rmse_original)
+pred <- predict(modelo_edad, clean_geih)
+mse <- mean((log_hourly_inglab - pred)^2)
+rmse <- sqrt(mse)
+rmse_og <- exp(rmse)
+print(rmse_og)
 
 ```
+
+*un Mse bajo significa que el modelo predice bien el log(w) por
+lo que las predicciones del salario w despues de exponenciarlas
+estarn cerca de los valores reales. Mi MSE mide el error en la
+escala logarítmica por lo que se si se toma la raiz cuadrada del
+MSE se obtiene un valor que representa el error medio en la
+escala del log salario.*
 
 -   Un gráfico del perfil estimado de edad-ingresos implícito en
     la ecuación anterior, incluyendo un análisis de la edad en la
@@ -727,20 +744,9 @@ print(rmse_original)
     confianza. *(Nota: Usa bootstrap para construir los
     intervalos de confianza.)*
 
-Derivando la ecuación con respecto a la edad e igualando a cero
-
-$$ \frac{\delta log(w)}{\delta Edad} = 0,0065 -2(000,1)Edad  =0 $$
-
-$$ Edad = 32,5 $$
-
-Esto significa que el salario crece con la edad hasta
-aproximadamente los 32 años de edad, a partir de este punto el
-salario empieza a disminuir.
-
 ```{r}
-
-#Modelo para el bootstrap 
-boot_model<- lm(log_inglab ~ age + age_sq, data = clean_geih)
+#Para encontrar la edad máxima
+boot_model<- lm(log_hourly_inglab ~ age + age_sq, data = clean_geih)
 coefs<-boot_model$coef
 
 #Obtener los coeficientes de la regresión en escalares
@@ -748,32 +754,38 @@ b0<-coefs[1]
 b1<-coefs[2]
 b2<-coefs[3] 
 
+#Se calcula la edad máxima 
+age_max <- round((-b1/(2*b2)),1)
+print(age_max)
+```
 
-#Se calcula la edad promedio 
-age_bar <- mean(clean_geih$age)
-elast <- b1+2*b2*age_bar
+Derivando la ecuación con respecto a la edad e igualando a cero
+
+Esto significa que el salario crece con la edad hasta
+aproximadamente los 41 años de edad, a partir de este punto el
+salario empieza a disminuir.
+
+```{r}
 
 #Desarrollamos la función para el bootstrap
 boot_func <- function(data,index)
 {
-    sample <- data[index, ]
-    boot_model <-lm(log_inglab ~ age + age_sq,data, subset = index)
+    boot_sample <- data[index, ]
+    boot_model <-lm(log_inglab ~ age + age_sq,data, subset = boot_sample)
     beta2_boot <- coef(boot_model)["age"]
     beta3_boot <-  coef(boot_model)["age_sq"]
     return(- beta2_boot / (2 * beta3_boot))
 }
 
 #Se aplica el bootstrap 
-boot_result <- boot(clean_geih, boot_func,10)
+boot__age <- boot(clean_geih, boot_func,10)
 boot_result
 
 #Para obtener los intervalos de confianza
-conf_int <- boot.ci(boot_result, type = "perc")
+conf_int <- boot.ci(boot_age, type = "perc")$percent[4:5]
 conf_int
 
-
 #Para graficar el perfil estimado de edad e ingresos 
-top_age <- -b2 / (2*b2)
 pred_log_w <- predict(boot_model, clean_geih, interval = "confidence")
 
 #En la escala 
