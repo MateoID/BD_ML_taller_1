@@ -1232,13 +1232,14 @@ predicciones6 <- predict(modelo_log_sizefirm_cuentapropia, newdata = testing)
 predicciones7 <- predict(modelo_efectos_fijos_oficio, newdata = testing)
 
 # Calcular RMSE para cada modelo
-rmse1 <- sqrt(mean((testing$log_hourly_inglab - predicciones1)^2))
-rmse2 <- sqrt(mean((testing$log_hourly_inglab - predicciones2)^2))
-rmse3 <- sqrt(mean((testing$log_hourly_inglab - predicciones3)^2))
-rmse4 <- sqrt(mean((testing$log_hourly_inglab - predicciones4)^2))
-rmse5 <- sqrt(mean((testing$log_hourly_inglab - predicciones5)^2))
-rmse6 <- sqrt(mean((testing$log_hourly_inglab - predicciones6)^2))
-rmse7 <- sqrt(mean((testing$log_hourly_inglab - predicciones7)^2))
+
+rmse1 <- RMSE(predicciones1, testing$log_hourly_inglab)
+rmse2 <- RMSE(predicciones2, testing$log_hourly_inglab)
+rmse3 <- RMSE(predicciones3, testing$log_hourly_inglab)
+rmse4 <- RMSE(predicciones4, testing$log_hourly_inglab)
+rmse5 <- RMSE(predicciones5, testing$log_hourly_inglab)
+rmse6 <- RMSE(predicciones6, testing$log_hourly_inglab)
+rmse7 <- RMSE(predicciones7, testing$log_hourly_inglab)
 
 
 # Crear una tabla con los resultados
@@ -1313,7 +1314,7 @@ plot(outliers_data$age, outliers_data$log_hourly_inglab,
 ```
 Los outliers están concentrados en ciertos grupos (estratos 2 y 3, empresas pequeñas, mujeres, trabajadores por cuenta propia y sector formal), lo que sugiere que el modelo actual tiene dificultades para predecir los ingresos en estos grupos.
 
-(c) **LOOCV.** Para los dos modelos con el menor error de
+(d) **LOOCV.** Para los dos modelos con el menor error de
     predicción en la sección anterior, calcule el error de
     predicción utilizando *Leave-One-Out Cross-Validation*
     (LOOCV). Compare los resultados del error de prueba con
@@ -1322,6 +1323,30 @@ Los outliers están concentrados en ciertos grupos (estratos 2 y 3, empresas peq
     de influencia. *(Nota: al realizar esta subsección, los
     cálculos pueden tomar mucho tiempo dependiendo de sus
     habilidades de programación, planifique en consecuencia).*
+    
+```{r}
+calcular_loocv <- function(modelo, datos) {
+  n <- nrow(datos)
+  errores <- numeric(n)
+  
+  for (i in 1:n) {
+    # Entrenar el modelo dejando fuera la i-ésima observación
+    modelo_loocv <- update(modelo, data = datos[-i, ])
+    
+    # Predecir la observación dejada fuera
+    prediccion <- predict(modelo_loocv, newdata = datos[i, ])
+    
+    # Calcular el error
+    errores[i] <- datos$log_hourly_inglab[i] - prediccion
+  }
+  
+  # Calcular RMSE
+  rmse_loocv <- sqrt(mean(errores^2))
+  return(rmse_loocv)
+}
+
+```
+
 
 # Repositorio y código
 
