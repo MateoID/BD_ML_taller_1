@@ -570,8 +570,13 @@ $$ Al presentar y discutir tus resultados, incluye:
     #Calculamos el modelo 
     modelo_edad <- lm(log_hourly_inglab ~ age + age_sq, data = clean_geih)
 
-    #Tabla de resultados
-    stargazer(modelo_edad, type = "text")
+    # Tabla de resultados
+    stargazer(modelo_edad, type = "latex", 
+              title = "Tabla 1 - Perfil de Edad-Ingresos",
+              dep.var.labels = "Log Ingresos por hora",
+              no.space = TRUE, 
+              keep.stat = c("n", "rsq"),
+              out = file.path(table_results_path, "tabla.tex"))
     ```
 
 **Agregar la discusion de la significancia economica de estos
