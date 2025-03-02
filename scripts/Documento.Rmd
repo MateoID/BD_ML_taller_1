@@ -704,10 +704,10 @@ mse
       theme_minimal()
     ```
 
-```{}
+```         
 ```
 
-```{}
+```         
 ```
 
 Esto significa que el salario crece con la edad hasta
@@ -735,14 +735,26 @@ conf_int
 
 ```
 
-# 4. Brecha salarial por género
+# 4. Brecha salarial por género (Javier / Mateo)
 
-Los formuladores de políticas han estado preocupados durante
-mucho tiempo por la brecha salarial de género, y este será
-nuestro enfoque en esta subsección.
+## Rubrica
 
-[**a. Comience estimando y discutiendo la brecha salarial
-incondicional:**]{.underline}
+Se presenta la estimación de la brecha salarial de género
+incondicional y condicional en una misma tabla, con las
+estimaciones lado a lado. La tabla no es un pantallazo, sino que
+está debidamente formateada, con título y notas que permitan
+entenderla sin recurrir al documento. Por ejemplo, listando las
+variables control utilizadas. Se justifica la inclusión de los
+diferentes controles.
+
+## Descripción taller
+
+La brecha salarial de género. Los formuladores de políticas han
+estado preocupados durante mucho tiempo por la brecha salarial de
+género, y este será nuestro enfoque en esta subsección.
+
+[a. Comience estimando y discutiendo la brecha salarial
+incondicional:]{.underline}
 
 $$
 log(w) = \beta_1 + \beta_2Female + u
@@ -752,15 +764,10 @@ donde *Female* es un indicador que toma el valor de uno si el
 individuo en la muestra se identifica como mujer.
 
 ```{r, echo=FALSE, warning=F, results='asis'}
-
-# Montando el modelo incondicional
 modelo_unconditional <- lm(log_hourly_inglab ~ female, data=clean_geih)
 
-# Extrayendo el R² ajustado del modelo incondicional para referirlo inline
-r2_ajustado_unconditional <- summary(modelo_unconditional)$adj.r.squared * 100
-
 stargazer(modelo_unconditional,
-          type = "html",                     # tipo de render para la tabla
+          type = "text",                     # tipo de render para la tabla
           title = "Tabla XXX. Resultados 'unconditional model' para brecha salarial", 
           align = TRUE,                      # Alinea los coeficientes al punto del decimal
           no.space = TRUE,                   # omite espacios no utilizados dentro de la tabla
@@ -776,6 +783,8 @@ stargazer(modelo_unconditional,
 
 ```
 
+**respuesta:**
+
 Utilizando como referencia el "unconditional model" podemos
 discutir sobre los siguientes puntos:
 
@@ -790,7 +799,7 @@ constante <- coeficientes["(Intercept)"]
 salario_real_hombres <- exp(constante)
 
 # Mostrar el resultado
-salario_real_hombres <- round(as.numeric(salario_real_hombres), 0)
+salario_real_hombres <- round(as.numeric(salario_real_hombres), 1)
 ```
 
 -   Para el caso del intercepto, podemos sacarle el exponente
@@ -800,26 +809,24 @@ salario_real_hombres <- round(as.numeric(salario_real_hombres), 0)
 -   En cuanto al coeficiente de ***female*** en el que se puede
     observar que dicho coeficiente es estadisticamente diferente
     de cero (*p value= 0.00001*), podemos interpretar que en
-    promedio el salario por hora de las mujeres es un
-    `r abs(round(coef(modelo_unconditional)["female"], 4)) * 100`%
-    más bajo que el salario de los hombres.
+    promedio el salario por hora de las mujeres es un 6.2% más
+    bajo que el salario de los hombres.
 
--   En cuanto al $R^2$ ajustado se puede observar que es del
-    `r round(r2_ajustado_unconditional, 2)`% lo que quiere decir
-    que el modelo utilizando solo variable de *female* explica el
-    `r round(r2_ajustado_unconditional, 2)`% de la variabilidad
-    del logaritmo del ingreso por hora. De alguna manera, esta es
-    esperable porque solo tenemos una variable predictora y esto
-    deja por fuera otras variables que pueden ser relevantes como
-    la educación, la edad, la experiencia, entre otras.
+-   En cuanto al $R^2$ ajustado se puede observar que es del 1%
+    lo que quiere decir que el modelo utilizando solo variable de
+    *female* explica el 1% de la variabilidad del logaritmo del
+    ingreso por hora. De alguna manera, esta es esperable porque
+    solo tenemos una variable predictora y esto deja por fuera
+    otras variables que pueden ser relevantes como la educación,
+    la edad, la experiencia, entre otras.
 
-[**b. Un eslogan común es "igual salario por igual trabajo". Una
+[b. Un eslogan común es "igual salario por igual trabajo". Una
 forma de interpretar esto es que, para empleados con
 características laborales y personales similares, no debería
 existir una brecha salarial de género. Para analizar esto, estima
 la brecha salarial condicional incorporando variables de control
 como características del trabajador y del puesto de
-trabajo.**]{.underline}
+trabajo.]{.underline}
 
 Para llevar a cabo esta estimación de un modelo condicional se
 consideraron dos grandes grupos de variables control que pueden
@@ -860,9 +867,9 @@ Donde:
 -   $\text{tama}$ representa el tamaño de la empresa.
 -   $\epsilon$ es el término de error.
 
-i.  **Primero estimamos la brecha salarial condicional a los
+i.  Primero estimamos la brecha salarial condicional a los
     controles explicados previamente usando el método
-    convencional y usando FWL**
+    convencional y usando FWL
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis', encoding = 'UTF-8'}
 
@@ -877,9 +884,6 @@ modelo_condicional_usual <- lm(log_hourly_inglab ~ female +
                           factor(formal) +          #work:formalidad
                           factor(sizeFirm),         #work:tamaño empresa
                           data=clean_geih)
-
-# Extraer el R² ajustado del modelo múltiple
-r2_ajustado_multiple <- summary(modelo_condicional_usual)$adj.r.squared * 100
 
 # Teorema Frisch-Waugh-Lovell
 # Calculando los residuales del modelo omitiendo la variable female (ingresos~controles) (modelo 1)
@@ -914,11 +918,12 @@ female <- residual_female
 # Ahora corremos el modelo regresando los ingresos del modelo 1 sobre los residuales del modelo 2. 
 modelo_condicional_fwl <- lm(log_hourly_inglab ~ female)
 
+
 # Ahora vamos a sacar la tabla de comparación de los modelos. 
 stargazer(modelo_unconditional, modelo_condicional_usual, modelo_condicional_fwl, 
   
-  type = "html",                     # Tipo de salida: "text" para consola, "html" o "latex" para otros formatos
-  title = "Tabla XXX. Comparación de los coeficientes de female para los diferentes modelos", 
+  type = "text",                     # Tipo de salida: "text" para consola, "html" o "latex" para otros formatos
+  title = "Tabla XXX. Resultados 'unconditional model' para brecha salarial", 
   align = TRUE,                      # Alinea los numeros al punto decimal
   no.space = TRUE,                   # Elimina espacios innecesarios
   keep = c("female"),                # Variable predictora de interes
@@ -943,30 +948,27 @@ stargazer(modelo_unconditional, modelo_condicional_usual, modelo_condicional_fwl
   )
 )
 
-
 ```
 
 Los resultados muestran una brecha salarial de género
 significativa, que se amplía después de controlar por otras
 variables. Es decir que después de usar los controles descritos
 en la regresión se observa que en promedio y *"ceteris paribus"*,
-las mujeres ganan un
-`r abs(round(coef(modelo_condicional_usual)["female"], 4)) * 100`%
-menos que los hombres. Esto también muestra que dicha brecha es
-aún mayor cuando se controla por otras variables adicionales como
-educación, antiguedad, formalidad y otros controles previamente
-explicados. Al comparar el ajuste del modelo usando el
-$R^2 ajustado$ se puede observar que el modelo simple ajusta los
-datos pobremente (`r round(r2_ajustado_unconditional, 2)`%) lo
-que sugiere que el género por sí solo no es un predictor fuerte
-de los ingresos. Sin embargo, el aumento en el $R^2 ajustado$ en
-el modelo múltiple (`r round(r2_ajustado_multiple, 2)`%) indica
-que otros factores (controles inlcuidos) juegan un papel
-importante en la determinación de los ingresos.
+las mujeres ganan un 11.5% menos que los hombres. Esto también
+muestra que dicha brecha es aún mayor cuando se controla por
+otras variables adicionales como educación, antiguedad,
+formalidad y otros controles previamente explicados. Al comparar
+el ajuste del modelo usando el $R^2 ajustado$ se puede observar
+que el modelo simple ajusta los datos pobremente (0.12%) lo que
+sugiere que el género por sí solo no es un predictor fuerte de
+los ingresos. Sin embargo, el aumento en el $R^2 ajustado$ en el
+modelo múltiple (43.7%) indica que otros factores (controles
+inlcuidos) juegan un papel importante en la determinación de los
+ingresos.
 
-ii. **Ahora estimamos la brecha salarial condicional a los
+ii. Ahora estimamos la brecha salarial condicional a los
     controles explicados usando FWL y bootstrap para calcular el
-    error estandar con las dos aproximaciones y poder comparar.**
+    error estandar con las dos aproximaciones y poder comparar.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis', encoding = 'UTF-8'}
 
@@ -1014,15 +1016,8 @@ tabla_comparacion <- data.frame(
   Regresión_FWL_Bootstrap = rbind(mean(modelo_boot_fwl$t), sd(modelo_boot_fwl$t))
 )
 
-
 # Convertir a matriz
 matriz_resultados <- as.matrix(round(tabla_comparacion[, -1], 3))  # Excluir la columna "Modelo"
-
-# Extrayendo los SE para referirlos en el texto
-se_fwl <- matriz_resultados[2, 1]  
-se_fwl_bootstrap <- matriz_resultados[2, 2] 
-
-# Terminando de ajustar la matriz para el stargazer
 rownames(matriz_resultados) <- tabla_comparacion$Modelo   # Usar "Modelo" como nombres de fila
 colnames(matriz_resultados) <- c("Regresión FWL", "Regresión FWL Bootstrap")  # Renombrar columnas
 matriz_resultados["SE", ] <- paste0("(", matriz_resultados["SE", ], ")")
@@ -1030,7 +1025,7 @@ matriz_resultados["SE", ] <- paste0("(", matriz_resultados["SE", ], ")")
 # Presentando la tabla con stargazer
 stargazer(
   matriz_resultados,  # Usar la matriz de resultados
-  type = "html",      
+  type = "text",      
   title = "Tabla XXXX. Comparación de coeficientes y errores estándar usando FWL con y sin boostraping",
   align = TRUE,       # Alinea los números por el punto decimal
   no.space = TRUE,    # Elimina espacios innecesarios
@@ -1048,139 +1043,134 @@ coeficientes obtenidos con ambos métodos tienen el mismo signo y
 son muy similares, lo que implica que en promedio una mujer
 recibe menos ingresos por hora que un hombre. Por otra parte, el
 error estándar sí disminuye cuando se usa el método de
-bootstraping (pasa de `r se_fwl` a `r se_fwl_bootstrap`). De esta
-manera, podemos concluir que la estimación de la brecha salarial
-utilizando FWL y bootstraping es más precisa que usando FWL
-simplemente. De forma adicional, hay que resaltar que estos
-métodos no asumen homocedasticidad por lo cual se ajustan más a
-lo que ocurre en la realidad.
+bootstraping (pasa de 0.012 a 0.009). De esta manera, podemos
+concluir que la estimación de la brecha salarial utilizando FWL y
+bootstraping es más precisa que usando FWL simplemente. De forma
+adicional, hay que resaltar que estos métodos no asumen
+homocedasticidad por lo cual se ajustan más a lo que ocurre en la
+realidad.
 
-[**c. Ahora vamos a graficar el perfil de edad-salario predicho y
+[c. Ahora vamos a graficar el perfil de edad-salario predicho y
 estime las edades en las que se alcanza el pico salarial, junto
 con los respectivos intervalos de confianza por
-género.**]{.underline}
+género]{.underline}.
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
+```{r, echo=FALSE}
 
-# Modelo de regresión
-modelo_edad_salario <- lm(log_hourly_inglab ~ female * (age + age_sq) + 
-                            factor(p6210) + p6426 + factor(oficio) + 
-                            factor(relab) + factor(formal) + factor(sizeFirm), 
-                          data = clean_geih)
+fwl_boot_fn <- function(data, index) {
+  sample_data <- data[index, ]
+  
+  r_wage <- residuals(lm(log_hourly_inglab ~ 
+                           factor(oficio) + 
+                           factor(relab) + 
+                           factor(p6210) + 
+                           factor(formal), 
+                         data = sample_data))
+  
+  r_age <- residuals(lm(age ~ 
+                          factor(oficio) + 
+                          factor(relab) + 
+                          factor(p6210) + 
+                          factor(formal), 
+                        data = sample_data))
+  
+  r_age2 <- residuals(lm(age_sq ~ 
+                          factor(oficio) + 
+                          factor(relab) + 
+                          factor(p6210) + 
+                          factor(formal), 
+                        data = sample_data))
+  
+  r_female <- residuals(lm(female ~ 
+                             factor(oficio) + 
+                             factor(relab) + 
+                             factor(p6210) + 
+                             factor(formal), 
+                           data = sample_data))
+  
+  coef(lm(r_wage ~ r_age + r_age2 + r_female))
+}
 
-#Interacción female * (age + age_sq): Esto permite que el perfil de edad-salario sea diferente para hombres y mujeres.
+# Aplicamos bootstrap con 1000 iteraciones
+set.seed(10101)
+fwl_boot <- boot(clean_geih, fwl_boot_fn, R = 10)
 
+# Extraer estimaciones
+boot_coefs <- apply(fwl_boot$t, 2, mean)  # Media de los coeficientes
 
-# crando un data frame con el rango de edades de los datos 
-datos_prediccion <- expand.grid(
-  age = seq(18, 94, by = 1),  # Rango de edades
-  female = c(0, 1),            # Género (0 = hombre, 1 = mujer)
-  p6210 = median(clean_geih$p6210, na.rm = TRUE),  # Educación (mediana)
-  p6426 = median(clean_geih$p6426, na.rm = TRUE),  # Antigüedad (mediana)
-  oficio = names(sort(table(clean_geih$oficio), decreasing = TRUE))[1],  # Oficio más común
-  relab = names(sort(table(clean_geih$relab), decreasing = TRUE))[1],     # Tipo de ocupación más común
-  formal = median(clean_geih$formal, na.rm = TRUE),  # Formalidad (mediana)
-  sizeFirm = median(clean_geih$sizeFirm, na.rm = TRUE)  # Tamaño de empresa (mediana)
-  )
+edad_seq <- seq(18, 94, by = 1)
 
-# Calculando la variable age_sq (edad al cuadrado)
-datos_prediccion$age_sq <- datos_prediccion$age^2
+# Transformar predicciones de log-salario a salario en COP
+# Para hombres
+salario_pred_male <- exp(boot_coefs[1] + boot_coefs[2] * edad_seq + boot_coefs[3] * edad_seq^2)
+salario_pred_female <- exp(boot_coefs[1] + boot_coefs[2] * edad_seq + boot_coefs[3] * edad_seq^2 + boot_coefs[4])
 
-# Generando las predicciónes e intervalos de confianza
-predicciones <- predict(modelo_edad_salario, newdata = datos_prediccion, interval = "confidence")                 
+salario_boot_pred_male <- apply(fwl_boot$t, 1, function(b) exp(boot_coefs[1] + b[2] * edad_seq + b[3] * edad_seq^2))
+salario_ic_male <- apply(salario_boot_pred_male, 1, quantile, probs = c(0.025, 0.975))
 
-# Combinando predicciones con el data frame original
-datos_prediccion <- cbind(datos_prediccion, predicciones)
+salario_boot_pred_female <- apply(fwl_boot$t, 1, function(b) exp(boot_coefs[1] + b[2] * edad_seq + b[3] * edad_seq^2 + b[4]))
+salario_ic_female <- apply(salario_boot_pred_female, 1, quantile, probs = c(0.025, 0.975))
 
-# Transformar predicciones a la escala original (salarios reales)
-datos_prediccion$salario_real <- exp(datos_prediccion$fit)
-datos_prediccion$salario_real_lwr <- exp(datos_prediccion$lwr)
-datos_prediccion$salario_real_upr <- exp(datos_prediccion$upr)
+# Crear data frame para ggplot
+df_plot <- data.frame(
+  edad = rep(edad_seq, 2),  
+  salario = c(salario_pred_male, salario_pred_female),
+  salario_lower = c(salario_ic_male[1,], salario_ic_female[1,]),
+  salario_upper = c(salario_ic_male[2,], salario_ic_female[2,]),
+  gender = rep(c("Male", "Female"), each = length(edad_seq))
+)
 
-
-# Encontrando la edad pico salarial para hombres y mujeres.  
-# derivando e igualando a cero la especificación del modelo utilizado
-# Extrayendo coeficientes del modelo estimado
-coef_modelo <- coef(modelo_edad_salario)
-
-# Edad de pico para hombres (female = 0)
-edad_pico_hombres <- - round((coef_modelo["age"]) / (2 * coef_modelo["age_sq"]), 2)
-
-# Edad de pico para mujeres (female = 1)
-edad_pico_mujeres <- - round((coef_modelo["age"] + coef_modelo["female:age"]) / 
-  (2 * (coef_modelo["age_sq"] + coef_modelo["female:age_sq"])), 2)
-
-
-
-# Haciendo la gráfica
-ggplot(datos_prediccion, aes(x = age, y = salario_real, color = factor(female), fill = factor(female))) +
-  geom_line(size = 1.2) +  # Línea de predicción
-  geom_ribbon(aes(ymin = salario_real_lwr, ymax = salario_real_upr, fill = factor(female)), alpha = 0.2) +  # Intervalo de confianza
-  geom_vline(xintercept = edad_pico_hombres, color = "#1f78b4", linetype = "dashed", size = 1) +  # Línea vertical azul para hombres
-  geom_vline(xintercept = edad_pico_mujeres, color = "#e31a1c", linetype = "dashed", size = 1) +  # Línea vertical roja para mujeres
-  labs(
-    title = "Perfil de edad-salario predicho por género (salarios reales)",
-    x = "Edad",
-    y = "Salario por hora predicho",
-    color = "Género",
-    fill = "Género"
-  ) +
-  annotate("text", x = edad_pico_hombres, y = max(datos_prediccion$salario_real),  # Texto para hombres (más arriba)
-           label = paste("Hombres:", edad_pico_hombres, "años"), 
-           color = "#1f78b4", vjust = 22, hjust = 1.08) +
-  annotate("text", x = edad_pico_mujeres, y = max(datos_prediccion$salario_real),  # Texto para mujeres (más abajo)
-           label = paste("Mujeres:", edad_pico_mujeres, "años"), 
-           color = "#e31a1c", vjust = 22, hjust = -0.1) +
-  scale_color_manual(values = c("0" = "#1f78b4", "1" = "#e31a1c"), labels = c("Hombre", "Mujer")) +
-  scale_fill_manual(values = c("0" = "#1f78b4", "1" = "#e31a1c"), labels = c("Hombre", "Mujer")) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(hjust = 0.5, face = "bold"),
-    legend.position = "bottom"
-  )
-
+# Gráfica con ggplot2
+ggplot(df_plot, aes(x = edad, y = salario, color = gender, fill = gender)) +
+  geom_line(size = 1) +
+  geom_ribbon(aes(ymin = salario_lower, ymax = salario_upper), alpha = 0.2) +
+  scale_y_continuous(labels = scales::comma_format(scale = 1)) +  # Formato de miles de COP
+  labs(title = "Perfil de edad-salario predicho por género",
+       x = "Edad",
+       y = "Salario por hora (COP)",
+       color = "Género",
+       fill = "Género") +
+  theme_minimal()
 ```
 
-Aunque existe una diferencia relativamente pequeña entre la edad
-pico salarial, esto podría reflejar dinámicas laborales
-específicas de género como que las mujeres tienen interrupciones
-en su carrera laboral debido a responsabilidades de cuidado (por
-ejemplo, maternidad o cuidado de familiares), lo que retrasa
-ligeramente el pico salarial. Mientras que los hombres podrían
-tener una progresión salarial más continua y sin interrupciones
-significativas que demoren la llegada a su pico salarial.
+Al presentar y discutir tus resultados, incluya:
 
-La brecha salarial incondicional, que refleja la diferencia
-salarial entre hombres y mujeres sin considerar otras variables,
-es del
-`r abs(round(coef(modelo_unconditional)["female"], 4)) * 100`% en
-este análisis, indicando que las mujeres ganan, en promedio, un
-`r abs(round(coef(modelo_unconditional)["female"], 4)) * 100`%
-menos que los hombres. Sin embargo, al controlar por
-características observables como educación, experiencia,
-ocupación y otros factores laborales, la brecha salarial
-condicional aumenta al
-`r abs(round(coef(modelo_condicional_usual)["female"], 4)) * 100`%,
-lo que sugiere que las mujeres enfrentan una desventaja salarial
-aún mayor cuando se comparan con hombres que tienen
-características similares. Este incremento en la brecha
-condicional es evidencia de que las mujeres poseen atributos que,
-en teoría, deberían asociarse con salarios más altos, pero aún
-así reciben remuneraciones inferiores. Este fenómeno podría estar
-relacionado con un problema de discriminación, donde las mujeres
-son penalizadas en el mercado laboral debido a prejuicios de
-género, prácticas salariales inequitativas o barreras en la
-promoción. Aunque parte de la brecha incondicional podría
-explicarse por diferencias en la selección de ocupaciones o
-interrupciones laborales (como las responsabilidades de cuidado),
-el aumento de la brecha al incluir controles indica que la
-discriminación, que es una variable no medible fácilmente,
-desempeña un papel significativo. Por lo tanto, es probable que
-la desigualdad salarial observada sea el resultado de una
-combinación de factores, donde la discriminación tiene un peso
-considerable, lo que subraya la necesidad de políticas que
-aborden tanto la equidad en el acceso a oportunidades como la
-eliminación de prácticas laborales discriminatorias.
+-   Una ecuación de estimación, explicando las variables de
+    control incluidas (ten cuidado con los *bad controls*).
+
+-   Una tabla de regresión con las estimaciones de las brechas
+    salariales condicional e incondicional, presentadas lado a
+    lado y resaltando el coeficiente de interés. Las variables de
+    control no deben incluirse en la tabla, pero sí mencionarse
+    adecuadamente.
+
+-   Una interpretación de los coeficientes de *Female*, una
+    comparación entre los modelos y el ajuste dentro de la
+    muestra.
+
+-   Un análisis de las edades en las que se alcanza el pico
+    salarial y su similitud/diferencia estadística.
+
+-   Una discusión reflexiva sobre la brecha salarial condicional
+    e incondicional, evaluando si los cambios en el coeficiente
+    son evidencia de un problema de selección, discriminación,
+    una combinación de ambos o si no están relacionados con estos
+    factores.
+
+## Rubrica
+
+Predicción edad-salario
+
+Se presenta el perfil edad-salario predicho y sus intervalos de
+confianza desagregando por género en una gráfica autocontenida
+con título, ejes, leyenda, y notas que permiten entender sin
+recurrir al documento.
+
+Edad pico
+
+Se estima la 'edad pico' por género con sus correspondientes
+errores estándar, y se argumenta su similitud o disimilitud
+estadística.
 
 # 5. Predicción del salario (Nico / Cami)
 
