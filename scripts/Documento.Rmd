@@ -641,30 +641,73 @@ mse
     confianza. *(Nota: Usa bootstrap para construir los
     intervalos de confianza.)*
 
-```{r}
-#Para encontrar la edad máxima
-profile_model<- lm(log_hourly_inglab ~ age + age_sq, data = clean_geih)
-coefs<-coef(profile_model)
+    ```{r}
+    #Se calcula el valor máximo de la edad 
+    coefs <- coef(modelo_edad)
+    beta1 <- coefs[1]
+    beta2 <- coefs[2]
+    beta3 <- coefs[3]
 
-#Obtener los coeficientes de la regresión en escalares
-b1<-coefs[1]
-b2<-coefs[2] 
+    #Valor de la edad máxima
+    age_max <- (-beta2/(2*beta3))
+    print(age_max)
 
-#Perfil del ingreso
+    #Desarrollamos la función para el bootstrap
+    boot_func <- function(data,index)
+    {
+        boot_sample <- data[index, ]
+        boot_model <-lm(log_hourly_inglab ~ age + age_sq, data = data, subset = index)
+        beta2 <- boot_model$coefficients[2]
+        beta3 <-  boot_model$coefficients[3]
+        return(- beta2/ (2 * beta3))
+    }
 
-elast <- b1 + 2*b2*(clean_geih$age)
+    # Extraer estimaciones
+    age_coefs <- apply(boot_age$t, 2, mean)  # Media de los coeficientes
+    age_coefs
 
-#Se calcula la edad máxima 
-age_max <- (-b1/(2*b2))
-print(age_max)
+    #Para obtener los intervalos de confianza usando bootstrap
+    conf_int <- boot.ci(boot_age, type = "perc")
+    conf_int
 
-# Graficar la relación edad-ingreso
-ggplot(clean_geih, aes(x = age, y = elast)) +
-  geom_line(color = "#2DAA9E", size = 1) + 
-  labs(title = "Relación Edad-Ingreso Estimada",
-       x = "Edad",
-       y = "Ingreso laboral horario") +
-  theme_minimal()
+    #Estimaciones 
+    perfil_pred <- function(age, coef) {
+      log_sal_pred <- coef[1] + coef[2] * age + coef[3] * age^2
+      return(exp(log_sal_pred))
+    }
+
+    # Rangos de edades 
+    age_range <- seq(min(clean_geih$age), max(clean_geih$age), 1)
+
+    #Perfil estimado 
+    pred_profile <- perfil_pred(age_range, coef(modelo_edad))
+
+    # Bootstrap para intervalos de confianza del perfil
+    boot_perfiles <- sapply(1:1000, function(i) {
+      sample_data <- clean_geih[sample(nrow(clean_geih), replace = TRUE), ]
+      modelo_boot <-lm(log_hourly_inglab ~ age + age_sq, data = sample_data)
+      perfil_pred(age_range, coef(modelo_boot))
+    })
+
+    ci_perfil <- apply(boot_perfiles, 1, quantile, probs = c(0.025, 0.975))
+
+    # Gráfico del perfil edad-ingresos
+    ggplot() +
+      geom_line(aes(x = age_range, y = pred_profile), color = "blue", size = 1) +
+      geom_ribbon(aes(x = age_range, ymin = ci_perfil[1, ], ymax = ci_perfil[2, ]), alpha = 0.3, fill = "blue") +
+      geom_vline(aes(xintercept = age_max), color = "red", linetype = "dashed") +
+      labs(
+        title = "Perfil estimado de edad vs ingresos",
+        x = "Edad",
+        y = "Ingresos reales"
+      ) +
+      theme_minimal()
+    ```
+
+```{}
+```
+
+```{}
 ```
 
 Esto significa que el salario crece con la edad hasta
@@ -677,9 +720,9 @@ salario empieza a disminuir.
 boot_func <- function(data,index)
 {
     boot_sample <- data[index, ]
-    boot_model <-lm(log_hourly_inglab ~ age + age_sq,data, subset = boot_sample)
-    beta2_boot <- boot_model$coefficients[2]
-    beta3_boot <-  boot_model$coefficients[3]
+    boot_model <-lm(log_hourly_inglab ~ age + age_sq, data = data, subset = index)
+    beta2 <- boot_model$coefficients[2]
+    beta3 <-  boot_model$coefficients[3]
     return(- beta2_boot / (2 * beta3_boot))
 }
 
@@ -687,25 +730,8 @@ boot_func <- function(data,index)
 boot_age <- boot(clean_geih, boot_func, 10)
 
 #Para obtener los intervalos de confianza
-conf_int <- boot.ci(boot_age, type = "perc")$percent[4:5]
+conf_int <- boot.ci(boot_age, type = "perc")
 conf_int
-
-#Para graficar el perfil estimado de edad e ingresos 
-pred_log_w <- predict(boot_model, clean_geih, interval = "confidence")
-
-#En la escala 
-clean_geih$predicted_wage <- exp(pred_log_w[,1])  
-
-#Graficamos
-ggplot(clean_geih, aes(x = clean_geih$age, y = pred_log_w)) +
-  geom_point(aes(y = exp(log_inglab)), alpha = 0.3) +  # Puntos reales
-  geom_line(color = "blue", size = 1) +  # Línea de predicción
-  geom_ribbon(aes(ymin = exp(pred_log_w[,2]), ymax = exp(pred_log_w[,3])), 
-              fill = "lightblue", alpha = 0.4) +  # Intervalo de confianza
-  theme_minimal() +
-  labs(title = "Perfil Edad-Ingresos en la Muestra",
-       x = "Edad",
-       y = "Salario Estimado")
 
 ```
 
