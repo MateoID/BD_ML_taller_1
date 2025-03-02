@@ -48,3 +48,8 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 .DS_Store
+
+#Specific files
+brecha_genero_pdf.Rmd
+.log
+brecha_genero_pdf.pdf
