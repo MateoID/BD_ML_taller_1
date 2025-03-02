@@ -227,7 +227,7 @@ integridad en la identificación individual.*
 
 #### Construcción de variables
 
-*Una vez establecidos los filtros y asginados los
+*Una vez establecidos los filtros y asignados los
 identificadores, se seleccionaron las variables relevantes para
 el análisis. En primer lugar, la variable dependiente se
 construyó a partir de la suma de diversas categorías de ingresos
@@ -284,11 +284,11 @@ hora, **log_hourly_inglab**, se fundamentó en dos razones
 principales: una metodológica y otra basada en intuición
 económica. Desde un punto de vista metodológico, la variable de
 ingresos por hora disponible creada en la base de datos inicial
-presentaba una cantidad considerable de valores faltantes, lo que
-reducía la muestra en aproximadamente un 40% tras la aplicación
-de los filtros de selección. Esta pérdida de observaciones habría
-limitado el análisis, disminuyendo la robustez de las
-estimaciones.*
+`y_salary_m_hu` presentaba una cantidad considerable de valores
+faltantes, lo que reducía la muestra en aproximadamente un 40%
+tras la aplicación de los filtros de selección. Esta pérdida de
+observaciones habría limitado el análisis, disminuyendo la
+robustez de las estimaciones.*
 
 *Por otro lado, desde una perspectiva de intuición económica, el
 análisis detallado de la documentación de la GEIH reveló la
@@ -305,7 +305,7 @@ laborales con el objetivo de minimizar la cantidad de valores
 faltantes. Las versiones imputadas y no imputadas de cada fuente
 de ingreso laboral permitó obtener una variable consolidada que
 luego se sumó junto con el ingreso en especie y los viáticos
-ajustados a valores mensuales. De esta manera, se mejorar la
+ajustados a valores mensuales. De esta manera, se mejora la
 calidad de la variable dependiente, alineándola con la realidad
 económica del país.*
 
@@ -341,7 +341,8 @@ aquellas con educación universitaria, mientras que los valores
 intermedios representan distintos niveles educativos. En la
 muestra, con la frecuencia más alta se encuentra la categoría 5,
 lo que indica que la educación secundaria es el nivel educativo
-más recurrente entre los entrevistados.*
+más recurrente entre los entrevistados. Falta poner el valor de
+tener esta variable.*
 
 *De igual manera, se consideró que las características laborales
 desempeñan un papel clave en las diferencias salariales. Por esta
@@ -382,100 +383,6 @@ individuos pertenecen al estrato 3. Esto sugiere que solo el 25%
 de la muestra reside en estratos superiores, lo que refleja la
 concentración de la población en niveles socioeconómicos bajos y
 medios.*
-
-Nuestra variable explicada, `log_hourly_inglab`, requirió un
-proceso detallado de construcción, dado que no se encontraba
-directamente en la base de datos de la Gran Encuesta Integrada de
-Hogares (GEIH). Para su cálculo, partimos de diversas fuentes de
-ingreso laboral que fueron seleccionadas considerando el concepto
-de rentas laborales definido por la Dirección de Impuestos y
-Aduanas Nacionales (DIAN), el cual comprende exclusivamente
-aquellos ingresos derivados de la actividad laboral de una
-persona. La variable se construyó a partir del ingreso mensual
-por la primera actividad antes de imputación (`impa`), el ingreso
-mensual imputado por la primera actividad (`impaes`), el ingreso
-mensual por la segunda actividad antes de imputación (`isa`), el
-ingreso mensual imputado por la segunda actividad (`isaes`), el
-ingreso mensual en especie antes de imputación (`ie`), el ingreso
-mensual en especie imputado (`iees`) y el valor anual de viáticos
-(`p6630s4a1`), que fue ajustado a valores mensuales dividiéndolo
-entre doce.
-
-Si bien la base de datos incluía la variable `ingtot`, que
-representa la suma total de ingresos reportados por cada
-individuo, esta no era adecuada para nuestro análisis, pues
-incorpora fuentes de ingreso no laborales, tales como arriendos,
-dividendos y pensiones. Debido a que nuestro interés radica en
-analizar el ingreso laboral, optamos por construir
-`hourly_inglab` exclusivamente a partir de los componentes
-mencionados. Posteriormente, para obtener el ingreso por hora,
-dividimos el ingreso mensual total por la cantidad de horas
-trabajadas reportadas por cada individuo. Como resultado, la
-media de la variable fue de \$9.323 COP, con un rango que va
-desde \$0 hasta \$888.775 COP. La mediana, en contraste, se ubicó
-en \$5.204 COP, lo que evidencia un sesgo a la derecha en la
-distribución de la variable, dado que la diferencia entre la
-mediana y la media es considerable.
-
-Asimismo, se incoporó la variable de **género** de los
-individuos, considerando la presencia de brecha de ingresos entre
-hombres y mujeres, lo que permite evaluar las diferencias. A
-través de la variable `female`, que identifica a las mujeres de
-la muestra la cual destaca en proporciones que corresponden al
-47% de los encuestados y el 53% corresponde a los hombres. En
-este mismo sentido, se incorporó el nivel educativo como un
-determinante en los ingresos, esta variable toma valores entre 1
-y 6, donde 1 corresponde a personas sin educación formal y 6 a
-aquellas con educación universitaria, mientras que los valores
-intermedios reflejan distintos niveles educativos. En la muestra,
-la media de esta variable se encuentra en 5, lo que indica que el
-nivel educativo más frecuente es la educación secundaria.
-
-Para el anális, se considera que las características laborales
-que son igualmente relevantes en la relación de las diferencias
-salariales. Por esto, la variable ocupación, que clasifica los
-individuos según su actividad económica, fue agregada en la base
-de datos. Esta variable en particular cuenta con 80 actividades
-diferentes pero permite reconocer que la remuneración entre
-sectores y tipo de empleo pueden. En la muestra, la ocupación más
-frecuente corresponde a vendedores ambulantes, domiciliarios,
-vendedores de loterías, periódicos y comerciantes. De igual
-forma, la variable vinculada a relación laboral, permite
-disntinguir entre los trabajadores asalariados, independientes, y
-aquellos con otro tipo de vinculación laboral. En esta variable
-de 9 categorías distintas, la actividad de obrero o empleado de
-una empresa particular estas dos son las más comunes.
-
-Además de estas variables principales, incluimos otras variables
-de control que consideramos relevantes para el análisis. La
-variable `oficio` recoge información sobre la ocupación de los
-individuos y está categorizada en 80 tipos de actividades
-diferentes. Dentro de nuestra muestra, la ocupación más frecuente
-corresponde a vendedores ambulantes, a domicilio, de loterías y
-periódicos, y mercaderistas. De manera similar, la variable
-`relab` clasifica la relación laboral de los individuos en nueve
-categorías distintas, siendo la más común la de obrero o empleado
-de empresa particular. Estas variables son relevantes porque el
-tipo de actividad que desempeña una persona puede determinar
-significativamente su nivel de ingresos, incluso más allá de la
-cantidad de horas trabajadas o su nivel educativo.
-
-Otra variable que consideramos fundamental en nuestro análisis es
-`formal`, que indica si un trabajador está afiliado o no a la
-seguridad social. En nuestra muestra, el 58.6% de los individuos
-es formal, lo que coincide con las cifras reportadas en el
-Boletín Técnico GEIH del DANE para el periodo diciembre 2018 -
-febrero 2019, donde se registró un 60.7% de trabajadores formales
-en Bogotá.
-
-Por último, decidimos incluir el estrato socioeconómico de los
-individuos como un indicador adicional de sus condiciones de
-vida. Esta variable tiene un rango de 1 a 6, con una media de 2.6
-y una mediana de 2. Al igual que la variable de ingresos, el
-estrato presenta un sesgo hacia la derecha, dado que hasta el
-percentil 75 los individuos de la muestra pertenecen al estrato
-3, lo que indica que solo el 25% de los encuestados reside en
-estratos superiores de servicios públicos domiciliarios.
 
 ```{r}
 # Haciendo el webscraping - 
@@ -657,16 +564,6 @@ $$ Al presentar y discutir tus resultados, incluye:
 -   Una tabla de regresión.
 
     ```{r}
-    #No tener variable dependiente con na, nan, infinito o menores a 0
-    clean_geih <- clean_geih[!is.na(clean_geih$hourly_inglab) & 
-                           !is.nan(clean_geih$hourly_inglab) & 
-                           !is.infinite(clean_geih$hourly_inglab) & 
-                           clean_geih$hourly_inglab > 0, ]
-
-    clean_geih <- clean_geih[!is.na(clean_geih$age) & 
-                           !is.nan(clean_geih$age) & 
-                           !is.infinite(clean_geih$age) & 
-                           clean_geih$age > 0, ]
 
     #Transformación directa de variables de interés para el modelo
     clean_geih <- clean_geih %>% mutate(age_sq = age^2) 
@@ -725,23 +622,18 @@ en los ingresos por hora no está siendo capturada por la edad ni
 por su transformación cuadrática, lo que limita la capacidad del
 modelo para describir la relación entre estas variables.*
 
-Asimismo, el Error Cuadrático Medio se utiliza como la métrica
-que permite evaluar el ajuste del modelo, en este caso, dentro de
-la muestra. Para la discusión del ajuste en este modelo en
-particular, el valor de MSE transformado a la escala original
-tiene un valor de 1.30, lo cual indica que en promedio, las
-predicciones del ingreso pueden desviarse 1.30 veces del valor
-real.
+sirve para comparar con otros valores es el mse como medida de
+ajuste. Este valor lo tenemos como referencia para comparar con
+el menos mse tenga con el entrenamiento entre los modelos de
+entrenamiento. Dejarlo abierto es el error dentro de la muestra,
+esto serviria para medir el ajuste y comparar.
 
 ```{r}
 
 #MSE dentro de la muestra 
 pred <- predict(modelo_edad, clean_geih)
 mse <- mean((clean_geih$log_hourly_inglab - pred)^2)
-rmse <- sqrt(mse)
-exp_rmse <- exp(rmse) - 1
-exp_rmse
-
+mse
 ```
 
 -   Un gráfico del perfil estimado de edad-ingresos implícito en
@@ -761,7 +653,7 @@ b2<-coefs[2]
 
 #Perfil del ingreso
 
-elast <- b1*clean_geih$age + 2*b2*(clean_geih$age_sq)
+elast <- b1 + 2*b2*(clean_geih$age_sq)
 
 #Se calcula la edad máxima 
 age_max <- (-b1/(2*b2))
@@ -1215,6 +1107,10 @@ ggplot(split_data, aes(x = Split, y = Count)) +
     #modelo edad bootstrap
     boot_model<- lm(log_hourly_inglab ~ age + age_sq, data = clean_geih)
 
+    #Incluir el modelo de género 
+
+    #Incluir el modelo de género con condicionado 
+
     #modelo efecto de la edad (age) sobre el ingreso varía según el género (female).
 
     modelo_interaccion_age_female <- lm(log_hourly_inglab ~ age + age_sq + female + age:female, data = clean_geih)
@@ -1362,7 +1258,6 @@ dificultades para predecir los ingresos en estos grupos.
     habilidades de programación, planifique en consecuencia).*
 
 ```{r}
-library(parallel)
 
 # Función para LOOCV
 loocv_lm <- function(formula, data) {
