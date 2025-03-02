@@ -384,6 +384,9 @@ de la muestra reside en estratos superiores, lo que refleja la
 concentración de la población en niveles socioeconómicos bajos y
 medios.*
 
+**Agregar las descripciones de las variables tenure, sizefirm,
+cuenta propia,**
+
 ```{r}
 # Haciendo el webscraping - 
 # Funciona pero lo desactivo mientras trabajamos. Hay que activarlo al final
@@ -404,8 +407,8 @@ medios.*
 
 # exportando la data cruda
 # exportando la data cruda
-saveRDS(tabla_geih, file = "../data/raw/data_GEIH_raw.rds")
-tabla_geih <- readRDS(file.path(data_raw_path,"Data_GEIH_raw.rds"))
+#saveRDS(tabla_geih, file = "../data/raw/data_GEIH_raw.rds")
+tabla_geih <- readRDS(file.path(data_raw_path,"Data_GEIH_raw_2.rds"))
 
 # Limpieza de los datos
 clean_geih <- tabla_geih %>% 
@@ -446,9 +449,6 @@ clean_geih <- tabla_geih %>%
 # Calculando la variable viáticos anuales a viáticos mensuales
 clean_geih <-  clean_geih %>% 
   mutate(p6630s4a1 = p6630s4a1 / 12)
-
-# Exportando la tabla con las variables seleccionadas
-save(clean_geih, file = file.path(data_processed_path,"data_GEIH_seleccionada.RData"))
 
 # Sumando los ingresos por diferentes conceptos para cada persona
 clean_geih$inglab <- rowSums(clean_geih[, c(
@@ -644,7 +644,7 @@ mse
 
 ```{r}
 #Para encontrar la edad máxima
-profile_model<- lm(hourly_inglab ~ age + age_sq, data = clean_geih)
+profile_model<- lm(log_hourly_inglab ~ age + age_sq, data = clean_geih)
 coefs<-coef(profile_model)
 
 #Obtener los coeficientes de la regresión en escalares
@@ -678,15 +678,14 @@ salario empieza a disminuir.
 boot_func <- function(data,index)
 {
     boot_sample <- data[index, ]
-    boot_model <-lm(log_inglab ~ age + age_sq,data, subset = boot_sample)
-    beta2_boot <- boot_model$coefficients[1]
-    beta3_boot <-  boot_model$coe["age_sq"]
+    boot_model <-lm(log_hourly_inglab ~ age + age_sq,data, subset = boot_sample)
+    beta2_boot <- boot_model$coefficients[2]
+    beta3_boot <-  boot_model$coefficients[3]
     return(- beta2_boot / (2 * beta3_boot))
 }
 
 #Se aplica el bootstrap 
-boot__age <- boot(clean_geih, boot_func, 4835)
-boot_result
+boot_age <- boot(clean_geih, boot_func, 10)
 
 #Para obtener los intervalos de confianza
 conf_int <- boot.ci(boot_age, type = "perc")$percent[4:5]
