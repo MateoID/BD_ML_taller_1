@@ -1419,7 +1419,7 @@ loocv_lm <- function(formula, data) {
   errores <- numeric(n)
   
   if ("age_sq" %in% all.vars(formula)) {
-    data$age_sq <- data$age^2
+    data$age_sq <- data$age_sq
   }
   
   # Ajustar el modelo y predecir en una observación
