@@ -761,7 +761,7 @@ r2_ajustado_unconditional <- summary(modelo_unconditional)$adj.r.squared * 100
 # Exportando la tabla del modelo uncondicional
 stargazer(modelo_unconditional,  # Modelo a usar
           title = "Tabla 4-1. Resultados del modelo incondicional",  # Título
-          type = "html",          # Formato de salida (texto)
+          type = "latex",          # Formato de salida (texto)
           
           no.space = TRUE,        # Tabla compacta
           keep = "female",        # Solo incluye "female"
@@ -925,8 +925,8 @@ modelo_condicional_fwl <- lm(log_hourly_inglab ~ female)
 # Ahora vamos a sacar la tabla de comparación de los modelos. 
 stargazer(modelo_unconditional, modelo_condicional_usual, modelo_condicional_fwl, 
   
-  type = "html",                     # Tipo de salida: "text" para consola
-  title = "Tabla 4-2. Comparación de los coeficientes de female para los diferentes modelos", 
+  type = "latex",                     # Tipo de salida: "text" para consola
+  title = "Tabla 4-2. Comparación del coeficiente de female para los diferentes modelos", 
   align = TRUE,                      # Alinea los números al punto decimal
   no.space = TRUE,                   # Elimina espacios innecesarios
   keep = c("female"),                # Variable predictora de interés
@@ -1018,6 +1018,7 @@ boots_modelo_funcion <-function(data, index){
 
 
 # Hace el bootstrap utilizando la función previamente definida
+# modelo_boot_fwl <- boot(clean_geih, boots_modelo_funcion, R = 1000)
 modelo_boot_fwl <- boot(clean_geih, boots_modelo_funcion, R = 10)
 
 # Armando el dataframe para presentar la tabla
@@ -1043,7 +1044,7 @@ matriz_resultados["SE", ] <- paste0("(", matriz_resultados["SE", ], ")")
 # Presentando la tabla con stargazer
 stargazer(
   matriz_resultados,  # Usar la matriz de resultados
-  type = "html",      
+  type = "latex",      
   title = "Tabla 4-3. Comparación de coeficientes y errores estándar usando FWL con y sin boostraping",
   align = TRUE,       # Alinea los números por el punto decimal
   no.space = TRUE,    # Elimina espacios innecesarios
