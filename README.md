@@ -8,9 +8,6 @@ Nicolás Moreno Enrriquez -
 Responder a los planteamientos del problem set 1 del curso de Big data y Machine learning 2025-1. 
 
 
-# Tareas 
-prueba Javier
-
-
-prueba camito
-lalalala
+# OJO---- AJUSTAR ANTES DE TERMINAR EL DOCUMENTO
+1. Descomentar el webscraping
+2. Setear bootstrapping a 1000 en brecha de genero
