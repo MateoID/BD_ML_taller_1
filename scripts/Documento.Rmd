@@ -549,6 +549,8 @@ skim(clean_geih)
 10. Se estima la 'edad pico' con sus correspondientes errores
     estándar, interpretando los resultados y su significancia
     tanto económica como estadística.
+    
+    pruebieta
 
 ## Contenido redactado previamente Cami-Nico
 
