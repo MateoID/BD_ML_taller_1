@@ -530,26 +530,35 @@ skim(clean_geih)
 ## Rubrica
 
 1.  Formato de tablas y gráficas
+
 2.  Se presenta los resultados de la estimación en una tabla que
     no es un pantallazo sino que está debidamente formateada, con
     el formato indicado, y contiene título y notas que permiten
     entenderla sin recurrir al documento,
+
 3.  Interpretación de coeficientes
+
 4.  Se interpreta los coeficientes y se discute su significancia
     tanto económica como estadística,
+
 5.  Discusión del ajuste del modelo
+
 6.  Se discute el ajuste del modelo sobre la muestra
+
 7.  Predicción de la edad-salario
+
 8.  Se presenta el perfil edad-salario predicho y sus intervalos
     de confianza en una gráfica autocontenida y debidamente
     formateada, con el formato indicado. Contiene título, ejes,
     leyenda, y notas que permiten entender sin recurrir al
     documento,
+
 9.  Edad pico
+
 10. Se estima la 'edad pico' con sus correspondientes errores
     estándar, interpretando los resultados y su significancia
     tanto económica como estadística.
-    
+
     pruebieta
 
 ## Contenido redactado previamente Cami-Nico
@@ -767,7 +776,6 @@ $$
 donde *Female* es un indicador que toma el valor de uno si el
 individuo en la muestra se identifica como mujer.
 
-<div align="center"> 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis', encoding = 'UTF-8'}
 # Montando el modelo incondicional
 modelo_unconditional <- lm(log_hourly_inglab ~ female, data=clean_geih)
@@ -796,8 +804,6 @@ stargazer(modelo_unconditional,  # Modelo a usar
           
           out = file.path(table_results_path, "4_1_table_modelo_unconditional.tex"))  # Guarda en archivo .tex .tex
 ```
-</div>
-<style> .espacio-tabla { margin-bottom: 20px; # Ajusta el espacio según necesites } </style><div class="espacio-tabla"></div>
 
 Utilizando como referencia el "unconditional model" podemos
 discutir sobre los siguientes puntos:
@@ -835,7 +841,7 @@ salario_real_hombres <- round(as.numeric(salario_real_hombres), 0)
     esperable porque solo tenemos una variable predictora y esto
     deja por fuera otras variables que pueden ser relevantes como
     la educación, la edad, la experiencia, entre otras.
-    
+
 [**b. Un eslogan común es "igual salario por igual trabajo". Una
 forma de interpretar esto es que, para empleados con
 características laborales y personales similares, no debería
@@ -886,8 +892,7 @@ Donde:
 i.  **Primero estimamos la brecha salarial condicional a los
     controles explicados previamente usando el método
     convencional y usando FWL**
-    
-<div align="center"> 
+
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis', encoding = 'UTF-8'}
 
 # Montando el modelo condicional utilizando la regresión múltiple convencional
@@ -971,8 +976,6 @@ stargazer(modelo_unconditional, modelo_condicional_usual, modelo_condicional_fwl
 
 
 ```
-</div>
-<style> .espacio-tabla { margin-bottom: 20px; # Ajusta el espacio según necesites } </style><div class="espacio-tabla"></div>
 
 Los resultados muestran una brecha salarial de género
 significativa, que se amplía después de controlar por otras
@@ -996,7 +999,6 @@ ii. **Ahora estimamos la brecha salarial condicional a los
     controles explicados usando FWL y bootstrap para calcular el
     error estandar con las dos aproximaciones y poder comparar.**
 
-<div align="center"> 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis', encoding = 'UTF-8'}
 
 # estableciendo una semilla
@@ -1078,16 +1080,14 @@ stargazer(
 )
 
 ```
-</div> ```
-<style> .espacio-tabla { margin-bottom: 20px; # Ajusta el espacio según necesites } </style><div class="espacio-tabla"></div>
 
-Partiendo de los resultados de la **tabla 4-3**, los
-coeficientes obtenidos con ambos métodos tienen el mismo signo y
-son muy similares, lo que implica que en promedio una mujer
-recibe menos ingresos por hora que un hombre. Por otra parte, el
-error estándar sí disminuye cuando se usa el método de
-bootstraping (pasa de `r se_fwl` a `r se_fwl_bootstrap`). De esta
-manera, podemos concluir que la estimación de la brecha salarial
+Partiendo de los resultados de la **tabla 4-3**, los coeficientes
+obtenidos con ambos métodos tienen el mismo signo y son muy
+similares, lo que implica que en promedio una mujer recibe menos
+ingresos por hora que un hombre. Por otra parte, el error
+estándar sí disminuye cuando se usa el método de bootstraping
+(pasa de `r se_fwl` a `r se_fwl_bootstrap`). De esta manera,
+podemos concluir que la estimación de la brecha salarial
 utilizando FWL y bootstraping es más precisa que usando FWL
 simplemente. De forma adicional, hay que resaltar que estos
 métodos no asumen homocedasticidad por lo cual se ajustan más a
@@ -1098,7 +1098,6 @@ estime las edades en las que se alcanza el pico salarial, junto
 con los respectivos intervalos de confianza por
 género.**]{.underline}
 
-<div align="center"> 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 
 # Modelo de regresión
@@ -1180,8 +1179,6 @@ ggplot(datos_prediccion, aes(x = age, y = salario_real, color = factor(female), 
 ggsave(filename = file.path(figure_results_path, "Figure 4_1_predic_salario_edad.png"))
 
 ```
-</div>
-<style> .espacio-tabla { margin-bottom: 20px; # Ajusta el espacio según necesites } </style><div class="espacio-tabla"></div>
 
 Aunque existe una diferencia relativamente pequeña entre la edad
 pico salarial, esto podría reflejar dinámicas laborales
