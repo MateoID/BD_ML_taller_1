@@ -30,7 +30,9 @@ p_load(rio,
        boot,
        rvest, 
        ggplot, 
-      parallel)   
+      parallel, 
+      AER
+)   
 
 # Declarando las rutas
 data_raw_path <- "../data/raw"
@@ -569,8 +571,19 @@ $$ Al presentar y discutir tus resultados, incluye:
     #Calculamos el modelo 
     modelo_edad <- lm(log_hourly_inglab ~ age + age_sq, data = clean_geih)
 
-    #Tabla de resultados
-    stargazer(modelo_edad, type = "text")
+    #Organizar las etiquetas
+    custom_labels <- list(
+      "(Constant)" = "Intercepto",
+      "age" = "Edad",
+      "age_sq" = "Edad^2")
+
+    # Tabla de resultados
+    stargazer (modelo_edad, type = "latex", 
+              title = "Tabla 1 - Perfil de Edad-Ingresos",
+              dep.var.labels = "Log Ingresos por hora",
+              no.space = TRUE, 
+              keep.stat = c("n", "rsq"),
+              out = file.path(table_results_path, "3_1_Tabla_Edad.tex"))
     ```
 
 **Agregar la discusion de la significancia economica de estos
@@ -620,11 +633,14 @@ en los ingresos por hora no está siendo capturada por la edad ni
 por su transformación cuadrática, lo que limita la capacidad del
 modelo para describir la relación entre estas variables.*
 
-sirve para comparar con otros valores es el mse como medida de
-ajuste. Este valor lo tenemos como referencia para comparar con
-el menos mse tenga con el entrenamiento entre los modelos de
-entrenamiento. Dejarlo abierto es el error dentro de la muestra,
-esto serviria para medir el ajuste y comparar.
+*El error cuadrático medio (MSE) dentro de la muestra se emplea
+como criterio para evaluar y comparar el ajuste de distintos
+modelos, dado que mide la precisión de las predicciones. En este
+caso, el MSE obtenido fue de **0.72**, lo que sirve como
+referencia para contrastar modelos posteriores, favoreciendo
+aquellos con un menor MSE. En términos generales, este valor es
+útil principalmente para medir el grado de ajuste y establecer
+comparaciones entre modelos.*
 
 ```{r}
 
@@ -661,6 +677,9 @@ mse
         return(- beta2/ (2 * beta3))
     }
 
+    #Se aplica el bootstrap 
+    boot_age <- boot(clean_geih, boot_func, 10)
+
     # Extraer estimaciones
     age_coefs <- apply(boot_age$t, 2, mean)  # Media de los coeficientes
     age_coefs
@@ -691,23 +710,19 @@ mse
     ci_perfil <- apply(boot_perfiles, 1, quantile, probs = c(0.025, 0.975))
 
     # Gráfico del perfil edad-ingresos
-    ggplot() +
-      geom_line(aes(x = age_range, y = pred_profile), color = "blue", size = 1) +
+    grafico_edad <- ggplot() +
+      geom_line(aes(x = age_range, y = pred_profile), color = "blue", linewidth = 1) +
       geom_ribbon(aes(x = age_range, ymin = ci_perfil[1, ], ymax = ci_perfil[2, ]), alpha = 0.3, fill = "blue") +
       geom_vline(aes(xintercept = age_max), color = "red", linetype = "dashed") +
       labs(
         title = "Perfil estimado de edad vs ingresos",
         x = "Edad",
-        y = "Ingresos reales"
+        y = "Ingresos por hora"
       ) +
       theme_minimal()
+
+    ggsave(filename = file.path(figure_results_path, "3_1_grafico_edad.png"))
     ```
-
-```{}
-```
-
-```{}
-```
 
 Esto significa que el salario crece con la edad hasta
 aproximadamente los 41 años de edad, a partir de este punto el
@@ -761,7 +776,7 @@ r2_ajustado_unconditional <- summary(modelo_unconditional)$adj.r.squared * 100
 # Exportando la tabla del modelo uncondicional
 stargazer(modelo_unconditional,  # Modelo a usar
           title = "Tabla 4-1. Resultados del modelo incondicional",  # Título
-          type = "latex",          # Formato de salida (texto)
+          type = "html",          # Formato de salida (texto)
           
           no.space = TRUE,        # Tabla compacta
           keep = "female",        # Solo incluye "female"
@@ -781,7 +796,6 @@ stargazer(modelo_unconditional,  # Modelo a usar
 ```
 </div>
 <style> .espacio-tabla { margin-bottom: 20px; # Ajusta el espacio según necesites } </style><div class="espacio-tabla"></div>
-
 
 Utilizando como referencia el "unconditional model" podemos
 discutir sobre los siguientes puntos:
@@ -819,7 +833,7 @@ salario_real_hombres <- round(as.numeric(salario_real_hombres), 0)
     esperable porque solo tenemos una variable predictora y esto
     deja por fuera otras variables que pueden ser relevantes como
     la educación, la edad, la experiencia, entre otras.
-
+    
 [**b. Un eslogan común es "igual salario por igual trabajo". Una
 forma de interpretar esto es que, para empleados con
 características laborales y personales similares, no debería
@@ -870,7 +884,7 @@ Donde:
 i.  **Primero estimamos la brecha salarial condicional a los
     controles explicados previamente usando el método
     convencional y usando FWL**
-
+    
 <div align="center"> 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis', encoding = 'UTF-8'}
 
@@ -925,8 +939,8 @@ modelo_condicional_fwl <- lm(log_hourly_inglab ~ female)
 # Ahora vamos a sacar la tabla de comparación de los modelos. 
 stargazer(modelo_unconditional, modelo_condicional_usual, modelo_condicional_fwl, 
   
-  type = "latex",                     # Tipo de salida: "text" para consola
-  title = "Tabla 4-2. Comparación del coeficiente de female para los diferentes modelos", 
+  type = "html",                     # Tipo de salida: "text" para consola
+  title = "Tabla 4-2. Comparación de los coeficientes de female para los diferentes modelos", 
   align = TRUE,                      # Alinea los números al punto decimal
   no.space = TRUE,                   # Elimina espacios innecesarios
   keep = c("female"),                # Variable predictora de interés
@@ -1018,7 +1032,6 @@ boots_modelo_funcion <-function(data, index){
 
 
 # Hace el bootstrap utilizando la función previamente definida
-# modelo_boot_fwl <- boot(clean_geih, boots_modelo_funcion, R = 1000)
 modelo_boot_fwl <- boot(clean_geih, boots_modelo_funcion, R = 10)
 
 # Armando el dataframe para presentar la tabla
@@ -1044,7 +1057,7 @@ matriz_resultados["SE", ] <- paste0("(", matriz_resultados["SE", ], ")")
 # Presentando la tabla con stargazer
 stargazer(
   matriz_resultados,  # Usar la matriz de resultados
-  type = "latex",      
+  type = "html",      
   title = "Tabla 4-3. Comparación de coeficientes y errores estándar usando FWL con y sin boostraping",
   align = TRUE,       # Alinea los números por el punto decimal
   no.space = TRUE,    # Elimina espacios innecesarios
@@ -1165,6 +1178,8 @@ ggplot(datos_prediccion, aes(x = age, y = salario_real, color = factor(female), 
 ggsave(filename = file.path(figure_results_path, "Figure 4_1_predic_salario_edad.png"))
 
 ```
+</div>
+<style> .espacio-tabla { margin-bottom: 20px; # Ajusta el espacio según necesites } </style><div class="espacio-tabla"></div>
 
 Aunque existe una diferencia relativamente pequeña entre la edad
 pico salarial, esto podría reflejar dinámicas laborales
@@ -1206,7 +1221,6 @@ combinación de factores, donde la discriminación tiene un peso
 considerable, lo que subraya la necesidad de políticas que
 aborden tanto la equidad en el acceso a oportunidades como la
 eliminación de prácticas laborales discriminatorias.
-
 
 # 5. Predicción del salario (Nico / Cami)
 
