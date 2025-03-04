@@ -1860,21 +1860,26 @@ representan distintos niveles educativos. En la muestra, con la
 frecuencia más alta se encuentra la categoría 5, lo que indica que la
 educación secundaria es el nivel educativo más recurrente entre los
 entrevistados.</em></p>
+<p>Incorporamos también la variable <strong>cuentaPropia</strong>
+correspondiente a 1 si el individuo trabaja como independiente y 0 de lo
+contrario. Para nuestra muestra, aproximadamente el 31% de los
+individuos trabajaba como independiente lo que equivale a 5106
+observaciones del total.</p>
 <p><em>De igual manera, se consideró que las características laborales
 desempeñan un papel clave en las diferencias salariales. Por esta razón,
-se incluyó la variable de <strong>ocupación</strong>, que clasifica a
-los individuos según su actividad económica. Dicha variable abarca 80
+se incluyó la variable de <strong>oficio</strong>, que clasifica a los
+individuos según su actividad económica. Dicha variable abarca 80
 categorías distintas y permite identificar cómo la remuneración varía
 entre sectores y tipos de empleo. En la muestra, las ocupaciones más
 frecuentes corresponden a vendedores ambulantes, domiciliarios,
 vendedores de loterías, periódicos y comerciantes.</em></p>
-<p><em>Por otro lado, se incorporó la variable de relación laboral, la
-cual distingue entre trabajadores asalariados, independientes y otras
-formas de vinculación laboral. Esta variable cuenta con nueve
-categorías, siendo las más comunes las de obrero o empleado de una
-empresa particular. De este modo, su inclusión permite evaluar cómo el
-tipo de vínculo laboral influye en la estructura salarial y en las
-posibles diferencias en los ingresos.</em></p>
+<p><em>Por otro lado, se incorporó la variable de <strong>relación
+laboral</strong>, la cual distingue entre trabajadores asalariados,
+independientes y otras formas de vinculación laboral. Esta variable
+cuenta con nueve categorías, siendo las más comunes las de obrero o
+empleado de una empresa particular. De este modo, su inclusión permite
+evaluar cómo el tipo de vínculo laboral influye en la estructura
+salarial y en las posibles diferencias en los ingresos.</em></p>
 <p><em>Otra de las variables clave para el análisis es
 <strong>formal,</strong> la cual indica si un trabajador está afiliado a
 la seguridad social. Su inclusión permite diferenciar entre empleos que
@@ -1918,10 +1923,148 @@ organización. La alta desviación estándar de 89.488 refuerza la idea de
 una distribución altamente dispersa y no normal, con una fuerte
 asimetría debido a valores extremos en los empleados con mayor
 antigüedad.</em></p>
-<p><strong>Agregar las descripciones de las variables tenure, sizefirm,
-cuenta propia,</strong></p>
-<p>[1] 0 [1] 323 Min. 1st Qu. Median Mean 3rd Qu. Max. 4.083 163.333
-196.000 193.561 204.167 530.833</p>
+<pre class="r"><code># Haciendo el webscraping - 
+# Funciona pero lo desactivo mientras trabajamos. Hay que activarlo al final
+  # tabla_geih &lt;- data.frame()
+   
+  # for (i in 1:10){
+    # my_url &lt;- sprintf(&quot;https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_%d.html&quot;, i)
+    # my_table &lt;- read_html(my_url) %&gt;% 
+     #  html_elements(xpath=&#39;/html/body/table&#39;) %&gt;% 
+     #  html_table()
+     
+  #   my_table &lt;- as.data.frame(my_table)
+     
+  #   tabla_geih &lt;- rbind(tabla_geih, my_table)
+
+  #   rm(my_table)
+
+  # }
+
+tabla_geih &lt;- readRDS(file.path(data_raw_path,&quot;Data_GEIH_raw_2.rds&quot;))
+
+# Limpieza de los datos
+clean_geih &lt;- tabla_geih %&gt;% 
+  filter(age &gt;= 18, ocu == 1) %&gt;% 
+  mutate(
+    directorio = as.factor(directorio),
+    secuencia_p = as.factor(secuencia_p),
+    orden = as.factor(orden),
+    id = paste(directorio, secuencia_p, orden, sep = &quot;&quot;)) %&gt;% 
+  select(
+    # Variables demográficas
+    &#39;id&#39;, # Identificador único por individuo
+    &#39;age&#39;, # Edad
+    &#39;sex&#39;, # Sexo
+    &#39;p6210&#39;, # Nivel educativo alcanzado 
+    &#39;p6426&#39;, #antiguedad en la empresa 
+    
+    # Variables para utilizar en el cálculo de los ingresos por hora
+    &#39;impa&#39;, # Ingreso mensual por la primera actividad antes de imputación
+    &#39;impaes&#39;, # Ingreso mensual imputado por la primera actividad
+    &#39;isa&#39;, # Ingreso mensual por la segunda actividad antes de imputación
+    &#39;isaes&#39;, # Ingreso mensual imputado por la segunda actividad
+    &#39;ie&#39;, # Ingreso mensual en especie antes de imputación
+    &#39;iees&#39;, # Ingreso mensual en especia imputado
+    &#39;p6630s4a1&#39;, # Valor anual viáticos
+    &#39;hoursWorkUsual&#39;, # Horas trabajadas en la última semana
+    &#39;hoursWorkActualSecondJob&#39;, # Horas trabajadas en la última semana por la segunda actividad
+    
+    # Otras variables de interes
+    &#39;formal&#39;, # empleo formal
+    &#39;sizeFirm&#39;, # tamaño de la firma
+    &#39;oficio&#39;, # Oficio de la persona
+    &#39;relab&#39;, # tipo de ocupación
+    &#39;cuentaPropia&#39;, # Independiente
+    &#39;estrato1&#39;, # Estrato
+    )
+
+# Calculando la variable viáticos anuales a viáticos mensuales
+clean_geih &lt;-  clean_geih %&gt;% 
+  mutate(p6630s4a1 = p6630s4a1 / 12)
+
+# Sumando los ingresos por diferentes conceptos para cada persona
+clean_geih$inglab &lt;- rowSums(clean_geih[, c(
+  &#39;impa&#39;, 
+  &#39;impaes&#39;, 
+  &#39;isa&#39;, 
+  &#39;isaes&#39;, 
+  &#39;ie&#39;, 
+  &#39;iees&#39;,
+  &#39;p6630s4a1&#39;
+)], na.rm=TRUE)
+
+# Revisión de la variable ingresos laborales calculada
+sum(is.na(clean_geih$inglab)) # no tenemos NAs en la variable</code></pre>
+<p>[1] 0</p>
+<pre class="r"><code>sum(clean_geih$inglab == 0) # tenemos 323 observaciones con ingresos = a cero lo cual no tiene sentido. </code></pre>
+<p>[1] 323</p>
+<pre class="r"><code># Imputaciôn de promedio de ingresos por estrato y sexo para valores de ingreso que son iguales a cero.
+clean_geih &lt;- clean_geih %&gt;%
+  group_by(estrato1, sex) %&gt;%
+  mutate(mean_inglab = mean(inglab[inglab != 0], na.rm = TRUE)) %&gt;%
+  ungroup() %&gt;%
+  mutate(inglab = ifelse(inglab == 0, mean_inglab, inglab)) %&gt;%
+  as.data.frame()
+
+# Cálculo e imputación de horas trabajadas por mes
+clean_geih &lt;- clean_geih %&gt;% 
+  mutate(hour_month1 = (hoursWorkUsual * 49) / 12) %&gt;% 
+  mutate(hour_month2 = (hoursWorkActualSecondJob * 49) / 12)
+
+clean_geih$total_hours &lt;- rowSums(clean_geih[, c(&#39;hour_month1&#39;, &#39;hour_month2&#39;)], na.rm=TRUE) 
+summary(clean_geih$total_hours)</code></pre>
+<p>Min. 1st Qu. Median Mean 3rd Qu. Max. 4.083 163.333 196.000 193.561
+204.167 530.833</p>
+<pre class="r"><code># Cálculo de ingresos laborales por hora
+clean_geih &lt;- clean_geih %&gt;% 
+  mutate(hourly_inglab = inglab / total_hours)
+
+# Convirtiendo la variable sexo a female
+clean_geih &lt;- clean_geih %&gt;%  
+  #Transformación directa de variables de interés para el modelo
+  mutate(age_sq = age^2) %&gt;% 
+  mutate(female = ifelse(sex == 1, 0, 1)) %&gt;%   # Variable female para el análisis de brecha de género
+  mutate(p6210 = ifelse(p6210 == 9, 1, p6210)) %&gt;%
+  mutate(log_hourly_inglab = log(hourly_inglab)) %&gt;% # creando la variable log del salario hora
+  select(                                            # seleccionando las variables
+    &#39;id&#39;, 
+    &#39;hourly_inglab&#39;,
+    &#39;log_hourly_inglab&#39;,
+    &#39;age&#39;, 
+    &#39;age_sq&#39;,
+    &#39;female&#39;, 
+    &#39;p6210&#39;, 
+    &#39;cuentaPropia&#39;, 
+    &#39;estrato1&#39;, 
+    &#39;formal&#39;, 
+    &#39;sizeFirm&#39;, 
+    &#39;oficio&#39;, 
+    &#39;relab&#39;, 
+    &#39;p6426&#39;)
+
+stargazer(clean_geih,
+          type = &quot;html&quot;,
+          title = &quot;Tabla 1. Estadísticas descriptivas&quot;, 
+          align = TRUE,
+          no.space = TRUE,
+          omit = c(5),
+          nobs = FALSE,
+          median = TRUE,
+          covariate.labels = c(
+            &quot;Ingreso por hora&quot;, &quot;Log ingreso por hora&quot;, &quot;Edad&quot;, 
+            &quot;Mujer&quot;, &quot;Nivel educativo&quot;, &quot;Independiente&quot;, &quot;Estrato&quot;, &quot;Formal&quot;, 
+            &quot;Tamaño de la empresa&quot;, &quot;Tipo de oficio&quot;, &quot;Categoría laboral&quot;, 
+            &quot;Antigüedad en la empresa&quot;),
+          notes = c(
+            &quot;Todas las variables usadas en este trabajo provienen de la GEIH de Bogotá para 2018. \\\\&quot;,
+            &quot;Número de observaciones: 16,542 para todas las variables. Nuestra variable explicada \\\\&quot;,
+            &quot;es Log ingreso por hora que corresponde al logaritmo de los ingresos por hora para \\\\&quot;,
+            &quot;cada individuo. Ingreso por hora se encuentra expresado en pesos colombianos (COP).&quot;
+          ),
+          notes.append = FALSE,
+          out = file.path(table_results_path, &quot;2_1_table_estadisticas_descriptivas.html&quot;)
+          )</code></pre>
 <table style="text-align:center">
 <caption>
 <strong>Tabla 1. Estadísticas descriptivas</strong>
@@ -2052,6 +2195,26 @@ Nivel educativo
 </td>
 <td>
 6
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+Independiente
+</td>
+<td>
+0.309
+</td>
+<td>
+0.462
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+1
 </td>
 </tr>
 <tr>
@@ -2203,37 +2366,13 @@ colombianos (COP).
 </td>
 </tr>
 </table>
+% Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy
+Institute. E-mail: marek.hlavac at gmail.com % Date and time: lun, mar.
+03, 2025 - 10:38:34 p. m. % Requires LaTeX packages: dcolumn
 </div>
 </div>
-<div id="perfil-ingreso---edad-cami" class="section level1">
-<h1>3. Perfil ingreso - edad (Cami)</h1>
-<div id="rubrica" class="section level2">
-<h2>Rubrica</h2>
-<ol style="list-style-type: decimal">
-<li><p>Formato de tablas y gráficas</p></li>
-<li><p>Se presenta los resultados de la estimación en una tabla que no
-es un pantallazo sino que está debidamente formateada, con el formato
-indicado, y contiene título y notas que permiten entenderla sin recurrir
-al documento,</p></li>
-<li><p>Interpretación de coeficientes</p></li>
-<li><p>Se interpreta los coeficientes y se discute su significancia
-tanto económica como estadística,</p></li>
-<li><p>Discusión del ajuste del modelo</p></li>
-<li><p>Se discute el ajuste del modelo sobre la muestra</p></li>
-<li><p>Predicción de la edad-salario</p></li>
-<li><p>Se presenta el perfil edad-salario predicho y sus intervalos de
-confianza en una gráfica autocontenida y debidamente formateada, con el
-formato indicado. Contiene título, ejes, leyenda, y notas que permiten
-entender sin recurrir al documento,</p></li>
-<li><p>Edad pico</p></li>
-<li><p>Se estima la ‘edad pico’ con sus correspondientes errores
-estándar, interpretando los resultados y su significancia tanto
-económica como estadística.</p>
-<p>pruebieta</p></li>
-</ol>
-</div>
-<div id="contenido-redactado-previamente-cami-nico" class="section level2">
-<h2>Contenido redactado previamente Cami-Nico</h2>
+<div id="perfil-ingreso---edad" class="section level1">
+<h1>3. Perfil ingreso - edad</h1>
 <p>Una gran cantidad de evidencia en economía laboral sugiere que el
 perfil típico de edad-salario de los trabajadores sigue un patrón
 predecible: los salarios tienden a ser bajos cuando el trabajador es
@@ -2247,6 +2386,23 @@ log(w) = \beta_1 + \beta_2Edad + \beta_3 Edad^2 + u
 \]</span> Al presentar y discutir tus resultados, incluye:</p>
 <ul>
 <li><p>Una tabla de regresión.</p>
+<pre class="r"><code>#Calculamos el modelo 
+modelo_edad &lt;- lm(log_hourly_inglab ~ age + age_sq, data = clean_geih)
+
+#Organizar las etiquetas
+custom_labels &lt;- list(
+  &quot;(Constant)&quot; = &quot;Intercepto&quot;,
+  &quot;age&quot; = &quot;Edad&quot;,
+  &quot;age_sq&quot; = &quot;Edad^2&quot;)
+
+# Tabla de resultados
+stargazer (modelo_edad, type = &quot;html&quot;, 
+          title = &quot;Tabla 1 - Perfil de Edad-Ingresos&quot;,
+          dep.var.labels = &quot;Log Ingresos por hora&quot;,
+          no.space = TRUE, 
+          keep.stat = c(&quot;n&quot;, &quot;rsq&quot;),
+          star.cutoffs = NA,
+          out = file.path(table_results_path, &quot;3_1_Tabla_Edad.html&quot;))</code></pre>
 <table style="text-align:center">
 <caption>
 <p><strong>Tabla 1 - Perfil de Edad-Ingresos</strong></p>
@@ -2358,6 +2514,9 @@ log(w) = \beta_1 + \beta_2Edad + \beta_3 Edad^2 + u
 </tr>
 </table></li>
 </ul>
+% Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy
+Institute. E-mail: marek.hlavac at gmail.com % Date and time: lun, mar.
+03, 2025 - 10:38:36 p. m.
 <p><strong>Agregar la discusion de la significancia economica de estos
 coeficientes</strong></p>
 <ul>
@@ -2442,7 +2601,7 @@ boot_age &lt;- boot(clean_geih, boot_func, 10)
 # Extraer estimaciones
 age_coefs &lt;- apply(boot_age$t, 2, mean)  # Media de los coeficientes
 age_coefs</code></pre>
-<pre><code>## [1] 43.34738</code></pre>
+<pre><code>## [1] 43.431</code></pre>
 <pre class="r"><code>#Para obtener los intervalos de confianza usando bootstrap
 conf_int &lt;- boot.ci(boot_age, type = &quot;perc&quot;)</code></pre>
 <pre><code>## Warning in norm.inter(t, alpha): extreme order statistics used as endpoints</code></pre>
@@ -2455,7 +2614,7 @@ conf_int &lt;- boot.ci(boot_age, type = &quot;perc&quot;)</code></pre>
 ## 
 ## Intervals : 
 ## Level     Percentile     
-## 95%   (42.45, 44.52 )  
+## 95%   (42.51, 44.95 )  
 ## Calculations and Intervals on Original Scale
 ## Warning : Percentile Intervals used Extreme Quantiles
 ## Some percentile intervals may be unstable</code></pre>
@@ -2485,17 +2644,18 @@ grafico_edad &lt;- ggplot() +
   geom_line(aes(x = age_range, y = pred_profile), color = &quot;blue&quot;, linewidth = 1) +
   geom_ribbon(aes(x = age_range, ymin = ci_perfil[1, ], ymax = ci_perfil[2, ]), alpha = 0.3, fill = &quot;blue&quot;) +
   geom_vline(aes(xintercept = age_max), color = &quot;red&quot;, linetype = &quot;dashed&quot;) +
+  annotate(&quot;text&quot;, x = age_max + 2, y = quantile(pred_profile, 0.5), label = &quot;Edad pico 43 años&quot;, 
+           color = &quot;red&quot;, hjust = 0, size = 3, fontface = &quot;bold&quot;)
   labs(
     title = &quot;Perfil estimado de edad vs ingresos&quot;,
     x = &quot;Edad&quot;,
     y = &quot;Ingresos por hora&quot;
   ) +
-  theme_minimal()
-
-ggsave(filename = file.path(figure_results_path, &quot;3_1_grafico_edad.png&quot;))</code></pre>
+  theme_minimal()</code></pre>
+<pre><code>## NULL</code></pre>
+<pre class="r"><code>ggsave(filename = file.path(figure_results_path, &quot;3_1_grafico_edad.png&quot;))</code></pre>
 <pre><code>## Saving 7 x 5 in image</code></pre></li>
 </ul>
-</div>
 </div>
 <div id="brecha-salarial-por-género" class="section level1">
 <h1>4. Brecha salarial por género</h1>
@@ -2590,6 +2750,9 @@ Errores estándar en paréntesis; No incluye controles
 </td>
 </tr>
 </table>
+% Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy
+Institute. E-mail: marek.hlavac at gmail.com % Date and time: lun, mar.
+03, 2025 - 10:39:17 p. m.
 <p>Utilizando como referencia el “unconditional model” podemos discutir
 sobre los siguientes puntos:</p>
 <ul>
@@ -2834,6 +2997,9 @@ trabajo y tamaño de empresa.
 </td>
 </tr>
 </table>
+% Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy
+Institute. E-mail: marek.hlavac at gmail.com % Date and time: lun, mar.
+03, 2025 - 10:39:19 p. m. % Requires LaTeX packages: dcolumn
 <p>Los resultados muestran una brecha salarial de género significativa,
 que se amplía después de controlar por otras variables. Es decir que
 después de usar los controles descritos en la regresión se observa que
@@ -2919,6 +3085,9 @@ trabajo y tamaño de empresa.
 </td>
 </tr>
 </table>
+% Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy
+Institute. E-mail: marek.hlavac at gmail.com % Date and time: lun, mar.
+03, 2025 - 10:39:26 p. m. % Requires LaTeX packages: dcolumn
 <p>Partiendo de los resultados de la <strong>tabla 4-3</strong>, los
 coeficientes obtenidos con ambos métodos tienen el mismo signo y son muy
 similares, lo que implica que en promedio una mujer recibe menos
@@ -2967,34 +3136,8 @@ considerable, lo que subraya la necesidad de políticas que aborden tanto
 la equidad en el acceso a oportunidades como la eliminación de prácticas
 laborales discriminatorias.</p>
 </div>
-<div id="predicción-del-salario-nico-cami" class="section level1">
-<h1>5. Predicción del salario (Nico / Cami)</h1>
-<div id="rubrica-1" class="section level2">
-<h2>Rubrica</h2>
-<ul>
-<li><p>Se divide la muestra en una proporción 70-30, y se incluye una
-semilla que permita la reproducibilidad.</p></li>
-<li><p>Se presenta una tabla que resume el desempeño predictivo de las
-tres especificaciones anteriores en términos del RMSE.</p></li>
-<li><p>Se calcula el desempeño predictivo para, al menos, cinco
-especificaciones adicionales que exploran no-linealidades y mayor
-complejidad.</p></li>
-<li><p>Se interpreta el desempeño de los diferentes modelos y se
-describe, detalladamente, la especificación con mejor
-desempeño.</p></li>
-<li><p>Se presenta una gráfica con la distribución de los errores en el
-modelo con mejor desempeño predictivo y diagnostica los outilers de la
-muestra, argumentando si se deben a la naturaleza de los datos o al
-modelo.</p></li>
-<li><p>Se presenta una tabla con el LOOCV para los dos modelos con el
-menor error predictivo y compara los resultados con los obtenidos
-mediante el enfoque de validación.</p></li>
-</ul>
-<p>Notas de clase Gustavo:</p>
-<p>En cada uno de los folds se esta cambiando la muestra.</p>
-</div>
-<div id="contenido-redactado-previamente" class="section level2">
-<h2>Contenido redactado previamente</h2>
+<div id="predicción-del-salario" class="section level1">
+<h1>5. Predicción del salario</h1>
 <p>En las secciones anteriores, estimaste algunas especificaciones con
 un enfoque en la inferencia. En esta subsección, evaluaremos el poder
 predictivo de estas especificaciones.</p>
@@ -3273,7 +3416,7 @@ cat(&quot;LOOCV for Modelo Edad Formal completed.\n&quot;)</code></pre>
 training_time &lt;- difftime(end_time, start_time, units = &quot;mins&quot;)
 cat(&quot;\nTotal LOOCV training completed in:&quot;, round(training_time, 2), &quot;minutes\n&quot;)</code></pre>
 <pre><code>## 
-## Total LOOCV training completed in: 0.76 minutes</code></pre>
+## Total LOOCV training completed in: 0.79 minutes</code></pre>
 <pre class="r"><code># Mostrar resultados de LOOCV
 cat(&quot;RMSE (Modelo estrato:sizefirm):&quot;, resultados_estrato_sizefirm$rmse, &quot;\n&quot;)</code></pre>
 <pre><code>## RMSE (Modelo estrato:sizefirm): 0.6969082</code></pre>
@@ -3377,7 +3520,6 @@ print(resultados)</code></pre>
 <pre><code>##             Modelo RMSE_LOOCV RMSE_Validacion
 ## 1 Estrato:SizeFirm  0.6969082       0.7056719
 ## 2      Edad:Formal  0.7821320       0.7887830</code></pre>
-</div>
 </div>
 
 

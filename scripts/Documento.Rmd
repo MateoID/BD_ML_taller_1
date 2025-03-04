@@ -1,5 +1,5 @@
 ---
-title: 'Proble Set 1: Prediciendo el ingreso'
+title: 'Problem Set 1: Prediciendo el ingreso'
 author: "Maria Camila Caraballo, Javier Amaya, Nicolas Moreno, Mateo Isaza"
 date: "2025-02-01"
 output:
@@ -276,11 +276,11 @@ muestra, con la frecuencia más alta se encuentra la categoría 5,
 lo que indica que la educación secundaria es el nivel educativo
 más recurrente entre los entrevistados.*
 
-Incorporamos también la variable **cuentaPropia** correspondiente
-a 1 si el individuo trabaja como independiente y 0 de lo
-contrario. Para nuestra muestra, aproximadamente el 31% de los
+*Se incorporó también la variable **cuentaPropia**
+correspondiente a 1 si el individuo trabaja como independiente y
+0 de lo contrario. Para la muestra, aproximadamente el 31% de los
 individuos trabajaba como independiente lo que equivale a 5106
-observaciones del total.
+observaciones del total.*
 
 *De igual manera, se consideró que las características laborales
 desempeñan un papel clave en las diferencias salariales. Por esta
@@ -695,7 +695,7 @@ mse
       geom_ribbon(aes(x = age_range, ymin = ci_perfil[1, ], ymax = ci_perfil[2, ]), alpha = 0.3, fill = "blue") +
       geom_vline(aes(xintercept = age_max), color = "red", linetype = "dashed") +
       annotate("text", x = age_max + 2, y = quantile(pred_profile, 0.5), label = "Edad pico 43 años", 
-               color = "red", hjust = 0, size = 3, fontface = "bold")
+               color = "red", hjust = 0, size = 3, fontface = "bold") +
       labs(
         title = "Perfil estimado de edad vs ingresos",
         x = "Edad",
