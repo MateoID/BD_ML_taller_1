@@ -42,7 +42,7 @@ figure_results_path <- "../results/figures"
 
 ```
 
-# 1. Introducción 
+# 1. Introducción
 
 *Uno de los principales desafíos para la equidad tributaria y la
 sostenibilidad fiscal en Colombia es la subdeclaración de
@@ -490,7 +490,7 @@ stargazer(clean_geih,
 
 ```
 
-# 3. Perfil ingreso - edad 
+# 3. Perfil ingreso - edad
 
 Una gran cantidad de evidencia en economía laboral sugiere que el
 perfil típico de edad-salario de los trabajadores sigue un patrón
@@ -655,6 +655,8 @@ mse
       geom_line(aes(x = age_range, y = pred_profile), color = "blue", linewidth = 1) +
       geom_ribbon(aes(x = age_range, ymin = ci_perfil[1, ], ymax = ci_perfil[2, ]), alpha = 0.3, fill = "blue") +
       geom_vline(aes(xintercept = age_max), color = "red", linetype = "dashed") +
+      annotate("text", x = age_max + 2, y = quantile(pred_profile, 0.5), label = "Edad pico 43 años", 
+               color = "red", hjust = 0, size = 3, fontface = "bold")
       labs(
         title = "Perfil estimado de edad vs ingresos",
         x = "Edad",
