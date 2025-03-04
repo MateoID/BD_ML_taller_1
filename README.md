@@ -4,7 +4,7 @@ Javier Amaya Nieto - 202214392 - j.amayan@uniandes.edu.co
 Mateo Isaza Díaz - 202412526 - m.isazad@uniandes.edu.co
 Nicolás Moreno Enriquez -201615907- na.morenoe@uniandes.edu.co
 
-# POPÓSITO
+# PROPÓSITO
 Responder a los planteamientos del problem set 1 del curso de Big data y Machine learning 2025-1. 
 
 # INTRODUCCIÓN
@@ -59,5 +59,5 @@ La carpeta scripts contiene el elemento .Rproj con el que se creó el repositori
 scripts/Documento.Rmd
 scripts/Taller_1.Rproj
 
-# LICENSIA
+# LICENCIA
 Este proyecto se distribuye bajo la licencia MIT.
