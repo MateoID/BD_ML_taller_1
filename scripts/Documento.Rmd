@@ -380,6 +380,33 @@ de la muestra reside en estratos superiores, lo que refleja la
 concentración de la población en niveles socioeconómicos bajos y
 medios.*
 
+*El tamaño de la empresa, es una variable categórica cuyos
+valores corresponden a: i) 1 si el individuo es independiente;
+ii) 2 si el individuo trabaja e una empresa con 2 a 5
+trabajadores; iii) 3 si el individuo trabaja en una empresa con 6
+a 10 trabajadores; iv) 4 si el individuo trabaja en una empresa
+con 11 a 50 trabajadores; y v) 5 si el individuo trabaja en una
+empresa con más de 50 trabajadores. En este caso la media es de
+3.15 y la mediana de 3, lo que sugiere que la distribución está
+sesgada hacia valores más altos, pero con predomino de individuos
+trabajando en empresas pequeñas de entre 6 y 10 trabajadores.
+Dado que la desviación estándar es 1.649, la dispersión de los
+datos es relativamente baja, lo que sugiere una concentración en
+empresas de tamaño reducido. La distribución no parece seguir una
+forma normal, ya que la mediana y la media no coinciden y hay una
+posible asimetría hacia valores más altos.*
+
+*Finalmente, la antigüedad en la empresa, medida en meses,
+presenta una media de 63.76 meses y una mediana de 24 meses. Este
+contraste indica que la distribución está sesgada hacia valores
+más altos, con algunos empleados con una larga permanencia en la
+empresa. El rango es amplio, desde 0 hasta 720 meses, lo que
+evidencia la presencia de empleados recientes y otros con una
+gran trayectoria dentro de la organización. La alta desviación
+estándar de 89.488 refuerza la idea de una distribución altamente
+dispersa y no normal, con una fuerte asimetría debido a valores
+extremos en los empleados con mayor antigüedad.*
+
 **Agregar las descripciones de las variables tenure, sizefirm,
 cuenta propia,**
 
@@ -397,13 +424,11 @@ cuenta propia,**
   #   my_table <- as.data.frame(my_table)
      
   #   tabla_geih <- rbind(tabla_geih, my_table)
+
+  #   rm(my_table)
+
   # }
 
- #rm(my_table) #activar cuando se active el webscraping
-
-# exportando la data cruda
-# exportando la data cruda
-#saveRDS(tabla_geih, file = "../data/raw/data_GEIH_raw.rds")
 tabla_geih <- readRDS(file.path(data_raw_path,"Data_GEIH_raw_2.rds"))
 
 # Limpieza de los datos
@@ -466,8 +491,8 @@ clean_geih <- clean_geih %>%
   group_by(estrato1, sex) %>%
   mutate(mean_inglab = mean(inglab[inglab != 0], na.rm = TRUE)) %>%
   ungroup() %>%
-  mutate(inglab = ifelse(inglab == 0, mean_inglab, inglab))
-#checkpoint: sum(clean_geih$inglab == 0)
+  mutate(inglab = ifelse(inglab == 0, mean_inglab, inglab)) %>%
+  as.data.frame()
 
 # Cálculo e imputación de horas trabajadas por mes
 clean_geih <- clean_geih %>% 
@@ -480,9 +505,6 @@ summary(clean_geih$total_hours)
 # Cálculo de ingresos laborales por hora
 clean_geih <- clean_geih %>% 
   mutate(hourly_inglab = inglab / total_hours)
-
-# Checkpoint sexo pretransformación: 
-# table(clean_geih$female)
 
 # Convirtiendo la variable sexo a female
 clean_geih <- clean_geih %>%  
@@ -507,16 +529,28 @@ clean_geih <- clean_geih %>%
     'relab', 
     'p6426')
 
-# Checkpoint sexo pretransformación: 
-# table(clean_geih$female)
-
-# checkpoint de valores na, nan o infinitos en la variable ingresos log
-#sum(is.na(clean_geih$log_hourly_inglab))  # Check for NA values
-#sum(is.nan(clean_geih$log_hourly_inglab)) # Check for NaN values
-#sum(is.infinite(clean_geih$log_hourly_inglab)) # Check for Inf values
-
-# haciendo una revisión rápida de las variables
-skim(clean_geih)
+stargazer(clean_geih,
+          type = "latex",
+          title = "Tabla 1. Estadísticas descriptivas", 
+          align = TRUE,
+          no.space = TRUE,
+          omit = c(5, 8),
+          nobs = FALSE,
+          median = TRUE,
+          covariate.labels = c(
+            "Ingreso por hora", "Log ingreso por hora", "Edad", 
+            "Mujer", "Nivel educativo", "Estrato", "Formal", 
+            "Tamaño de la empresa", "Tipo de oficio", "Categoría laboral", 
+            "Antigüedad en la empresa"),
+          notes = c(
+            "Todas las variables usadas en este trabajo provienen de la GEIH de Bogotá para 2018. \\\\",
+            "Número de observaciones: 16,542 para todas las variables. Nuestra variable explicada \\\\",
+            "es Log ingreso por hora que corresponde al logaritmo de los ingresos por hora para \\\\",
+            "cada individuo. Ingreso por hora se encuentra expresado en pesos colombianos (COP)."
+          ),
+          notes.append = FALSE,
+          out = file.path(table_results_path, "2_1_table_estadisticas_descriptivas.tex")
+          )
 
 ```
 
