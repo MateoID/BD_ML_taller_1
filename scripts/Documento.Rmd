@@ -1283,7 +1283,7 @@ split_data <- data.frame(
 )
 
 #Crear visualización
-ggplot(split_data, aes(x = Split, y = Count)) +
+gr <- ggplot(split_data, aes(x = Split, y = Count)) +
   geom_bar(stat = "identity", fill = "darkblue", width = 0.5) +
   geom_text(aes(label = paste0(round(Percentage, 1), "%\n(n=", Count, ")")), 
             vjust = -0.5, color = "black", size = 4) +
@@ -1292,6 +1292,9 @@ ggplot(split_data, aes(x = Split, y = Count)) +
        x = "") +
   theme_bw() +
   ylim(0, max(split_data$Count) * 1.2) 
+
+# Guardar el gráfico como PNG
+ggsave("../results/figures/5_1_figure_visualizacion_datasets.png", plot = gr, width = 6, height=4,dpi=300)
 ```
 
 (b) Reporte y compare el desempeño predictivo en términos del
@@ -1301,85 +1304,119 @@ ggplot(split_data, aes(x = Split, y = Count)) +
 
     ```{r}
 
-    # Predecir en el conjunto de prueba
+    # Especificaciones desarrolladas en el taller
+        
+        form_1 <- log_hourly_inglab ~ female
+        form_2 <- log_hourly_inglab ~ age + age_sq
+        form_3 <- log_hourly_inglab ~ age + age_sq + female
+        form_4 <- log_hourly_inglab ~ age + age_sq + female + factor(p6210) + p6426 + factor(oficio) + factor(relab) + factor(formal) + factor(sizeFirm)
+        form_5 <- log_hourly_inglab ~ age + age_sq + female + factor(p6210) + p6426 + factor(oficio) + factor(relab) + factor(formal) + factor(sizeFirm) + age:female
+        
+        modelo_ingreso_female <- lm(form_1, data = clean_geih)
+        modelo_ingreso_edad_edadsq <- lm(form_2, data = clean_geih)
+        modelo_ingreso_edad_edadsq_female <- lm(form_3, data = clean_geih)
+        modelo_ingreso_edad_edadsq_female_others <- lm(form_4, data = clean_geih)
+        modelo_ingreso_edad_edadsq_female_others_interacccion <- lm(form_5, data = clean_geih)
+        
+        # Especificaciones adicionales de mayor complejidad
+        
+        #Modelo si el efecto de la interacción de la edad y el genero
+        form_6 <- log_hourly_inglab ~ age + age_sq + female + age:female
+        #Modelo si el efecto de la edad varía según la formalidad laboral (formal).
+        form_7 <- log_hourly_inglab ~ age + age_sq + I(age^3) + formal + age:formal
+        #Modelo si el efecto del estrato socioeconómico (estrato) sobre el ingreso varía según el tamaño de la empresa
+        form_8 <- log_hourly_inglab ~ age + age_sq + estrato1 + sizeFirm + estrato1:sizeFirm
+        #Modelo si el efecto del tamaño de la empresa varía según el tipo de empleo (cuentapropia).
+        form_9 <- log_hourly_inglab ~ age + age_sq + log(sizeFirm + 1) + cuentaPropia + log(sizeFirm + 1):cuentaPropia
+        #Modelo efectos fijos para la ocupación (oficio).
+        form_10 <- log_hourly_inglab ~ age + age_sq + I(age^3) + factor(oficio)
+        
+        modelo_interaccion_age_female <- lm(form_6, data = clean_geih)
+        modelo_polinomico_age_formal <- lm(form_7, data = clean_geih)
+        modelo_interaccion_estrato_sizefirm <- lm(form_8, data = clean_geih)
+        modelo_log_sizefirm_cuentapropia <- lm(form_9, data = clean_geih)
+        modelo_efectos_fijos_oficio <- lm(form_10, data = clean_geih)
+        
+        predicciones_modelo_1 <- predict(modelo_ingreso_female, newdata = testing)
+        predicciones_modelo_2 <- predict(modelo_ingreso_edad_edadsq, newdata = testing)
+        predicciones_modelo_3 <- predict(modelo_ingreso_edad_edadsq_female, newdata = testing)
+        predicciones_modelo_4 <- predict(modelo_ingreso_edad_edadsq_female_others, newdata = testing)
+        predicciones_modelo_5 <- predict(modelo_ingreso_edad_edadsq_female_others_interacccion, newdata = testing)
+        predicciones_modelo_6 <- predict(modelo_interaccion_age_female, newdata = testing)
+        predicciones_modelo_7 <- predict(modelo_polinomico_age_formal, newdata = testing)
+        predicciones_modelo_8 <- predict(modelo_interaccion_estrato_sizefirm, newdata = testing)
+        predicciones_modelo_9 <- predict(modelo_log_sizefirm_cuentapropia, newdata = testing)
+        predicciones_modelo_10 <- predict(modelo_efectos_fijos_oficio, newdata = testing)
+     
 
-    #modelo edad lineal   
-    modelo_edad <- lm(log_hourly_inglab ~ age + age_sq, data = clean_geih)
+        # Calcular RMSE para cada modelo
 
-    #modelo edad bootstrap
-    boot_model<- lm(log_hourly_inglab ~ age + age_sq, data = clean_geih)
-
-    #Incluir el modelo de género 
-
-    #Incluir el modelo de género con condicionado 
-
-    #modelo efecto de la edad (age) sobre el ingreso varía según el género (female).
-
-    modelo_interaccion_age_female <- lm(log_hourly_inglab ~ age + age_sq + female + age:female, data = clean_geih)
-
-    #Modelo si el efecto de la edad varía según la formalidad laboral (formal).
-
-    modelo_polinomico_age_formal <- lm(log_hourly_inglab ~ age + age_sq + I(age^3) + formal + age:formal, data = clean_geih)
-
-    #Modelo si el efecto del estrato socioeconómico (estrato) sobre el ingreso varía según el tamaño de la empresa (sizefirm).
-
-    modelo_interaccion_estrato_sizefirm <- lm(log_hourly_inglab ~ age + age_sq + estrato1 + sizeFirm + estrato1:sizeFirm, data = clean_geih)
-
-    #Modelo si el efecto del tamaño de la empresa varía según el tipo de empleo (cuentapropia).
-
-    modelo_log_sizefirm_cuentapropia <- lm(log_hourly_inglab ~ age + age_sq + log(sizeFirm + 1) + cuentaPropia + log(sizeFirm + 1):cuentaPropia, data = clean_geih)
-
-    #Modelo efectos fijos para la ocupación (oficio).
-
-    modelo_efectos_fijos_oficio <- lm(log_hourly_inglab ~ age + age_sq + I(age^3) + factor(oficio), data = clean_geih)
-
-    predicciones1 <- predict(modelo_edad, newdata = testing)
-    predicciones2 <- predict(boot_model, newdata = testing, interval = "confidence")
-    predicciones3 <- predict(modelo_interaccion_age_female, newdata = testing)
-    predicciones4 <- predict(modelo_polinomico_age_formal, newdata = testing)
-    predicciones5 <- predict(modelo_interaccion_estrato_sizefirm, newdata = testing)
-    predicciones6 <- predict(modelo_log_sizefirm_cuentapropia, newdata = testing)
-    predicciones7 <- predict(modelo_efectos_fijos_oficio, newdata = testing)
-
-    # Calcular RMSE para cada modelo
-
-    rmse1 <- RMSE(predicciones1, testing$log_hourly_inglab)
-    rmse2 <- RMSE(predicciones2, testing$log_hourly_inglab)
-    rmse3 <- RMSE(predicciones3, testing$log_hourly_inglab)
-    rmse4 <- RMSE(predicciones4, testing$log_hourly_inglab)
-    rmse5 <- RMSE(predicciones5, testing$log_hourly_inglab)
-    rmse6 <- RMSE(predicciones6, testing$log_hourly_inglab)
-    rmse7 <- RMSE(predicciones7, testing$log_hourly_inglab)
+        rmse1 <- RMSE(predicciones_modelo_1, testing$log_hourly_inglab)
+        rmse2 <- RMSE(predicciones_modelo_2, testing$log_hourly_inglab)
+        rmse3 <- RMSE(predicciones_modelo_3, testing$log_hourly_inglab)
+        rmse4 <- RMSE(predicciones_modelo_4, testing$log_hourly_inglab)
+        rmse5 <- RMSE(predicciones_modelo_5, testing$log_hourly_inglab)
+        rmse6 <- RMSE(predicciones_modelo_6, testing$log_hourly_inglab)
+        rmse7 <- RMSE(predicciones_modelo_7, testing$log_hourly_inglab)
+        rmse8 <- RMSE(predicciones_modelo_8, testing$log_hourly_inglab)
+        rmse9 <- RMSE(predicciones_modelo_9, testing$log_hourly_inglab)
+        rmse10 <- RMSE(predicciones_modelo_10, testing$log_hourly_inglab)
 
 
-    # Crear una tabla con los resultados
-    resultados <- data.frame(
-      Modelo = c("Modelo lineal", "Modelo bootstrap", "Modelo age:female", "Modelo age:formal", "Modelo estrato:sizefirm", "Modelo log(sizefirm):cuentapropia", "Modelo efectos fijos"),
-      RMSE = c(rmse1, rmse2, rmse3, rmse4, rmse5, rmse6, rmse7 )
-    )
+        # Crear una tabla con los resultados
+        resultados <- data.frame(
+          Modelo = c("modelo_ingreso_female", "modelo_ingreso_edad_edadsq", "modelo_ingreso_edad_edadsq_female", "modelo_ingreso_edad_edadsq_female_others", "modelo_ingreso_edad_edadsq_female_others_interacccion", "modelo_interaccion_age_female", "modelo_polinomico_age_formal", "modelo_interaccion_estrato_sizefirm", "modelo_log_sizefirm_cuentapropia", "modelo_efectos_fijos_oficio"),
+          RMSE = c(rmse1, rmse2, rmse3, rmse4, rmse5, rmse6, rmse7, rmse8, rmse9, rmse10 )
+        )
 
-    print(resultados)
+        print(resultados)
+        
+    latex_code <- xtable(resultados)
 
+    # Guardar el código LaTeX en un archivo .tex
+    print(latex_code, file = "../results/tables/5_2_table_resultados_RMSE_modelos.tex", include.rownames=FALSE)
     ```
 
 (c) En la discusión de los resultados, comente:
 
-    i\. El desempeño general de los modelos.\
+    i\. El desempeño general de los modelos.
 
-    Los modelos que incluyen interacciones y efectos fijos
-    (estrato:sizefirm y efectos fijos) tienen un desempeño
-    predictivo superior en comparación con los modelos más
-    simples (lineal y bootstrap). Esto sugiere que las relaciones
-    no lineales y las interacciones entre variables son
-    importantes para predecir el ingreso laboral.
+    En la discusión de los resultados, se observa que el
+    desempeño general de los modelos varía significativamente
+    según las variables incluidas y su complejidad. Los modelos
+    que incorporan más predictores, como edad, edad al cuadrado,
+    género (female) y otras interacciones
+    (modelo_ingreso_edad_edadsq_female_others y
+    modelo_ingreso_edad_edadsq_female_others_interacccion),
+    muestran el mejor desempeño, con los valores más bajos de
+    RMSE (0.6425849 y 0.6426649, respectivamente), lo que indica
+    una mayor precisión en las predicciones. Por otro lado, los
+    modelos más simples, como modelo_ingreso_female (RMSE =
+    0.8599398), tienen un rendimiento inferior, lo que sugiere
+    que la inclusión de variables adicionales y relaciones más
+    complejas mejora significativamente la capacidad predictiva.
+    Modelos con efectos fijos (modelo_efectos_fijos_oficio) o
+    interacciones específicas
+    (modelo_interaccion_estrato_sizefirm) también demuestran un
+    buen desempeño, con RMSEs relativamente bajos (0.7031694 y
+    0.7056719, respectivamente), lo que respalda la importancia
+    de considerar estructuras más sofisticadas en
+    la modelización.
 
-    ii. La especificación con el menor error de predicción.\
+    ii. La especificación con el menor error de predicción.
 
-La especificación con el menor error de predicción es el Modelo
-estrato:sizefirm , con un RMSE de 0.7069517. Este modelo incluye
-una interacción entre el estrato socioeconómico (estrato) y el
-tamaño de la empresa (sizefirm), lo que parece capturar mejor la
-variabilidad en los ingresos laborales.
+La especificación con el menor error de predicción es el
+modelo_ingreso_edad_edadsq_female_others, que alcanza un RMSE de
+0.6425849. Este modelo supera ligeramente a su versión con
+interacción
+(modelo_ingreso_edad_edadsq_female_others_interacccion, RMSE =
+0.6426649), lo que sugiere que la inclusión de la interacción no
+aporta una mejora significativa en la precisión. El bajo RMSE de
+este modelo indica que la combinación de variables como edad,
+edad al cuadrado, género (female) y otras variables adicionales
+permite una predicción más precisa en comparación con los demás
+modelos evaluados. Por lo tanto, este modelo representa la mejor
+opción en términos de minimización del error de predicción.
 
 ```         
 iii. Para la especificación con el menor error de predicción,
@@ -1395,59 +1432,76 @@ iii. Para la especificación con el menor error de predicción,
 ```
 
 ```{r}
-errores <- testing$log_hourly_inglab - predicciones5
+# modelo con menor error de predicción
+# predicciones_modelo_4 <- predict(modelo_ingreso_edad_edadsq_female_others, newdata = testing)
+errores <- testing$log_hourly_inglab - predicciones_modelo_4
 
-hist(errores, breaks = 30, main = "Distribución de los Errores", xlab = "Errores de Predicción")
+png("../results/figures/5_3_figure_histograma_errores.png", width = 800, height = 600, res = 100)  # res = resolución en DPI
 
+#Histograma con la Distribución de los Errores de modelo_ingreso_edad_edadsq_female_others
+hist(errores, breaks = 30, main = "Distribución de los Errores", xlab = "Errores de Predicción", col = "lightblue", border = "black")
+
+dev.off()
+
+#Numero de outliers en modelo_ingreso_edad_edadsq_female_others
 outliers <- which(abs(errores) > 2 * sd(errores))
 print(paste("Número de outliers:", length(outliers)))
 ```
 
-Hay 278 observaciones en la muestra de prueba cuyos errores de
-predicción son significativamente grandes (por ejemplo, errores
-que superan 2 desviaciones estándar de la media de los errores).
-Estos outliers representan casos donde el modelo no logra
-predecir adecuadamente el ingreso laboral (log_hourly_inglab).
+La existencia de 287 outliers sugiere que hay un grupo de
+observaciones para las cuales el modelo no logra predecir con
+precisión. Estos casos podrían deberse a características no
+capturadas por el modelo, como ingresos inusualmente altos o
+bajos, o comportamientos atípicos en las variables explicativas.
 
-Investigación de la DIAN
+Implicación para la DIAN:
 
-Los outliers podrían representar casos de interés para la DIAN
-(Dirección de Impuestos y Aduanas Nacionales), especialmente si:
-Los ingresos reales son significativamente más altos que los
-predichos (posible subdeclaración de ingresos). Los ingresos
-reales son significativamente más bajos que los predichos
-(posible evasión fiscal o ingresos no declarados). Recomendación:
-La DIAN podría investigar estos casos para verificar la
-consistencia de los datos y detectar posibles irregularidades.
+Los outliers podrían representar casos de interés para la DIAN,
+especialmente si corresponden a individuos con ingresos
+significativamente más altos de lo predicho, lo que podría
+indicar subdeclaración de ingresos o evasión fiscal. La DIAN
+podría priorizar la revisión de los outliers con errores de
+predicción positivos (ingresos observados significativamente
+mayores que los predichos), ya que estos podrían indicar posibles
+irregularidades fiscales.
 
-Análisis de los outliers:
+Análisis de los outliers:
 
 ```{r}
 # Identificar outliers
 outliers <- which(abs(errores) > 2 * sd(errores))
+print(paste("Número de outliers:", length(outliers)))
 
-# Filtrar las observaciones outliers
+# Explorar las observaciones que son outliers
 outliers_data <- testing[outliers, ]
 
 # Resumen de las características de los outliers
 summary(outliers_data)
 
-# Distribución de los outliers por estrato socioeconómico
-table(outliers_data$estrato1)
 
-# Distribución de los outliers por tamaño de la empresa
-table(outliers_data$sizeFirm)
+png("../results/figures/5_3_2_figure_outliers_plot.png", width = 800, height = 600, res = 100)
 
-# Gráfico de dispersión de edad vs. ingreso para los outliers
+# Visualización de los outliers en relación con las variables clave
 plot(outliers_data$age, outliers_data$log_hourly_inglab, 
-     main = "Outliers: Edad vs. Ingreso", 
-     xlab = "Edad", ylab = "Log Ingreso Laboral")
+     main = "Outliers: Edad vs Ingreso", 
+     xlab = "Edad", ylab = "Log Ingreso por Hora", 
+     col = "red", pch = 19)
+
+# Comparación con el resto de los datos
+points(testing$age, testing$log_hourly_inglab, col = "blue", pch = 19, cex = 0.5)
+legend("topright", legend = c("Outliers", "Datos Normales"), col = c("red", "blue"), pch =19)
+
+dev.off()
 ```
 
-Los outliers están concentrados en ciertos grupos (estratos 2 y
-3, empresas pequeñas, mujeres, trabajadores por cuenta propia y
-sector formal), lo que sugiere que el modelo actual tiene
-dificultades para predecir los ingresos en estos grupos.
+Estas observaciones presentan ingresos extremos, con valores de
+hourly_inglab que varían desde 91.84 hasta 306,122.45, lo que
+sugiere la presencia de casos atípicos que podrían ser de interés
+para la DIAN, especialmente aquellos con ingresos
+significativamente altos que podrían indicar subdeclaración o
+evasión fiscal. Por otra parte, el 58.54% de los outliers sean
+trabajadores por cuenta propia (cuentaPropia = 1) sugiere que
+este grupo tiene ingresos más variables y difíciles de predecir.
 
 (d) **LOOCV.** Para los dos modelos con el menor error de
     predicción en la sección anterior, calcule el error de
@@ -1467,7 +1521,7 @@ loocv_lm <- function(formula, data) {
   errores <- numeric(n)
   
   if ("age_sq" %in% all.vars(formula)) {
-    data$age_sq <- data$age^2
+    data$age_sq <- data$age_sq
   }
   
   # Ajustar el modelo y predecir en una observación
@@ -1488,71 +1542,86 @@ loocv_lm <- function(formula, data) {
   return(list(rmse = rmse, errores = errores))
 }
 
-# Definir las fórmulas de los dos modelos
-formula_estrato_sizefirm <- log_hourly_inglab ~ age + age_sq + estrato1 + sizeFirm + estrato1:sizeFirm
-formula_edad_formal <- log_hourly_inglab ~ age + age_sq + I(age^3) + formal + age:formal
+# Definir las fórmulas de los dos modelos con menor error de presicción
+
+# Definición modelo_ingreso_edad_edadsq_female_others <- lm(form_4, data = clean_geih)
+form_4 <- log_hourly_inglab ~ age + age_sq + female + p6210 + p6426 + oficio + relab + formal + sizeFirm
+
+# Definición modelo_ingreso_edad_edadsq_female_others_interacccion <- lm(form_5, data = clean_geih)
+form_5 <- log_hourly_inglab ~ age + age_sq + female + p6210 + p6426 + oficio + relab + formal + sizeFirm + age:female
 
 # Calcular LOOCV para ambos modelos
 start_time <- Sys.time()
-cat("Starting LOOCV for Modelo estrato:sizefirm...\n")
-resultados_estrato_sizefirm <- loocv_lm(formula_estrato_sizefirm, clean_geih)
-cat("LOOCV for Modelo estrato:sizefirm completed.\n")
+cat("Starting LOOCV for modelo_ingreso_edad_edadsq_female_others...\n")
+resultados_modelo_ingreso_edad_edadsq_female_others <- loocv_lm(form_4, clean_geih)
+cat("LOOCV for modelo_ingreso_edad_edadsq_female_others completed.\n")
 
-cat("Starting LOOCV for Modelo efectos fijos...\n")
-resultados_edad_formal <- loocv_lm(formula_edad_formal, clean_geih)
-cat("LOOCV for Modelo Edad Formal completed.\n")
+cat("Starting LOOCV for modelo_ingreso_edad_edadsq_female_others_interacccion...\n")
+resultados_modelo_ingreso_edad_edadsq_female_others_interacccion <- loocv_lm(form_5, clean_geih)
+cat("LOOCV for modelo_ingreso_edad_edadsq_female_others_interacccion completed.\n")
 
 end_time <- Sys.time()
 training_time <- difftime(end_time, start_time, units = "mins")
 cat("\nTotal LOOCV training completed in:", round(training_time, 2), "minutes\n")
 
 # Mostrar resultados de LOOCV
-cat("RMSE (Modelo estrato:sizefirm):", resultados_estrato_sizefirm$rmse, "\n")
-cat("RMSE (Modelo edad:formal):", resultados_edad_formal$rmse, "\n")
+cat("RMSE (modelo_ingreso_edad_edadsq_female_others):", resultados_modelo_ingreso_edad_edadsq_female_others$rmse, "\n")
+cat("RMSE (modelo_ingreso_edad_edadsq_female_others_interacccion):", resultados_modelo_ingreso_edad_edadsq_female_others_interacccion$rmse,"\n")
 ```
 
 ```{r}
 # Identificación observaciones influyentes
-outliers_estrato_sizefirm <- which(abs(resultados_estrato_sizefirm$errores) > 2 * sd(resultados_estrato_sizefirm$errores))
-outliers_edad_formal <- which(abs(resultados_edad_formal$errores) > 2 * sd(resultados_edad_formal$errores))
+outliers_modelo_ingreso_edad_edadsq_female_others <- which(abs(resultados_modelo_ingreso_edad_edadsq_female_others$errores) > 2 * sd(resultados_modelo_ingreso_edad_edadsq_female_others$errores))
+outliers_modelo_ingreso_edad_edadsq_female_others_interacccion <- which(abs(resultados_modelo_ingreso_edad_edadsq_female_others_interacccion$errores) > 2 * sd(resultados_modelo_ingreso_edad_edadsq_female_others_interacccion$errores))
 
 # Mostrar observaciones influyentes
-cat("Outliers en Modelo estrato:sizefirm:", length(outliers_estrato_sizefirm), "\n")
-cat("Outliers en Modelo edad:formal", length(outliers_edad_formal), "\n")
+cat("Outliers en modelo_ingreso_edad_edadsq_female_others", length(outliers_modelo_ingreso_edad_edadsq_female_others ), "\n")
+cat("Outliers en modelo_ingreso_edad_edadsq_female_others_interacccion", length(outliers_modelo_ingreso_edad_edadsq_female_others_interacccion), "\n")
 
 # Analisis características de los outliers
-cat("\nCaracterísticas de los outliers en Modelo estrato:sizefirm:\n")
-print(summary(clean_geih[outliers_estrato_sizefirm, ]))
+cat("\nCaracterísticas de los outliers en modelo_ingreso_edad_edadsq_female_others:\n")
+print(summary(clean_geih[outliers_modelo_ingreso_edad_edadsq_female_others, ]))
 
-cat("\nCaracterísticas de los outliers en Modelo efectos edad:formal\n")
-print(summary(clean_geih[outliers_edad_formal, ]))
+cat("\nCaracterísticas de los outliers en modelo_ingreso_edad_edadsq_female_others_interacccion\n")
+print(summary(clean_geih[outliers_modelo_ingreso_edad_edadsq_female_others_interacccion,]))
 ```
 
-El Modelo estrato:sizefirm tiene un RMSE de LOOCV (0.6969082)
-ligeramente menor que el RMSE de validación (0.7069517), lo que
-sugiere que generaliza bien.
-
-El Modelo edad:formal tiene un RMSE de LOOCV (0.782132) mayor que
-el RMSE de validación (0.7926872), lo que indica que puede estar
-sobreajustado.
-
-Conclusiones:
-
-El Modelo estrato:sizefirm es el mejor modelo en términos de
-desempeño predictivo, con un RMSE más bajo y menos outliers.
-
-El Modelo edad:formal tiene un desempeño inferior, con un RMSE
-más alto y más outliers. Los outliers en ambos modelos deben
-investigarse para determinar si son errores en los datos o casos
-atípicos que requieren un tratamiento especial.
+El análisis de los resultados de la validación cruzada (LOOCV) y
+las características de los outliers en los modelos
+modelo_ingreso_edad_edadsq_female_others y
+modelo_ingreso_edad_edadsq_female_others_interacccion muestra que
+ambos tienen un desempeño muy similar, con RMSE de 0.6961796 y
+0.6961372, respectivamente, lo que indica que la inclusión de la
+interacción age:female no aporta una mejora significativa en la
+precisión predictiva. Ambos modelos identifican un número casi
+idéntico de outliers (937 y 938, respectivamente). La presencia
+de estos outliers sugiere que el modelo tiene dificultades para
+predecir ingresos en casos atípicos, posiblemente debido a la
+omisión de variables relevantes o a la complejidad inherente de
+los patrones de ingresos.
 
 ```{r}
 resultados <- data.frame(
-  Modelo = c("Estrato:SizeFirm", "Edad:Formal"),
-  RMSE_LOOCV = c(resultados_estrato_sizefirm$rmse, resultados_edad_formal$rmse),
-  RMSE_Validacion = c(rmse5, rmse4)
+  Modelo = c("modelo_ingreso_edad_edadsq_female_others", "modelo_ingreso_edad_edadsq_female_others_interacccion"),
+  RMSE_LOOCV = c(resultados_modelo_ingreso_edad_edadsq_female_others$rmse, resultados_modelo_ingreso_edad_edadsq_female_others_interacccion$rmse),
+  RMSE_Validacion = c(rmse4, rmse5)
 )
 
 # Mostrar la tabla
 print(resultados)
+    
+latex_code <- xtable(resultados)
+
+# Guardar el código LaTeX en un archivo .tex
+print(latex_code, file = "../results/tables/5_4_table_resultados_RMSE_VS_LOOCV.tex", include.rownames=FALSE)
 ```
+
+En contraste con los RMSE de validación, ambos modelos también
+presentan RMSE muy cercanos (0.6425849 y 0.6426649), confirmando
+que la interacción no tiene un impacto relevante. Estos
+resultados sugieren que el modelo base
+(modelo_ingreso_edad_edadsq_female_others) es suficiente para
+predecir los ingresos, y que la complejidad adicional de la
+interacción no seria justificada. Además, la consistencia entre
+los RMSE de LOOCV y validación indica que los modelos generalizan
+bien a nuevos datos, sin sobreajuste.
