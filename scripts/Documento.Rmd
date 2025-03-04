@@ -94,11 +94,6 @@ calidad y precisión de los datos tributarios, facilitando la
 elaboración de presupuestos más ajustados a la realidad fiscal
 del país y promoviendo una gestión pública más eficiente.*
 
-Yáñez Henríquez, J. (2016). Evasión tributaria: atentado a la
-equidad. *Revista De Estudios Tributarios*, (13), pág. 171–206.
-Recuperado a partir de
-<https://revistaestudiostributarios.uchile.cl/index.php/RET/article/view/39874>
-
 De esta manera, el principal objetivo es construir un modelo de
 salario por horas individual:
 
@@ -594,6 +589,7 @@ $$ Al presentar y discutir tus resultados, incluye:
               dep.var.labels = "Log Ingresos por hora",
               no.space = TRUE, 
               keep.stat = c("n", "rsq"),
+              star.cutoffs = NA,
               out = file.path(table_results_path, "3_1_Tabla_Edad.tex"))
     ```
 
@@ -734,31 +730,6 @@ mse
 
     ggsave(filename = file.path(figure_results_path, "3_1_grafico_edad.png"))
     ```
-
-Esto significa que el salario crece con la edad hasta
-aproximadamente los 41 años de edad, a partir de este punto el
-salario empieza a disminuir.
-
-```{r}
-
-#Desarrollamos la función para el bootstrap
-boot_func <- function(data,index)
-{
-    boot_sample <- data[index, ]
-    boot_model <-lm(log_hourly_inglab ~ age + age_sq, data = data, subset = index)
-    beta2 <- boot_model$coefficients[2]
-    beta3 <-  boot_model$coefficients[3]
-    return(- beta2_boot / (2 * beta3_boot))
-}
-
-#Se aplica el bootstrap 
-boot_age <- boot(clean_geih, boot_func, 10)
-
-#Para obtener los intervalos de confianza
-conf_int <- boot.ci(boot_age, type = "perc")
-conf_int
-
-```
 
 # 4. Brecha salarial por género
 
@@ -1081,9 +1052,17 @@ stargazer(
 
 ```
 
-A partir de los resultados presentados en la Tabla **tabla 4-3**, se observa que los coeficientes estimados para la variable female son idénticos en ambos métodos, con un valor de -0.115. Esto indica que, en promedio, las mujeres reciben un ingreso por hora aproximadamente 11.5% menor que el de los hombres, después de controlar por variables como edad, educación, antigüedad, oficio, tipo de ocupación, formalidad y tamaño de la empresa(ambos coeficientes son estadísticamente significativos). La consistencia en los coeficientes sugiere que ambos métodos, FWL y FWL con bootstrapping, están capturando el mismo efecto de género sobre el ingreso laboral.
-
-Por otro lado, los errores estándar (SE) muestran una ligera diferencia entre los dos métodos. El SE obtenido mediante el método tradicional de FWL es `r se_fwl`, mientras que el SE calculado con bootstrapping es `r se_fwl_bootstrap`. Aunque la diferencia es mínima, el hecho de que el SE de bootstrapping sea ligeramente mayor sugiere que este método está capturando una mayor variabilidad en los datos, posiblemente debido a la presencia de heterocedasticidad o a la no linealidad en los residuos. Esto refuerza la idea de que el bootstrapping proporciona una estimación más robusta del error estándar, ya que no depende de supuestos restrictivos como la homocedasticidad.
+Partiendo de los resultados de la **tabla 4-3**, los coeficientes
+obtenidos con ambos métodos tienen el mismo signo y son muy
+similares, lo que implica que en promedio una mujer recibe menos
+ingresos por hora que un hombre. Por otra parte, el error
+estándar sí disminuye cuando se usa el método de bootstraping
+(pasa de `r se_fwl` a `r se_fwl_bootstrap`). De esta manera,
+podemos concluir que la estimación de la brecha salarial
+utilizando FWL y bootstraping es más precisa que usando FWL
+simplemente. De forma adicional, hay que resaltar que estos
+métodos no asumen homocedasticidad por lo cual se ajustan más a
+lo que ocurre en la realidad.
 
 [**c. Ahora vamos a graficar el perfil de edad-salario predicho y
 estime las edades en las que se alcanza el pico salarial, junto
