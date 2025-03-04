@@ -42,9 +42,7 @@ figure_results_path <- "../results/figures"
 
 ```
 
-# 1. Introducción (Cami)
-
-## Problema
+# 1. Introducción 
 
 *Uno de los principales desafíos para la equidad tributaria y la
 sostenibilidad fiscal en Colombia es la subdeclaración de
@@ -111,70 +109,10 @@ describes the data and its suitability to address the problem set
 question. It contains a preview of the results and main
 takeaways.*
 
-## Antecedentes
-
-Se mencionan antecedentes relevantes y debidamente documentados,
-
-## Presentación breve de los datos
-
-Se presentan brevemente los datos y la pertinencia para responder
-el problema planteado en el taller,
-
-## Resultados
-
-Contiene un resumen de los resultados,
-
-## Conclusiones
-
-Se presentan breves conclusiones del análisis.
-
-# 2. Datos (Mateo / Javier)
-
-## Rubrica
-
-Esto debe ser transversal a todas las secciones: se utiliza el
-conocimiento profesional y los antecedentes para agregar valor a
-la sección.
-
-### Fuente original y webscraping
-
-Se realiza una descripción completa de la fuente de datos
-original, así como de la técnica de webscraping para su
-recolección, resaltando las restricciones para el acceso a los
-datos en caso de haberlas,
-
-### Utilidad de la base para la solución del problema
-
-Se discute la utilidad de la base para la solución del problema
-planteado en el taller,
-
-### Limpieza de datos
-
-Se describe cómo se obtiene la muestra final incluyendo la unión
-entre las bases de datos, la transformación de variables, las
-variables incluidas en el análisis, y el tratamiento a
-observaciones faltantes y datos atípicos
-
-### Análisis descriptivo
-
-Se realiza un análisis descriptivo de las variables utilizadas en
-el análisis mediante tablas y/o gráficos que son autocontenidos y
-debidamente formateadas, con el formato sugerido. Las tablas no
-son pantallazos de R/Python (o el software utilizado), y tienen
-título y notas que permitan entenderlas sin recurrir al
-documento. Las gráficas tienen título, ejes, leyenda y notas que
-permiten entenderlas sin recurrir al documento.
-
-El análisis descriptivo permite al lector entender la variación
-de los datos y la elección de las variables,
-
-## Redacción previa - Mateo
-
--   Describa los datos brevemente, incluyendo su propósito y
-    cualquier otra información relevante.
+# 2. Datos
 
 \
-(b) Describa el proceso de adquisición de los datos y si existen
+2.1) Describa el proceso de adquisición de los datos y si existen
 restricciones para acceder a ellos o para realizar scraping.
 
 *A partir del enlace [**GEIH 2018
@@ -198,7 +136,7 @@ concatenando progresivamente las tablas extraídas. Como
 resultado, se obtuvo un dataframe con dimensiones 32,177 x 177.*
 
 \
-(c) Describa el proceso de limpieza de los datos.
+2.2) Describa el proceso de limpieza de los datos.
 
 #### Proceso de filtrado y preparación de datos
 
@@ -266,11 +204,10 @@ variable `sex`, invertimos su codificación y la renombramos como
 mujeres, siguiendo las especificaciones del taller en cuanto a
 las variables de interés.*
 
-\
-(d) Describa las variables incluidas en su análisis. Como mínimo,
-se debe incluir una tabla de estadísticas descriptivas con su
-interpretación. Sin embargo, espero un análisis profundo que
-ayude al lector a comprender los datos, su variación y la
+2.3) Describa las variables incluidas en su análisis. Como
+mínimo, se debe incluir una tabla de estadísticas descriptivas
+con su interpretación. Sin embargo, espero un análisis profundo
+que ayude al lector a comprender los datos, su variación y la
 justificación de la elección de los datos. Utilice su
 conocimiento profesional para agregar valor a esta sección. No lo
 presente como una lista "seca" de ingredientes.
@@ -337,8 +274,7 @@ aquellas con educación universitaria, mientras que los valores
 intermedios representan distintos niveles educativos. En la
 muestra, con la frecuencia más alta se encuentra la categoría 5,
 lo que indica que la educación secundaria es el nivel educativo
-más recurrente entre los entrevistados. Falta poner el valor de
-tener esta variable.*
+más recurrente entre los entrevistados.*
 
 *De igual manera, se consideró que las características laborales
 desempeñan un papel clave en las diferencias salariales. Por esta
@@ -410,7 +346,7 @@ extremos en los empleados con mayor antigüedad.*
 **Agregar las descripciones de las variables tenure, sizefirm,
 cuenta propia,**
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis', encoding = 'UTF-8'}
 # Haciendo el webscraping - 
 # Funciona pero lo desactivo mientras trabajamos. Hay que activarlo al final
   # tabla_geih <- data.frame()
@@ -530,7 +466,7 @@ clean_geih <- clean_geih %>%
     'p6426')
 
 stargazer(clean_geih,
-          type = "latex",
+          type = "html",
           title = "Tabla 1. Estadísticas descriptivas", 
           align = TRUE,
           no.space = TRUE,
@@ -554,43 +490,7 @@ stargazer(clean_geih,
 
 ```
 
-# 3. Perfil ingreso - edad (Cami)
-
-## Rubrica
-
-1.  Formato de tablas y gráficas
-
-2.  Se presenta los resultados de la estimación en una tabla que
-    no es un pantallazo sino que está debidamente formateada, con
-    el formato indicado, y contiene título y notas que permiten
-    entenderla sin recurrir al documento,
-
-3.  Interpretación de coeficientes
-
-4.  Se interpreta los coeficientes y se discute su significancia
-    tanto económica como estadística,
-
-5.  Discusión del ajuste del modelo
-
-6.  Se discute el ajuste del modelo sobre la muestra
-
-7.  Predicción de la edad-salario
-
-8.  Se presenta el perfil edad-salario predicho y sus intervalos
-    de confianza en una gráfica autocontenida y debidamente
-    formateada, con el formato indicado. Contiene título, ejes,
-    leyenda, y notas que permiten entender sin recurrir al
-    documento,
-
-9.  Edad pico
-
-10. Se estima la 'edad pico' con sus correspondientes errores
-    estándar, interpretando los resultados y su significancia
-    tanto económica como estadística.
-
-    pruebieta
-
-## Contenido redactado previamente Cami-Nico
+# 3. Perfil ingreso - edad 
 
 Una gran cantidad de evidencia en economía laboral sugiere que el
 perfil típico de edad-salario de los trabajadores sigue un patrón
@@ -607,7 +507,7 @@ $$ Al presentar y discutir tus resultados, incluye:
 
 -   Una tabla de regresión.
 
-    ```{r}
+    ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis', encoding = 'UTF-8'}
     #Calculamos el modelo 
     modelo_edad <- lm(log_hourly_inglab ~ age + age_sq, data = clean_geih)
 
@@ -618,7 +518,7 @@ $$ Al presentar y discutir tus resultados, incluye:
       "age_sq" = "Edad^2")
 
     # Tabla de resultados
-    stargazer (modelo_edad, type = "latex", 
+    stargazer (modelo_edad, type = "html", 
               title = "Tabla 1 - Perfil de Edad-Ingresos",
               dep.var.labels = "Log Ingresos por hora",
               no.space = TRUE, 
@@ -1226,38 +1126,7 @@ considerable, lo que subraya la necesidad de políticas que
 aborden tanto la equidad en el acceso a oportunidades como la
 eliminación de prácticas laborales discriminatorias.
 
-# 5. Predicción del salario (Nico / Cami)
-
-## Rubrica
-
--   Se divide la muestra en una proporción 70-30, y se incluye
-    una semilla que permita la reproducibilidad.
-
--   Se presenta una tabla que resume el desempeño predictivo de
-    las tres especificaciones anteriores en términos del RMSE.
-
--   Se calcula el desempeño predictivo para, al menos, cinco
-    especificaciones adicionales que exploran no-linealidades y
-    mayor complejidad.
-
--   Se interpreta el desempeño de los diferentes modelos y se
-    describe, detalladamente, la especificación con mejor
-    desempeño.
-
--   Se presenta una gráfica con la distribución de los errores en
-    el modelo con mejor desempeño predictivo y diagnostica los
-    outilers de la muestra, argumentando si se deben a la
-    naturaleza de los datos o al modelo.
-
--   Se presenta una tabla con el LOOCV para los dos modelos con
-    el menor error predictivo y compara los resultados con los
-    obtenidos mediante el enfoque de validación.
-
-Notas de clase Gustavo:
-
-En cada uno de los folds se esta cambiando la muestra.
-
-## Contenido redactado previamente
+# 5. Predicción del salario
 
 En las secciones anteriores, estimaste algunas especificaciones
 con un enfoque en la inferencia. En esta subsección, evaluaremos
@@ -1567,25 +1436,3 @@ resultados <- data.frame(
 # Mostrar la tabla
 print(resultados)
 ```
-
-# Repositorio y código
-
-### Rubrica
-
--   El documento es autocontenido, no excede las 10 páginas y las
-    8 tablas o figuras,
-
--   Existe el repositorio siguiendo el template provisto,
-
--   Contiene un README que ayuda al lector a navegar el
-    repositorio e incluye instrucciones breves para replicar
-    completamente el trabajo,
-
--   La rama del repositorio principal muestra al menos cinco (5)
-    contribuciones que aportan significativamente al taller, por
-    parte de cada miembro del equipo,
-
--   El código en el repositorio es legible.
-
--   El código es reproducible descargandose directamente del
-    repositorio.

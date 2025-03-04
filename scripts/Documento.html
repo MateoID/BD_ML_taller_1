@@ -1657,10 +1657,8 @@ data_raw_path &lt;- &quot;../data/raw&quot;
 data_processed_path &lt;- &quot;../data/processed&quot;
 table_results_path &lt;- &quot;../results/tables&quot;
 figure_results_path &lt;- &quot;../results/figures&quot;</code></pre>
-<div id="introducción-cami" class="section level1">
-<h1>1. Introducción (Cami)</h1>
-<div id="problema" class="section level2">
-<h2>Problema</h2>
+<div id="introducción" class="section level1">
+<h1>1. Introducción</h1>
 <p><em>Uno de los principales desafíos para la equidad tributaria y la
 sostenibilidad fiscal en Colombia es la subdeclaración de ingresos, una
 práctica facilitada por la ausencia de información precisa sobre los
@@ -1715,70 +1713,10 @@ antecedents. It briefly describes the data and its suitability to
 address the problem set question. It contains a preview of the results
 and main takeaways.</em></p>
 </div>
-<div id="antecedentes" class="section level2">
-<h2>Antecedentes</h2>
-<p>Se mencionan antecedentes relevantes y debidamente documentados,</p>
-</div>
-<div id="presentación-breve-de-los-datos" class="section level2">
-<h2>Presentación breve de los datos</h2>
-<p>Se presentan brevemente los datos y la pertinencia para responder el
-problema planteado en el taller,</p>
-</div>
-<div id="resultados" class="section level2">
-<h2>Resultados</h2>
-<p>Contiene un resumen de los resultados,</p>
-</div>
-<div id="conclusiones" class="section level2">
-<h2>Conclusiones</h2>
-<p>Se presentan breves conclusiones del análisis.</p>
-</div>
-</div>
-<div id="datos-mateo-javier" class="section level1">
-<h1>2. Datos (Mateo / Javier)</h1>
-<div id="rubrica" class="section level2">
-<h2>Rubrica</h2>
-<p>Esto debe ser transversal a todas las secciones: se utiliza el
-conocimiento profesional y los antecedentes para agregar valor a la
-sección.</p>
-<div id="fuente-original-y-webscraping" class="section level3">
-<h3>Fuente original y webscraping</h3>
-<p>Se realiza una descripción completa de la fuente de datos original,
-así como de la técnica de webscraping para su recolección, resaltando
-las restricciones para el acceso a los datos en caso de haberlas,</p>
-</div>
-<div id="utilidad-de-la-base-para-la-solución-del-problema" class="section level3">
-<h3>Utilidad de la base para la solución del problema</h3>
-<p>Se discute la utilidad de la base para la solución del problema
-planteado en el taller,</p>
-</div>
-<div id="limpieza-de-datos" class="section level3">
-<h3>Limpieza de datos</h3>
-<p>Se describe cómo se obtiene la muestra final incluyendo la unión
-entre las bases de datos, la transformación de variables, las variables
-incluidas en el análisis, y el tratamiento a observaciones faltantes y
-datos atípicos</p>
-</div>
-<div id="análisis-descriptivo" class="section level3">
-<h3>Análisis descriptivo</h3>
-<p>Se realiza un análisis descriptivo de las variables utilizadas en el
-análisis mediante tablas y/o gráficos que son autocontenidos y
-debidamente formateadas, con el formato sugerido. Las tablas no son
-pantallazos de R/Python (o el software utilizado), y tienen título y
-notas que permitan entenderlas sin recurrir al documento. Las gráficas
-tienen título, ejes, leyenda y notas que permiten entenderlas sin
-recurrir al documento.</p>
-<p>El análisis descriptivo permite al lector entender la variación de
-los datos y la elección de las variables,</p>
-</div>
-</div>
-<div id="redacción-previa---mateo" class="section level2">
-<h2>Redacción previa - Mateo</h2>
-<ul>
-<li>Describa los datos brevemente, incluyendo su propósito y cualquier
-otra información relevante.</li>
-</ul>
+<div id="datos" class="section level1">
+<h1>2. Datos</h1>
 <p><br />
-(b) Describa el proceso de adquisición de los datos y si existen
+2.1) Describa el proceso de adquisición de los datos y si existen
 restricciones para acceder a ellos o para realizar scraping.</p>
 <p><em>A partir del enlace <a href="https://ignaciomsarmiento.github.io/GEIH2018_sample/page1.html"><strong>GEIH
 2018 Sample</strong></a>, se analizó el código HTML subyacente para
@@ -1797,7 +1735,7 @@ veces, permitiendo iterar sobre las distintas páginas de datos,
 concatenando progresivamente las tablas extraídas. Como resultado, se
 obtuvo un dataframe con dimensiones 32,177 x 177.</em></p>
 <p><br />
-(c) Describa el proceso de limpieza de los datos.</p>
+2.2) Describa el proceso de limpieza de los datos.</p>
 <div id="proceso-de-filtrado-y-preparación-de-datos" class="section level4">
 <h4>Proceso de filtrado y preparación de datos</h4>
 <p><em>Para el análisis, se filtró la base de datos para incluir
@@ -1862,8 +1800,7 @@ variable <code>sex</code>, invertimos su codificación y la renombramos
 como <code>female</code>, de modo que su valor fuera 0 para hombres y 1
 para mujeres, siguiendo las especificaciones del taller en cuanto a las
 variables de interés.</em></p>
-<p><br />
-(d) Describa las variables incluidas en su análisis. Como mínimo, se
+<p>2.3) Describa las variables incluidas en su análisis. Como mínimo, se
 debe incluir una tabla de estadísticas descriptivas con su
 interpretación. Sin embargo, espero un análisis profundo que ayude al
 lector a comprender los datos, su variación y la justificación de la
@@ -1922,7 +1859,7 @@ con educación universitaria, mientras que los valores intermedios
 representan distintos niveles educativos. En la muestra, con la
 frecuencia más alta se encuentra la categoría 5, lo que indica que la
 educación secundaria es el nivel educativo más recurrente entre los
-entrevistados. Falta poner el valor de tener esta variable.</em></p>
+entrevistados.</em></p>
 <p><em>De igual manera, se consideró que las características laborales
 desempeñan un papel clave en las diferencias salariales. Por esta razón,
 se incluyó la variable de <strong>ocupación</strong>, que clasifica a
@@ -1957,429 +1894,320 @@ sesgo hacia la derecha, ya que hasta el percentil 75 los individuos
 pertenecen al estrato 3. Esto sugiere que solo el 25% de la muestra
 reside en estratos superiores, lo que refleja la concentración de la
 población en niveles socioeconómicos bajos y medios.</em></p>
+<p><em>El tamaño de la empresa, es una variable categórica cuyos valores
+corresponden a: i) 1 si el individuo es independiente; ii) 2 si el
+individuo trabaja e una empresa con 2 a 5 trabajadores; iii) 3 si el
+individuo trabaja en una empresa con 6 a 10 trabajadores; iv) 4 si el
+individuo trabaja en una empresa con 11 a 50 trabajadores; y v) 5 si el
+individuo trabaja en una empresa con más de 50 trabajadores. En este
+caso la media es de 3.15 y la mediana de 3, lo que sugiere que la
+distribución está sesgada hacia valores más altos, pero con predomino de
+individuos trabajando en empresas pequeñas de entre 6 y 10 trabajadores.
+Dado que la desviación estándar es 1.649, la dispersión de los datos es
+relativamente baja, lo que sugiere una concentración en empresas de
+tamaño reducido. La distribución no parece seguir una forma normal, ya
+que la mediana y la media no coinciden y hay una posible asimetría hacia
+valores más altos.</em></p>
+<p><em>Finalmente, la antigüedad en la empresa, medida en meses,
+presenta una media de 63.76 meses y una mediana de 24 meses. Este
+contraste indica que la distribución está sesgada hacia valores más
+altos, con algunos empleados con una larga permanencia en la empresa. El
+rango es amplio, desde 0 hasta 720 meses, lo que evidencia la presencia
+de empleados recientes y otros con una gran trayectoria dentro de la
+organización. La alta desviación estándar de 89.488 refuerza la idea de
+una distribución altamente dispersa y no normal, con una fuerte
+asimetría debido a valores extremos en los empleados con mayor
+antigüedad.</em></p>
 <p><strong>Agregar las descripciones de las variables tenure, sizefirm,
 cuenta propia,</strong></p>
-<pre class="r"><code># Haciendo el webscraping - 
-# Funciona pero lo desactivo mientras trabajamos. Hay que activarlo al final
-  # tabla_geih &lt;- data.frame()
-   
-  # for (i in 1:10){
-    # my_url &lt;- sprintf(&quot;https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_%d.html&quot;, i)
-    # my_table &lt;- read_html(my_url) %&gt;% 
-     #  html_elements(xpath=&#39;/html/body/table&#39;) %&gt;% 
-     #  html_table()
-     
-  #   my_table &lt;- as.data.frame(my_table)
-     
-  #   tabla_geih &lt;- rbind(tabla_geih, my_table)
-  # }
-
- #rm(my_table) #activar cuando se active el webscraping
-
-# exportando la data cruda
-# exportando la data cruda
-#saveRDS(tabla_geih, file = &quot;../data/raw/data_GEIH_raw.rds&quot;)
-tabla_geih &lt;- readRDS(file.path(data_raw_path,&quot;Data_GEIH_raw_2.rds&quot;))
-
-# Limpieza de los datos
-clean_geih &lt;- tabla_geih %&gt;% 
-  filter(age &gt;= 18, ocu == 1) %&gt;% 
-  mutate(
-    directorio = as.factor(directorio),
-    secuencia_p = as.factor(secuencia_p),
-    orden = as.factor(orden),
-    id = paste(directorio, secuencia_p, orden, sep = &quot;&quot;)) %&gt;% 
-  select(
-    # Variables demográficas
-    &#39;id&#39;, # Identificador único por individuo
-    &#39;age&#39;, # Edad
-    &#39;sex&#39;, # Sexo
-    &#39;p6210&#39;, # Nivel educativo alcanzado 
-    &#39;p6426&#39;, #antiguedad en la empresa 
-    
-    # Variables para utilizar en el cálculo de los ingresos por hora
-    &#39;impa&#39;, # Ingreso mensual por la primera actividad antes de imputación
-    &#39;impaes&#39;, # Ingreso mensual imputado por la primera actividad
-    &#39;isa&#39;, # Ingreso mensual por la segunda actividad antes de imputación
-    &#39;isaes&#39;, # Ingreso mensual imputado por la segunda actividad
-    &#39;ie&#39;, # Ingreso mensual en especie antes de imputación
-    &#39;iees&#39;, # Ingreso mensual en especia imputado
-    &#39;p6630s4a1&#39;, # Valor anual viáticos
-    &#39;hoursWorkUsual&#39;, # Horas trabajadas en la última semana
-    &#39;hoursWorkActualSecondJob&#39;, # Horas trabajadas en la última semana por la segunda actividad
-    
-    # Otras variables de interes
-    &#39;formal&#39;, # empleo formal
-    &#39;sizeFirm&#39;, # tamaño de la firma
-    &#39;oficio&#39;, # Oficio de la persona
-    &#39;relab&#39;, # tipo de ocupación
-    &#39;cuentaPropia&#39;, # Independiente
-    &#39;estrato1&#39;, # Estrato
-    )
-
-# Calculando la variable viáticos anuales a viáticos mensuales
-clean_geih &lt;-  clean_geih %&gt;% 
-  mutate(p6630s4a1 = p6630s4a1 / 12)
-
-# Sumando los ingresos por diferentes conceptos para cada persona
-clean_geih$inglab &lt;- rowSums(clean_geih[, c(
-  &#39;impa&#39;, 
-  &#39;impaes&#39;, 
-  &#39;isa&#39;, 
-  &#39;isaes&#39;, 
-  &#39;ie&#39;, 
-  &#39;iees&#39;,
-  &#39;p6630s4a1&#39;
-)], na.rm=TRUE)
-
-# Revisión de la variable ingresos laborales calculada
-sum(is.na(clean_geih$inglab)) # no tenemos NAs en la variable</code></pre>
-<pre><code>## [1] 0</code></pre>
-<pre class="r"><code>sum(clean_geih$inglab == 0) # tenemos 323 observaciones con ingresos = a cero lo cual no tiene sentido. </code></pre>
-<pre><code>## [1] 323</code></pre>
-<pre class="r"><code># Imputaciôn de promedio de ingresos por estrato y sexo para valores de ingreso que son iguales a cero.
-clean_geih &lt;- clean_geih %&gt;%
-  group_by(estrato1, sex) %&gt;%
-  mutate(mean_inglab = mean(inglab[inglab != 0], na.rm = TRUE)) %&gt;%
-  ungroup() %&gt;%
-  mutate(inglab = ifelse(inglab == 0, mean_inglab, inglab))
-#checkpoint: sum(clean_geih$inglab == 0)
-
-# Cálculo e imputación de horas trabajadas por mes
-clean_geih &lt;- clean_geih %&gt;% 
-  mutate(hour_month1 = (hoursWorkUsual * 49) / 12) %&gt;% 
-  mutate(hour_month2 = (hoursWorkActualSecondJob * 49) / 12)
-
-clean_geih$total_hours &lt;- rowSums(clean_geih[, c(&#39;hour_month1&#39;, &#39;hour_month2&#39;)], na.rm=TRUE) 
-summary(clean_geih$total_hours)</code></pre>
-<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   4.083 163.333 196.000 193.561 204.167 530.833</code></pre>
-<pre class="r"><code># Cálculo de ingresos laborales por hora
-clean_geih &lt;- clean_geih %&gt;% 
-  mutate(hourly_inglab = inglab / total_hours)
-
-# Checkpoint sexo pretransformación: 
-# table(clean_geih$female)
-
-# Convirtiendo la variable sexo a female
-clean_geih &lt;- clean_geih %&gt;%  
-  #Transformación directa de variables de interés para el modelo
-  mutate(age_sq = age^2) %&gt;% 
-  mutate(female = ifelse(sex == 1, 0, 1)) %&gt;%   # Variable female para el análisis de brecha de género
-  mutate(p6210 = ifelse(p6210 == 9, 1, p6210)) %&gt;%
-  mutate(log_hourly_inglab = log(hourly_inglab)) %&gt;% # creando la variable log del salario hora
-  select(                                            # seleccionando las variables
-    &#39;id&#39;, 
-    &#39;hourly_inglab&#39;,
-    &#39;log_hourly_inglab&#39;,
-    &#39;age&#39;, 
-    &#39;age_sq&#39;,
-    &#39;female&#39;, 
-    &#39;p6210&#39;, 
-    &#39;cuentaPropia&#39;, 
-    &#39;estrato1&#39;, 
-    &#39;formal&#39;, 
-    &#39;sizeFirm&#39;, 
-    &#39;oficio&#39;, 
-    &#39;relab&#39;, 
-    &#39;p6426&#39;)
-
-# Checkpoint sexo pretransformación: 
-# table(clean_geih$female)
-
-# checkpoint de valores na, nan o infinitos en la variable ingresos log
-#sum(is.na(clean_geih$log_hourly_inglab))  # Check for NA values
-#sum(is.nan(clean_geih$log_hourly_inglab)) # Check for NaN values
-#sum(is.infinite(clean_geih$log_hourly_inglab)) # Check for Inf values
-
-# haciendo una revisión rápida de las variables
-skim(clean_geih)</code></pre>
-<table>
-<caption>Data summary</caption>
-<tbody>
-<tr class="odd">
-<td align="left">Name</td>
-<td align="left">clean_geih</td>
+<p>[1] 0 [1] 323 Min. 1st Qu. Median Mean 3rd Qu. Max. 4.083 163.333
+196.000 193.561 204.167 530.833</p>
+<table style="text-align:center">
+<caption>
+<strong>Tabla 1. Estadísticas descriptivas</strong>
+</caption>
+<tr>
+<td colspan="6" style="border-bottom: 1px solid black">
+</td>
 </tr>
-<tr class="even">
-<td align="left">Number of rows</td>
-<td align="left">16542</td>
+<tr>
+<td style="text-align:left">
+Statistic
+</td>
+<td>
+Mean
+</td>
+<td>
+St. Dev.
+</td>
+<td>
+Min
+</td>
+<td>
+Median
+</td>
+<td>
+Max
+</td>
 </tr>
-<tr class="odd">
-<td align="left">Number of columns</td>
-<td align="left">14</td>
+<tr>
+<td colspan="6" style="border-bottom: 1px solid black">
+</td>
 </tr>
-<tr class="even">
-<td align="left">_______________________</td>
-<td align="left"></td>
+<tr>
+<td style="text-align:left">
+Ingreso por hora
+</td>
+<td>
+9,677.007
+</td>
+<td>
+17,465.710
+</td>
+<td>
+81.633
+</td>
+<td>
+5,323.182
+</td>
+<td>
+888,775.500
+</td>
 </tr>
-<tr class="odd">
-<td align="left">Column type frequency:</td>
-<td align="left"></td>
+<tr>
+<td style="text-align:left">
+Log ingreso por hora
+</td>
+<td>
+8.722
+</td>
+<td>
+0.856
+</td>
+<td>
+4.402
+</td>
+<td>
+8.580
+</td>
+<td>
+13.698
+</td>
 </tr>
-<tr class="even">
-<td align="left">character</td>
-<td align="left">1</td>
+<tr>
+<td style="text-align:left">
+Edad
+</td>
+<td>
+39.436
+</td>
+<td>
+13.483
+</td>
+<td>
+18
+</td>
+<td>
+38
+</td>
+<td>
+94
+</td>
 </tr>
-<tr class="odd">
-<td align="left">numeric</td>
-<td align="left">13</td>
+<tr>
+<td style="text-align:left">
+Mujer
+</td>
+<td>
+0.470
+</td>
+<td>
+0.499
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+1
+</td>
 </tr>
-<tr class="even">
-<td align="left">________________________</td>
-<td align="left"></td>
+<tr>
+<td style="text-align:left">
+Nivel educativo
+</td>
+<td>
+5.000
+</td>
+<td>
+1.099
+</td>
+<td>
+1
+</td>
+<td>
+5
+</td>
+<td>
+6
+</td>
 </tr>
-<tr class="odd">
-<td align="left">Group variables</td>
-<td align="left">None</td>
+<tr>
+<td style="text-align:left">
+Estrato
+</td>
+<td>
+2.551
+</td>
+<td>
+1.011
+</td>
+<td>
+1
+</td>
+<td>
+2
+</td>
+<td>
+6
+</td>
 </tr>
-</tbody>
+<tr>
+<td style="text-align:left">
+Formal
+</td>
+<td>
+0.587
+</td>
+<td>
+0.492
+</td>
+<td>
+0
+</td>
+<td>
+1
+</td>
+<td>
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+Tamaño de la empresa
+</td>
+<td>
+3.152
+</td>
+<td>
+1.649
+</td>
+<td>
+1
+</td>
+<td>
+3
+</td>
+<td>
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+Tipo de oficio
+</td>
+<td>
+49.773
+</td>
+<td>
+28.080
+</td>
+<td>
+1
+</td>
+<td>
+45
+</td>
+<td>
+99
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+Categoría laboral
+</td>
+<td>
+2.268
+</td>
+<td>
+1.547
+</td>
+<td>
+1
+</td>
+<td>
+1
+</td>
+<td>
+9
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+Antigüedad en la empresa
+</td>
+<td>
+63.758
+</td>
+<td>
+89.488
+</td>
+<td>
+0
+</td>
+<td>
+24
+</td>
+<td>
+720
+</td>
+</tr>
+<tr>
+<td colspan="6" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td colspan="6" style="text-align:left">
+Todas las variables usadas en este trabajo provienen de la GEIH de
+Bogotá para 2018.
+</td>
+</tr>
+<tr>
+<td colspan="6" style="text-align:left">
+Número de observaciones: 16,542 para todas las variables. Nuestra
+variable explicada
+</td>
+</tr>
+<tr>
+<td colspan="6" style="text-align:left">
+es Log ingreso por hora que corresponde al logaritmo de los ingresos por
+hora para
+</td>
+</tr>
+<tr>
+<td colspan="6" style="text-align:left">
+cada individuo. Ingreso por hora se encuentra expresado en pesos
+colombianos (COP).
+</td>
+</tr>
 </table>
-<p><strong>Variable type: character</strong></p>
-<table>
-<colgroup>
-<col width="19%" />
-<col width="13%" />
-<col width="19%" />
-<col width="5%" />
-<col width="5%" />
-<col width="8%" />
-<col width="12%" />
-<col width="15%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">skim_variable</th>
-<th align="right">n_missing</th>
-<th align="right">complete_rate</th>
-<th align="right">min</th>
-<th align="right">max</th>
-<th align="right">empty</th>
-<th align="right">n_unique</th>
-<th align="right">whitespace</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">id</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">9</td>
-<td align="right">10</td>
-<td align="right">0</td>
-<td align="right">16542</td>
-<td align="right">0</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Variable type: numeric</strong></p>
-<table style="width:100%;">
-<colgroup>
-<col width="17%" />
-<col width="9%" />
-<col width="13%" />
-<col width="7%" />
-<col width="8%" />
-<col width="6%" />
-<col width="7%" />
-<col width="7%" />
-<col width="7%" />
-<col width="8%" />
-<col width="5%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">skim_variable</th>
-<th align="right">n_missing</th>
-<th align="right">complete_rate</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
-<th align="right">p0</th>
-<th align="right">p25</th>
-<th align="right">p50</th>
-<th align="right">p75</th>
-<th align="right">p100</th>
-<th align="left">hist</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">hourly_inglab</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">9677.01</td>
-<td align="right">17465.71</td>
-<td align="right">81.63</td>
-<td align="right">4081.63</td>
-<td align="right">5323.18</td>
-<td align="right">9081.63</td>
-<td align="right">888775.5</td>
-<td align="left">▇▁▁▁▁</td>
-</tr>
-<tr class="even">
-<td align="left">log_hourly_inglab</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">8.72</td>
-<td align="right">0.86</td>
-<td align="right">4.40</td>
-<td align="right">8.31</td>
-<td align="right">8.58</td>
-<td align="right">9.11</td>
-<td align="right">13.7</td>
-<td align="left">▁▂▇▁▁</td>
-</tr>
-<tr class="odd">
-<td align="left">age</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">39.44</td>
-<td align="right">13.48</td>
-<td align="right">18.00</td>
-<td align="right">28.00</td>
-<td align="right">38.00</td>
-<td align="right">50.00</td>
-<td align="right">94.0</td>
-<td align="left">▇▇▅▁▁</td>
-</tr>
-<tr class="even">
-<td align="left">age_sq</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1736.99</td>
-<td align="right">1164.92</td>
-<td align="right">324.00</td>
-<td align="right">784.00</td>
-<td align="right">1444.00</td>
-<td align="right">2500.00</td>
-<td align="right">8836.0</td>
-<td align="left">▇▃▁▁▁</td>
-</tr>
-<tr class="odd">
-<td align="left">female</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0.47</td>
-<td align="right">0.50</td>
-<td align="right">0.00</td>
-<td align="right">0.00</td>
-<td align="right">0.00</td>
-<td align="right">1.00</td>
-<td align="right">1.0</td>
-<td align="left">▇▁▁▁▇</td>
-</tr>
-<tr class="even">
-<td align="left">p6210</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">5.00</td>
-<td align="right">1.10</td>
-<td align="right">1.00</td>
-<td align="right">4.00</td>
-<td align="right">5.00</td>
-<td align="right">6.00</td>
-<td align="right">6.0</td>
-<td align="left">▁▂▂▆▇</td>
-</tr>
-<tr class="odd">
-<td align="left">cuentaPropia</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0.31</td>
-<td align="right">0.46</td>
-<td align="right">0.00</td>
-<td align="right">0.00</td>
-<td align="right">0.00</td>
-<td align="right">1.00</td>
-<td align="right">1.0</td>
-<td align="left">▇▁▁▁▃</td>
-</tr>
-<tr class="even">
-<td align="left">estrato1</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">2.55</td>
-<td align="right">1.01</td>
-<td align="right">1.00</td>
-<td align="right">2.00</td>
-<td align="right">2.00</td>
-<td align="right">3.00</td>
-<td align="right">6.0</td>
-<td align="left">▇▆▁▁▁</td>
-</tr>
-<tr class="odd">
-<td align="left">formal</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0.59</td>
-<td align="right">0.49</td>
-<td align="right">0.00</td>
-<td align="right">0.00</td>
-<td align="right">1.00</td>
-<td align="right">1.00</td>
-<td align="right">1.0</td>
-<td align="left">▆▁▁▁▇</td>
-</tr>
-<tr class="even">
-<td align="left">sizeFirm</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">3.15</td>
-<td align="right">1.65</td>
-<td align="right">1.00</td>
-<td align="right">2.00</td>
-<td align="right">3.00</td>
-<td align="right">5.00</td>
-<td align="right">5.0</td>
-<td align="left">▆▅▂▃▇</td>
-</tr>
-<tr class="odd">
-<td align="left">oficio</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">49.77</td>
-<td align="right">28.08</td>
-<td align="right">1.00</td>
-<td align="right">33.00</td>
-<td align="right">45.00</td>
-<td align="right">70.00</td>
-<td align="right">99.0</td>
-<td align="left">▃▃▇▁▅</td>
-</tr>
-<tr class="even">
-<td align="left">relab</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">2.27</td>
-<td align="right">1.55</td>
-<td align="right">1.00</td>
-<td align="right">1.00</td>
-<td align="right">1.00</td>
-<td align="right">4.00</td>
-<td align="right">9.0</td>
-<td align="left">▇▅▁▁▁</td>
-</tr>
-<tr class="odd">
-<td align="left">p6426</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">63.76</td>
-<td align="right">89.49</td>
-<td align="right">0.00</td>
-<td align="right">7.00</td>
-<td align="right">24.00</td>
-<td align="right">84.00</td>
-<td align="right">720.0</td>
-<td align="left">▇▁▁▁▁</td>
-</tr>
-</tbody>
-</table>
-</div>
 </div>
 </div>
 <div id="perfil-ingreso---edad-cami" class="section level1">
 <h1>3. Perfil ingreso - edad (Cami)</h1>
-<div id="rubrica-1" class="section level2">
+<div id="rubrica" class="section level2">
 <h2>Rubrica</h2>
 <ol style="list-style-type: decimal">
 <li><p>Formato de tablas y gráficas</p></li>
@@ -2419,50 +2247,116 @@ log(w) = \beta_1 + \beta_2Edad + \beta_3 Edad^2 + u
 \]</span> Al presentar y discutir tus resultados, incluye:</p>
 <ul>
 <li><p>Una tabla de regresión.</p>
-<pre class="r"><code>#Calculamos el modelo 
-modelo_edad &lt;- lm(log_hourly_inglab ~ age + age_sq, data = clean_geih)
-
-#Organizar las etiquetas
-custom_labels &lt;- list(
-  &quot;(Constant)&quot; = &quot;Intercepto&quot;,
-  &quot;age&quot; = &quot;Edad&quot;,
-  &quot;age_sq&quot; = &quot;Edad^2&quot;)
-
-# Tabla de resultados
-stargazer (modelo_edad, type = &quot;latex&quot;, 
-          title = &quot;Tabla 1 - Perfil de Edad-Ingresos&quot;,
-          dep.var.labels = &quot;Log Ingresos por hora&quot;,
-          no.space = TRUE, 
-          keep.stat = c(&quot;n&quot;, &quot;rsq&quot;),
-          star.cutoffs = NA,
-          out = file.path(table_results_path, &quot;3_1_Tabla_Edad.tex&quot;))</code></pre>
-<pre><code>## 
-## % Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy Institute. E-mail: marek.hlavac at gmail.com
-## % Date and time: lun, mar. 03, 2025 - 9:40:12 p. m.
-## \begin{table}[!htbp] \centering 
-##   \caption{Tabla 1 - Perfil de Edad-Ingresos} 
-##   \label{} 
-## \begin{tabular}{@{\extracolsep{5pt}}lc} 
-## \\[-1.8ex]\hline 
-## \hline \\[-1.8ex] 
-##  &amp; \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
-## \cline{2-2} 
-## \\[-1.8ex] &amp; Log Ingresos por hora \\ 
-## \hline \\[-1.8ex] 
-##  age &amp; 0.041 \\ 
-##   &amp; (0.003) \\ 
-##   age\_sq &amp; $-$0.0005 \\ 
-##   &amp; (0.00003) \\ 
-##   Constant &amp; 7.917 \\ 
-##   &amp; (0.057) \\ 
-##  \hline \\[-1.8ex] 
-## Observations &amp; 16,542 \\ 
-## R$^{2}$ &amp; 0.013 \\ 
-## \hline 
-## \hline \\[-1.8ex] 
-## \textit{Note:}  &amp; \multicolumn{1}{r}{NA} \\ 
-## \end{tabular} 
-## \end{table}</code></pre></li>
+<table style="text-align:center">
+<caption>
+<p><strong>Tabla 1 - Perfil de Edad-Ingresos</strong></p>
+</caption>
+<tr>
+<td colspan="2" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+<p><em>Dependent variable:</em></p>
+</td>
+</tr>
+<tr>
+<td>
+</td>
+<td colspan="1" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+<p>Log Ingresos por hora</p>
+</td>
+</tr>
+<tr>
+<td colspan="2" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+<p>age</p>
+</td>
+<td>
+<p>0.041</p>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+<p>(0.003)</p>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+<p>age_sq</p>
+</td>
+<td>
+<p>-0.0005</p>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+<p>(0.00003)</p>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+<p>Constant</p>
+</td>
+<td>
+<p>7.917</p>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+<p>(0.057)</p>
+</td>
+</tr>
+<tr>
+<td colspan="2" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+<p>Observations</p>
+</td>
+<td>
+<p>16,542</p>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+<p>R<sup>2</sup></p>
+</td>
+<td>
+<p>0.013</p>
+</td>
+</tr>
+<tr>
+<td colspan="2" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+<p><em>Note:</em></p>
+</td>
+<td style="text-align:right">
+<p>NA</p>
+</td>
+</tr>
+</table></li>
 </ul>
 <p><strong>Agregar la discusion de la significancia economica de estos
 coeficientes</strong></p>
@@ -2548,7 +2442,7 @@ boot_age &lt;- boot(clean_geih, boot_func, 10)
 # Extraer estimaciones
 age_coefs &lt;- apply(boot_age$t, 2, mean)  # Media de los coeficientes
 age_coefs</code></pre>
-<pre><code>## [1] 43.78696</code></pre>
+<pre><code>## [1] 43.34738</code></pre>
 <pre class="r"><code>#Para obtener los intervalos de confianza usando bootstrap
 conf_int &lt;- boot.ci(boot_age, type = &quot;perc&quot;)</code></pre>
 <pre><code>## Warning in norm.inter(t, alpha): extreme order statistics used as endpoints</code></pre>
@@ -2561,7 +2455,7 @@ conf_int &lt;- boot.ci(boot_age, type = &quot;perc&quot;)</code></pre>
 ## 
 ## Intervals : 
 ## Level     Percentile     
-## 95%   (42.35, 45.56 )  
+## 95%   (42.45, 44.52 )  
 ## Calculations and Intervals on Original Scale
 ## Warning : Percentile Intervals used Extreme Quantiles
 ## Some percentile intervals may be unstable</code></pre>
@@ -3075,7 +2969,7 @@ laborales discriminatorias.</p>
 </div>
 <div id="predicción-del-salario-nico-cami" class="section level1">
 <h1>5. Predicción del salario (Nico / Cami)</h1>
-<div id="rubrica-2" class="section level2">
+<div id="rubrica-1" class="section level2">
 <h2>Rubrica</h2>
 <ul>
 <li><p>Se divide la muestra en una proporción 70-30, y se incluye una
@@ -3379,7 +3273,7 @@ cat(&quot;LOOCV for Modelo Edad Formal completed.\n&quot;)</code></pre>
 training_time &lt;- difftime(end_time, start_time, units = &quot;mins&quot;)
 cat(&quot;\nTotal LOOCV training completed in:&quot;, round(training_time, 2), &quot;minutes\n&quot;)</code></pre>
 <pre><code>## 
-## Total LOOCV training completed in: 0.64 minutes</code></pre>
+## Total LOOCV training completed in: 0.76 minutes</code></pre>
 <pre class="r"><code># Mostrar resultados de LOOCV
 cat(&quot;RMSE (Modelo estrato:sizefirm):&quot;, resultados_estrato_sizefirm$rmse, &quot;\n&quot;)</code></pre>
 <pre><code>## RMSE (Modelo estrato:sizefirm): 0.6969082</code></pre>
@@ -3483,26 +3377,6 @@ print(resultados)</code></pre>
 <pre><code>##             Modelo RMSE_LOOCV RMSE_Validacion
 ## 1 Estrato:SizeFirm  0.6969082       0.7056719
 ## 2      Edad:Formal  0.7821320       0.7887830</code></pre>
-</div>
-</div>
-<div id="repositorio-y-código" class="section level1">
-<h1>Repositorio y código</h1>
-<div id="rubrica-3" class="section level3">
-<h3>Rubrica</h3>
-<ul>
-<li><p>El documento es autocontenido, no excede las 10 páginas y las 8
-tablas o figuras,</p></li>
-<li><p>Existe el repositorio siguiendo el template provisto,</p></li>
-<li><p>Contiene un README que ayuda al lector a navegar el repositorio e
-incluye instrucciones breves para replicar completamente el
-trabajo,</p></li>
-<li><p>La rama del repositorio principal muestra al menos cinco (5)
-contribuciones que aportan significativamente al taller, por parte de
-cada miembro del equipo,</p></li>
-<li><p>El código en el repositorio es legible.</p></li>
-<li><p>El código es reproducible descargandose directamente del
-repositorio.</p></li>
-</ul>
 </div>
 </div>
 
