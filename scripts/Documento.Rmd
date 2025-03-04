@@ -42,7 +42,7 @@ figure_results_path <- "../results/figures"
 
 ```
 
-# 1. Introducción 
+# 1. Introducción
 
 *Uno de los principales desafíos para la equidad tributaria y la
 sostenibilidad fiscal en Colombia es la subdeclaración de
@@ -276,19 +276,25 @@ muestra, con la frecuencia más alta se encuentra la categoría 5,
 lo que indica que la educación secundaria es el nivel educativo
 más recurrente entre los entrevistados.*
 
+Incorporamos también la variable **cuentaPropia** correspondiente
+a 1 si el individuo trabaja como independiente y 0 de lo
+contrario. Para nuestra muestra, aproximadamente el 31% de los
+individuos trabajaba como independiente lo que equivale a 5106
+observaciones del total.
+
 *De igual manera, se consideró que las características laborales
 desempeñan un papel clave en las diferencias salariales. Por esta
-razón, se incluyó la variable de **ocupación**, que clasifica a
-los individuos según su actividad económica. Dicha variable
-abarca 80 categorías distintas y permite identificar cómo la
-remuneración varía entre sectores y tipos de empleo. En la
-muestra, las ocupaciones más frecuentes corresponden a vendedores
-ambulantes, domiciliarios, vendedores de loterías, periódicos y
+razón, se incluyó la variable de **oficio**, que clasifica a los
+individuos según su actividad económica. Dicha variable abarca 80
+categorías distintas y permite identificar cómo la remuneración
+varía entre sectores y tipos de empleo. En la muestra, las
+ocupaciones más frecuentes corresponden a vendedores ambulantes,
+domiciliarios, vendedores de loterías, periódicos y
 comerciantes.*
 
-*Por otro lado, se incorporó la variable de relación laboral, la
-cual distingue entre trabajadores asalariados, independientes y
-otras formas de vinculación laboral. Esta variable cuenta con
+*Por otro lado, se incorporó la variable de **relación laboral**,
+la cual distingue entre trabajadores asalariados, independientes
+y otras formas de vinculación laboral. Esta variable cuenta con
 nueve categorías, siendo las más comunes las de obrero o empleado
 de una empresa particular. De este modo, su inclusión permite
 evaluar cómo el tipo de vínculo laboral influye en la estructura
@@ -343,10 +349,7 @@ estándar de 89.488 refuerza la idea de una distribución altamente
 dispersa y no normal, con una fuerte asimetría debido a valores
 extremos en los empleados con mayor antigüedad.*
 
-**Agregar las descripciones de las variables tenure, sizefirm,
-cuenta propia,**
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis', encoding = 'UTF-8'}
+```{r, message=FALSE, warning=FALSE, results='asis', encoding = 'UTF-8'}
 # Haciendo el webscraping - 
 # Funciona pero lo desactivo mientras trabajamos. Hay que activarlo al final
   # tabla_geih <- data.frame()
@@ -470,12 +473,38 @@ stargazer(clean_geih,
           title = "Tabla 1. Estadísticas descriptivas", 
           align = TRUE,
           no.space = TRUE,
-          omit = c(5, 8),
+          omit = c(5),
           nobs = FALSE,
           median = TRUE,
           covariate.labels = c(
             "Ingreso por hora", "Log ingreso por hora", "Edad", 
-            "Mujer", "Nivel educativo", "Estrato", "Formal", 
+            "Mujer", "Nivel educativo", "Independiente", "Estrato", "Formal", 
+            "Tamaño de la empresa", "Tipo de oficio", "Categoría laboral", 
+            "Antigüedad en la empresa"),
+          notes = c(
+            "Todas las variables usadas en este trabajo provienen de la GEIH de Bogotá para 2018. \\\\",
+            "Número de observaciones: 16,542 para todas las variables. Nuestra variable explicada \\\\",
+            "es Log ingreso por hora que corresponde al logaritmo de los ingresos por hora para \\\\",
+            "cada individuo. Ingreso por hora se encuentra expresado en pesos colombianos (COP)."
+          ),
+          notes.append = FALSE,
+          out = file.path(table_results_path, "2_1_table_estadisticas_descriptivas.html")
+          )
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis', encoding = 'UTF-8'}
+stargazer(clean_geih,
+          type = "latex",
+          title = "Tabla 1. Estadísticas descriptivas", 
+          align = TRUE,
+          no.space = TRUE,
+          omit = c(5),
+          nobs = FALSE,
+          median = TRUE,
+          covariate.labels = c(
+            "Ingreso por hora", "Log ingreso por hora", "Edad", 
+            "Mujer", "Nivel educativo", "Independiente", "Estrato", "Formal", 
             "Tamaño de la empresa", "Tipo de oficio", "Categoría laboral", 
             "Antigüedad en la empresa"),
           notes = c(
@@ -487,10 +516,10 @@ stargazer(clean_geih,
           notes.append = FALSE,
           out = file.path(table_results_path, "2_1_table_estadisticas_descriptivas.tex")
           )
-
 ```
 
-# 3. Perfil ingreso - edad 
+
+# 3. Perfil ingreso - edad
 
 Una gran cantidad de evidencia en economía laboral sugiere que el
 perfil típico de edad-salario de los trabajadores sigue un patrón
@@ -507,7 +536,7 @@ $$ Al presentar y discutir tus resultados, incluye:
 
 -   Una tabla de regresión.
 
-    ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis', encoding = 'UTF-8'}
+    ```{r, message=FALSE, warning=FALSE, results='asis', encoding = 'UTF-8'}
     #Calculamos el modelo 
     modelo_edad <- lm(log_hourly_inglab ~ age + age_sq, data = clean_geih)
 
@@ -524,8 +553,20 @@ $$ Al presentar y discutir tus resultados, incluye:
               no.space = TRUE, 
               keep.stat = c("n", "rsq"),
               star.cutoffs = NA,
-              out = file.path(table_results_path, "3_1_Tabla_Edad.tex"))
+              out = file.path(table_results_path, "3_1_Tabla_Edad.html"))
     ```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis', encoding = 'UTF-8'}
+    # Tabla de resultados
+    stargazer (modelo_edad, type = "latex", 
+              title = "Tabla 1 - Perfil de Edad-Ingresos",
+              dep.var.labels = "Log Ingresos por hora",
+              no.space = TRUE, 
+              keep.stat = c("n", "rsq"),
+              star.cutoffs = NA,
+              out = file.path(table_results_path, "3_1_Tabla_Edad.tex"))
+```
+
 
 **Agregar la discusion de la significancia economica de estos
 coeficientes**
@@ -665,6 +706,7 @@ mse
     ggsave(filename = file.path(figure_results_path, "3_1_grafico_edad.png"))
     ```
 
+
 # 4. Brecha salarial por género
 
 Los formuladores de políticas han estado preocupados durante
@@ -692,6 +734,29 @@ r2_ajustado_unconditional <- summary(modelo_unconditional)$adj.r.squared * 100
 stargazer(modelo_unconditional,  # Modelo a usar
           title = "Tabla 4-1. Resultados del modelo incondicional",  # Título
           type = "html",          # Formato de salida (texto)
+          
+          no.space = TRUE,        # Tabla compacta
+          keep = "female",        # Solo incluye "female"
+          keep.stat = c("n", "rsq", "adj.rsq"),  # Estadísticas a mostrar
+          
+          star.cutoffs = NA,      # No asteriscos
+          notes = "Errores estándar en paréntesis; No incluye controles",  # Nota al pie
+          notes.align = "l",      # Alinea la nota a la izquierda
+          notes.append = FALSE,   # Evita notas adicionale
+            
+          dep.var.caption = "Logaritmo del ingreso", # Título de la variable dependiente
+          dep.var.labels.include = FALSE,    # Evita la etiqueta doble
+          covariate.labels = c("Female"),  # Renombra "female" a "Female"
+          dep.var.labels = "log(ingreso)",  # Etiqueta de la variable dependiente
+          
+          out = file.path(table_results_path, "4_1_table_modelo_unconditional.html"))  # Guarda en archivo .tex .tex
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis', encoding = 'UTF-8'}
+# Exportando la tabla del modelo uncondicional
+stargazer(modelo_unconditional,  # Modelo a usar
+          title = "Tabla 4-1. Resultados del modelo incondicional",  # Título
+          type = "latex",          # Formato de salida (texto)
           
           no.space = TRUE,        # Tabla compacta
           keep = "female",        # Solo incluye "female"
@@ -875,11 +940,44 @@ stargazer(modelo_unconditional, modelo_condicional_usual, modelo_condicional_fwl
   column.labels = c("Simple", "Múltiple", "FWL"), # Etiquetas de columnas
   
   add.lines = list(c("Controles", "No", "Sí", "Sí")), # Fila adicional: Indica si se incluyen controles
-  out = file.path(table_results_path, "4_2_table_comparacion_modelos_uncond_FWL.tex") # exportando
+  out = file.path(table_results_path, "4_2_table_comparacion_modelos_uncond_FWL.html") # exportando
   
   )
 
 
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis', encoding = 'UTF-8'}
+# Ahora vamos a sacar la tabla de comparación de los modelos. 
+stargazer(modelo_unconditional, modelo_condicional_usual, modelo_condicional_fwl, 
+  
+  type = "latex",                     # Tipo de salida: "text" para consola
+  title = "Tabla 4-2. Comparación de los coeficientes de female para los diferentes modelos", 
+  align = TRUE,                      # Alinea los números al punto decimal
+  no.space = TRUE,                   # Elimina espacios innecesarios
+  keep = c("female"),                # Variable predictora de interés
+  covariate.labels = c("Female"),    # Etiqueta personalizada para "female"
+  keep.stat = c("n", "rsq", "adj.rsq"), # Estadísticos a incluir
+
+  star.cutoffs = NA,                 # No asteriscos
+  notes.append = FALSE,              # Evita notas adicionales
+  notes = c(
+    "Errores estándar entre paréntesis; SE: error estándar; FWL: Frisch-Waugh-Lovell;",
+    "Controles: edad, educación, antigüedad, oficio, tipo de oficio, formalidad en el", 
+    "trabajo y tamaño de empresa."
+  ),                                 # Notas al pie
+  notes.align = "l",                 # Alinea la nota a la izquierda
+  
+  digits = 4,                        # Número de decimales en la tabla
+  dep.var.caption = "Logaritmo del ingreso", # Título de la variable dependiente
+  dep.var.labels.include = FALSE,    # Evita la etiqueta doble
+  
+  column.labels = c("Simple", "Múltiple", "FWL"), # Etiquetas de columnas
+  
+  add.lines = list(c("Controles", "No", "Sí", "Sí")), # Fila adicional: Indica si se incluyen controles
+  out = file.path(table_results_path, "4_2_table_comparacion_modelos_uncond_FWL.tex") # exportando
+  
+  )
 ```
 
 Los resultados muestran una brecha salarial de género
@@ -981,9 +1079,32 @@ stargazer(
   summary = FALSE,    # No mostrar resumen estadístico
   rownames = TRUE,    # Mostrar nombres de filas
   colnames = TRUE,     # Mostrar nombres de columnas
-  out = file.path(table_results_path, "4_3_table_comparacion_fwl_fwl-bootstraping.tex") # exportando
+  out = file.path(table_results_path, "4_3_table_comparacion_fwl_fwl-bootstraping.html") # exportando
 )
 
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis', encoding = 'UTF-8'}
+# Presentando la tabla con stargazer
+stargazer(
+  matriz_resultados,  # Usar la matriz de resultados
+  type = "latex",      
+  title = "Tabla 4-3. Comparación de coeficientes y errores estándar usando FWL con y sin boostraping",
+  align = TRUE,       # Alinea los números por el punto decimal
+  no.space = TRUE,    # Elimina espacios innecesarios
+  digits = 3,         # Número de decimales
+  notes.append = FALSE,              # Evita notas adicionales
+  notes = c(
+    "Errores estándar entre paréntesis; SE: error estándar; FWL: Frisch-Waugh-Lovell;", 
+    "Controles: edad, educación, antigüedad, oficio, tipo de oficio, formalidad en el", 
+    "trabajo y tamaño de empresa."
+    ),  # Nota al pie
+  notes.align = "l",  # Alinea la nota a la izquierda
+  summary = FALSE,    # No mostrar resumen estadístico
+  rownames = TRUE,    # Mostrar nombres de filas
+  colnames = TRUE,     # Mostrar nombres de columnas
+  out = file.path(table_results_path, "4_3_table_comparacion_fwl_fwl-bootstraping.tex") # exportando
+)
 ```
 
 Partiendo de los resultados de la **tabla 4-3**, los coeficientes
